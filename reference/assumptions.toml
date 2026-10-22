@@ -1,0 +1,8 @@
+# The controlled vocabulary of assumptions a recipe may make (field `assumes`).
+# A shard is unconditional if some supporting event has `assumes = []`.
+
+[GRH]
+description = "The generalised Riemann hypothesis (e.g. class group bounds in Magma/PARI/Sage without proof)."
+
+[heuristic]
+description = "A heuristic or probabilistic algorithm without a proof of correctness of its output."

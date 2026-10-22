@@ -1,0 +1,16 @@
+[workspace]
+members = ["native/bigint", "native/core", "native/py"]
+resolver = "3"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+authors = ["Maarten Derickx"]
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+
+
+[profile.release]
+overflow-checks = true

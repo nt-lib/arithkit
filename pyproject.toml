@@ -1,0 +1,66 @@
+[build-system]
+requires = ["maturin>=1.9,<2"]
+build-backend = "maturin"
+
+[project]
+name = "arithkit"
+version = "0.1.0"
+description = "Toy Python + Rust implementations of arithmetic algorithms with an identical Python interface"
+readme = "README.md"
+requires-python = ">=3.12"
+license = "MIT OR Apache-2.0"
+authors = [{ name = "Maarten Derickx" }]
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "pytest>=8",
+    "hypothesis>=6.100",
+    "pyright>=1.1.400",
+    "ruff>=0.6",
+    "sphinx>=8",
+]
+
+[tool.maturin]
+manifest-path = "native/py/Cargo.toml"
+python-source = "python"
+module-name = "arithkit._native"
+python-packages = ["arithkit_api", "arithkit_toy"]
+
+[tool.uv]
+# Rebuild the native extension whenever Rust sources change.
+cache-keys = [
+    { file = "pyproject.toml" },
+    { file = "Cargo.toml" },
+    { file = "Cargo.lock" },
+    { file = "native/**/Cargo.toml" },
+    { file = "native/**/*.rs" },
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["python", "tests", "."]
+addopts = "--strict-markers -m \"not slow\""
+markers = [
+    "toy: needs only the toy implementation (runs without Rust)",
+    "native: needs the native implementation",
+    "slow: slow tier (nightly), excluded by default",
+]
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"
+src = ["python", "tests", "tools"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "N", "RUF"]
+ignore = ["RUF002", "RUF003"]
+
+[tool.pyright]
+include = ["python", "tests", "tools"]
+exclude = ["python/arithkit/modular/*.py", "**/__pycache__", ".venv"]
+pythonVersion = "3.12"
+# Libraries and the conformance module are checked strictly; tests and tools (dynamic JSON data) in standard mode.
+typeCheckingMode = "standard"
+strict = ["python", "tests/typing"]
+extraPaths = ["python", "tests"]

@@ -1,0 +1,23 @@
+[package]
+name = "arithkit-py"
+description = "PyO3 bindings of arithkit-core: the extension module arithkit._native"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+
+[lib]
+name = "_native"
+crate-type = ["cdylib"]
+
+[features]
+default = ["interrupt"]
+interrupt = ["arithkit-core/interrupt"]
+
+[dependencies]
+arithkit-core = { path = "../core", default-features = false }
+arithkit-bigint = { path = "../bigint" }
+pyo3 = { version = "0.30", features = ["extension-module", "abi3-py312"] }
+
+[lints]
+workspace = true

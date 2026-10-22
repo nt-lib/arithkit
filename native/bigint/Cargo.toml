@@ -1,0 +1,13 @@
+[package]
+name = "arithkit-bigint"
+description = "Arbitrary precision integers for arithkit; the only crate allowed to use the backend (dashu)"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+
+[dependencies]
+dashu-int = "0.6"
+
+[lints]
+workspace = true

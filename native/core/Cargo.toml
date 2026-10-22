@@ -1,0 +1,18 @@
+[package]
+name = "arithkit-core"
+description = "The mathematics of arithkit, in pure Rust (no Python)"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+
+[features]
+default = ["interrupt"]
+# Long loops call infra::interrupt::check(); without this feature it is a no-op.
+interrupt = []
+
+[dependencies]
+arithkit-bigint = { path = "../bigint" }
+
+[lints]
+workspace = true

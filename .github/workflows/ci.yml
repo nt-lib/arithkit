@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  toy:
+    name: Toy implementation (no Rust)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.12"
+      - name: Install dependencies (without building the extension)
+        run: uv sync --no-install-project
+      - name: Toy tests
+        run: uv run --no-sync pytest -m toy
+      - name: Lint and type check
+        run: |
+          uv run --no-sync ruff check .
+          uv run --no-sync ruff format --check .
+          uv run --no-sync pyright
+      - name: Documentation
+        run: uv run --no-sync sphinx-build -W -q docs docs/_build
+      - name: Reference data checker
+        run: uv run --no-sync python -m tools.reference check
+
+  native:
+    name: Native implementation
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+      - uses: Swatinem/rust-cache@v2
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.12"
+      - name: Rust format and lints
+        run: |
+          cargo fmt --all --check
+          cargo clippy --workspace --all-targets -- -D warnings
+          cargo clippy --workspace --all-targets --no-default-features -- -D warnings
+      - name: Rust tests
+        run: cargo test --workspace --exclude arithkit-py
+      - name: Build and test (default features)
+        run: |
+          uv sync
+          uv run pytest
+      - name: Build and test without the interrupt feature
+        env:
+          MATURIN_PEP517_ARGS: --no-default-features
+          ARITHKIT_NO_INTERRUPT: "1"
+        run: uv run --reinstall-package arithkit pytest

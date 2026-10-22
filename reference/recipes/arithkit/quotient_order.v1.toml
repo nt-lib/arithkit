@@ -1,0 +1,7 @@
+id = "arithkit.quotient_order.v1"
+quantity = "quotient_order"
+system = "arithkit"
+# Evaluated by tools/reference with the native AdelicQuotient and LiftedQuotient in scope (order formula).
+template = "(AdelicQuotient if kind == 'adelic' else LiftedQuotient)(N, M).order()"
+parser = "int"
+assumes = []

@@ -1,0 +1,12 @@
+name = "quotient_order"
+description = """The order of the finite quotient Gamma_0(N)^* / Gamma(N;M) (fine version): kind "adelic" is
+Q^_{N,M} = U_N / Gamma^(N;M), kind "lifted" is Q~_{N,M} (maths/quotients, def:finite-quotients)."""
+key = ["kind", "N", "M"]
+domain = "kind in {adelic, lifted}; 1 <= N, M < 2^63; N squarefree"
+output = "int"
+canonical = "the integer itself"
+
+[input]
+kind = "str"
+N = "int"
+M = "int"

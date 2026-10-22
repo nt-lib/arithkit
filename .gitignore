@@ -1,0 +1,28 @@
+# Rust
+/target/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+*.so
+/dist/
+/build/
+.pytest_cache/
+.hypothesis/
+.ruff_cache/
+
+# Docs
+/docs/_build/
+
+# TeX build output
+/maths/**/*.pdf
+/maths/**/*.aux
+/maths/**/*.log
+/maths/**/*.bbl
+/maths/**/*.blg
+/maths/**/*.out
+/maths/**/*.toc
+
+# Temporary working directories
+/tmp/

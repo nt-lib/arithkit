@@ -1,0 +1,9 @@
+id = "toy.quotient_order.v1"
+quantity = "quotient_order"
+system = "toy"
+# A Python expression in the variables of the quantity's input; evaluated by tools/reference with
+# the toy implementation's AdelicQuotient and LiftedQuotient in scope. Counts the elements by
+# enumeration (independent of the order formula), so only for small N, M.
+template = "len((AdelicQuotient if kind == 'adelic' else LiftedQuotient)(N, M).elements())"
+parser = "int"
+assumes = []

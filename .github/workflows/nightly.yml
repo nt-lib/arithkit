@@ -1,0 +1,25 @@
+name: Nightly (slow tier)
+
+on:
+  schedule:
+    - cron: "17 3 * * *"
+  workflow_dispatch:
+
+jobs:
+  slow:
+    name: Many random examples
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.12"
+      - name: Build
+        run: uv sync
+      - name: All tests with the nightly hypothesis profile
+        env:
+          HYPOTHESIS_PROFILE: nightly
+        run: uv run pytest -m "slow or not slow"
