@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import functools
 import random
 from typing import Any
 
@@ -9,13 +10,17 @@ import pytest
 from hypothesis import given
 from hypothesis import strategies as st
 
-from conftest import load_backend
+from conftest import Backend, load_backend
 from helpers import outcome, random_gamma0_star
 
 pytestmark = pytest.mark.native
 
-TOY = load_backend("toy")
-NATIVE = load_backend("native")
+
+@functools.cache
+def backends() -> tuple[Backend, Backend]:
+    """Toy and native backends, imported lazily so that collection works without the extension."""
+    return load_backend("toy"), load_backend("native")
+
 
 SQUAREFREE = [1, 2, 3, 5, 6, 7, 10, 11, 14, 15, 21, 30]
 small_int = st.integers(min_value=-(10**20), max_value=10**20)
@@ -25,7 +30,8 @@ levels = st.tuples(st.sampled_from(SQUAREFREE), st.integers(min_value=1, max_val
 
 
 def pair(n: int, m: int, kind: str) -> tuple[Any, Any]:
-    return getattr(TOY.quotient, kind)(n, m), getattr(NATIVE.quotient, kind)(n, m)
+    toy, native = backends()
+    return getattr(toy.quotient, kind)(n, m), getattr(native.quotient, kind)(n, m)
 
 
 def coords(x: object) -> object:
@@ -114,8 +120,8 @@ def test_json_parsing_outcomes(text: str) -> None:
     toy, native = pair(6, 5, "AdelicQuotient")
     a, b = outcome(lambda: toy.element_from_json(text)), outcome(lambda: native.element_from_json(text))
     assert (a[0], coords(a[1])) == (b[0], coords(b[1]))
-    a = outcome(lambda: TOY.quotient.quotient_from_json(text).to_json())
-    b = outcome(lambda: NATIVE.quotient.quotient_from_json(text).to_json())
+    a = outcome(lambda: backends()[0].quotient.quotient_from_json(text).to_json())
+    b = outcome(lambda: backends()[1].quotient.quotient_from_json(text).to_json())
     assert a == b
 
 
