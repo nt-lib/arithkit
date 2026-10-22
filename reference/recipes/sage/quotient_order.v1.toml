@@ -1,16 +1,20 @@
 id = "sage.quotient_order.v1"
 quantity = "quotient_order"
 system = "sage"
-# Evaluated by crosscheck/sage/run.py inside Sage (from sage.all import *), with N, M, kind bound.
+# Evaluated by crosscheck/sage/run.py inside Sage (from sage.all import *), with N, M, kind bound;
+# the template is wrapped in parentheses, so it may span several lines.
 # |Q_{N,M}| = 2^omega(N) * #{g in G(Z/NM) : N | c} / #{g in G(Z/NM) : g = 1 mod M, NM | c}
 # with G = GL_2 (adelic) or SL_2 (lifted): Gamma(NM) lies in Gamma(N;M), and reduction modulo NM
 # is surjective (strong approximation for the lifted groups). Counts matrices; small NM only.
 template = """
 (2 ** len(prime_divisors(N)))
 * sum(1 for g in (GL if kind == 'adelic' else SL)(2, Zmod(N * M)) if g.matrix()[1, 0].lift() % N == 0)
-// sum(1 for g in (GL if kind == 'adelic' else SL)(2, Zmod(N * M))
-       if g.matrix()[1, 0].lift() % (N * M) == 0
-       and all((x - y).lift() % M == 0 for x, y in zip(g.matrix().list(), [1, 0, 0, 1])))
+// sum(
+    1
+    for g in (GL if kind == 'adelic' else SL)(2, Zmod(N * M))
+    if g.matrix()[1, 0].lift() % (N * M) == 0
+    and all((x - y).lift() % M == 0 for x, y in zip(g.matrix().list(), [1, 0, 0, 1]))
+)
 """
 parser = "int"
 assumes = []

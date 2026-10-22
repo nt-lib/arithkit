@@ -1,7 +1,7 @@
-"""Evaluate a Sage recipe (reference/recipes/sage/*.toml) on inputs read as JSONL from stdin.
+"""Evaluate a Sage recipe (reference/recipes/sage/*.toml) on the inputs in a JSONL file.
 
 Run with the Python of the Sage conda env, e.g.
-    /opt/sage/bin/conda run -n sage python crosscheck/sage/run.py RECIPE.toml < inputs.jsonl
+    /opt/sage/bin/conda run -n sage python crosscheck/sage/run.py RECIPE.toml INPUTS.jsonl
 Prints {"version": ...} and then one JSON output per input line.
 """
 
@@ -10,7 +10,7 @@ import sys
 import tomllib
 
 import sage.all as sage_all
-from sage.all import version
+from sage.version import version
 
 
 def main() -> None:
@@ -18,12 +18,14 @@ def main() -> None:
         recipe = tomllib.load(f)
     template = recipe["template"].strip()
     namespace = {name: getattr(sage_all, name) for name in dir(sage_all) if not name.startswith("_")}
-    print(json.dumps({"version": version()}))
-    for line in sys.stdin:
+    print(json.dumps({"version": f"SageMath {version}"}))
+    with open(sys.argv[2]) as f:
+        lines = f.read().splitlines()
+    for line in lines:
         if not line.strip():
             continue
         row = json.loads(line)
-        value = eval(template, namespace, dict(row))
+        value = eval(f"({template})", {**namespace, **row})
         print(json.dumps(int(value)))
 
 

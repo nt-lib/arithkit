@@ -8,6 +8,7 @@ import pathlib
 import socket
 import subprocess
 import sys
+import tempfile
 from typing import Any
 
 from tools.reference.model import Key, Tree, sha256
@@ -36,7 +37,7 @@ def evaluate_python(system: str, template: str, inputs: list[dict[str, Any]]) ->
     else:
         raise ValueError(system)
     namespace = {"AdelicQuotient": quotient.AdelicQuotient, "LiftedQuotient": quotient.LiftedQuotient}
-    outputs = [eval(template, dict(namespace), dict(row)) for row in inputs]
+    outputs = [eval(f"({template})", {**namespace, **row}) for row in inputs]
     return outputs, f"{system} 0.1.0 (python {sys.version.split()[0]})"
 
 
@@ -50,13 +51,15 @@ def evaluate_external(
     command = {"sage": ["/opt/sage/bin/conda", "run", "-n", "sage", "python"]}.get(system)
     if command is None:
         raise SystemExit(f"do not know how to start {system!r}")
-    proc = subprocess.run(
-        [*command, str(runner), str(recipe_path)],
-        input="\n".join(json.dumps(row) for row in inputs),
-        capture_output=True,
-        text=True,
-        check=True,
-    )
+    with tempfile.NamedTemporaryFile("w", suffix=".jsonl", dir=REPO / "tmp", delete=False) as f:
+        f.write("\n".join(json.dumps(row) for row in inputs) + "\n")
+        inputs_path = pathlib.Path(f.name)
+    try:
+        proc = subprocess.run(
+            [*command, str(runner), str(recipe_path), str(inputs_path)], capture_output=True, text=True, check=True
+        )
+    finally:
+        inputs_path.unlink()
     lines = proc.stdout.strip().splitlines()
     version = json.loads(lines[0])["version"]
     return [json.loads(line) for line in lines[1:]], version
