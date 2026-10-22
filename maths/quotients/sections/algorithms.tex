@@ -1,0 +1,366 @@
+\section{Conventions and algorithms of the implementation}\label{sec:algorithms}
+
+This section fixes the arbitrary choices made by the implementation
+(\texttt{arithkit}) and describes its algorithms, with proofs. Everything
+here is either \emph{canonical} or \emph{deterministic}: the output of a
+specified, versioned algorithm. Throughout, $N, M \geq 1$ with $N$
+squarefree, and $S$ denotes the set of primes dividing $NM$.
+
+\subsection{Encoding of the finite quotients}
+
+\begin{convention}[Atkin--Lehner matrices]\label{conv:al-matrices}
+For $e \mid N$ put $\ALmatrix{1} = 1$ and, for $e > 1$,
+\[
+  \ALmatrix{e} = \Mat{e}{y}{N}{ew},
+\]
+where $w \geq 1$ is the least integer with $ew \equiv 1 \bmod N/e$ and
+$y = (ew - 1)/(N/e)$. This is the matrix of the proof of
+\cref{lem:global-al} with $x = z = 1$; it has determinant $e$.
+\end{convention}
+
+\begin{convention}[Elements]\label{conv:elements}
+An element of $\AdelicQuotientGroup{N}{M}$ is encoded as a pair $(e, u)$
+with $e \mid N$ and $u = (a, b, c, d) \in [0, M)^4$ such that $ad - Nbc$ is
+a unit modulo $M$; it stands for $u\ALmatrix{e}$, where $u$ is the class of
+$\smallMat{a}{b}{Nc}{d}$ in $\EichlerOrder{N}/M\EichlerOrder{N}$
+(\cref{prop:eichler-model}). By \cref{prop:al-encoding} (whose proof works
+verbatim adelically, since $\ALmatrix{e} \in \MaxCompact{N}$ and the scalar
+$\gcd(e,e')$ is trivial in $\AdelicGroup$) the product is
+$(e,u)(e',u') = (\TypeProduct{e}{e'}, u\,\ALconj{e}(u')\,\ALcocycle{e}{e'})$.
+The lifted quotient $\LiftedQuotientGroup{N}{M}$ is the subgroup
+$\{\det u = 1\}$ (\cref{prop:det-one-quotients}). Elements are ordered
+lexicographically by $(e, a, b, c, d)$; this is the \emph{canonical order}.
+\end{convention}
+
+\begin{lemma}[Orders]\label{lem:quotient-orders}
+$|\AdelicQuotientGroup{N}{M}| = 2^{\NumPrimeFactors{N}}\prod_{p^k \HallDivides M} f(p^k)$
+with $f(p^k) = p^{4k-2}(p-1)^2$ if $p \mid N$ and
+$f(p^k) = |\GL{2}{\ResidueRing{p^k}}| = p^{4k-3}(p-1)^2(p+1)$ otherwise, and
+$|\LiftedQuotientGroup{N}{M}| = |\AdelicQuotientGroup{N}{M}|/\EulerPhi{M}$.
+\end{lemma}
+
+\begin{proof}
+By the Chinese remainder theorem $\unit{(\EichlerOrder{N}/M\EichlerOrder{N})}$ is
+the product of the unit groups modulo $p^k$. For $p \mid N$ an element of
+$\IwahoriOrder{p}/p^k\IwahoriOrder{p}$ is a unit if and only if its image in
+$\IwahoriOrder{p}/\IwahoriRadical{p} \cong \FF{p}\times\FF{p}$ is
+(\cref{lem:eichler-ideal}), which gives $p^{4k}(1 - 1/p)^2$ units. The
+determinant maps onto $\unit{(\ResidueRing{M})}$ (use $\Diagonal{t}{1}$).
+\end{proof}
+
+\begin{definition}[Canonical generators]\label{def:canonical-generators}
+Let $H$ be a subgroup of a finite group with a total order. Its
+\emph{canonical generators} are obtained by running through $H$ in increasing
+order and keeping every element that does not lie in the subgroup generated
+by the elements kept before.
+\end{definition}
+
+They depend only on $H$, generate $H$, and $H \subseteq H'$ need not imply
+anything about the canonical generators.
+
+\subsection{Coordinates on the trees}
+
+\begin{definition}[Vertex coordinates]\label{def:vertex-coordinates}
+Let $p$ be a prime. Every vertex of $\Tree{p}$ is the class of the column span
+of a unique matrix $\Mat{p^m}{b}{0}{1}$ with $m \in \ZZ$ and
+$b \in \ZZ[1/p] \cap [0, p^m)$ (Iwasawa decomposition); we write $(m, b)$ for
+this vertex. Thus $\LocalBaseVertex{p} = (0, 0)$ and
+$\LocalStdVertex{p}{p} = (-1, 0)$.
+\end{definition}
+
+\begin{lemma}[Neighbours]\label{lem:neighbours}
+The neighbours of $(m, b)$ are $(m+1, b + jp^m)$ for $0 \leq j < p$ and
+$(m-1, b \bmod p^{m-1})$. The neighbour $(1, t)$ of $\LocalBaseVertex{p}$ is
+the class of the lattice $L \supsetneq p\pAdicIntegers{p}^2$ with
+$L/p\pAdicIntegers{p}^2 = \FF{p}\transpose{(t, 1)}$, and $(-1, 0)$ the one with
+$L/p\pAdicIntegers{p}^2 = \FF{p}\StdBasis{1}$.
+\end{lemma}
+
+\begin{proof}
+The sublattices of index $p$ of $L = \langle p^m\StdBasis{1}, b\StdBasis{1}
++ \StdBasis{2}\rangle$ containing $pL$ are
+$\langle p^{m+1}\StdBasis{1}, (b + jp^m)\StdBasis{1} + \StdBasis{2}\rangle$ and
+$\langle p^m\StdBasis{1}, p(b\StdBasis{1} + \StdBasis{2})\rangle$, whose class is
+$(m-1, b)$.
+\end{proof}
+
+\begin{procedure}
+\textbf{Action on vertices.} For $g \in \GLplus{2}{\QQ}$ and a vertex $(m, b)$
+let $A = g\smallMat{p^m}{b}{0}{1} = \smallMat{\alpha}{\beta}{\gamma}{\delta}$.
+If $\gamma \neq 0$ and ($\delta = 0$ or $\val{p}{\gamma} < \val{p}{\delta}$),
+swap the columns of $A$. If now $\gamma \neq 0$, subtract $\gamma/\delta \in
+\ZZ_{(p)}$ times the second column from the first. The result is
+$\smallMat{x}{y}{0}{z}$; then $g(m, b) = (\val{p}{x/z},\ y/z \bmod p^{\val{p}{x/z}})$,
+the residue taken in $\ZZ[1/p] \cap [0, p^{m'})$. All steps are column
+operations by elements of $\GL{2}{\ZZ_{(p)}}$ and a scaling, so they do not
+change the vertex.
+\end{procedure}
+
+\subsection{Fixed sets of the principal congruence subgroups}
+
+\begin{lemma}[Local fixed sets]\label{lem:fixed-principal-iwahori}
+Let $p$ be a prime, $k \geq 0$, and $K$ the image in $\PGL{2}{\pAdicNumbers{p}}$
+of either $1 + p^k\MatRing{2}{\pAdicIntegers{p}}$ (with $k \geq 1$), or
+$1 + p^k\IwahoriOrder{p}$ (with $k \geq 1$), or $\unit{\IwahoriOrder{p}}$ (the
+case $k = 0$ of the Iwahori order), or the subgroup of determinant one
+elements of any of these. Then $\FixedSet{K}$ is the subtree spanned by the
+vertices at distance at most $k$ from $\LocalBaseVertex{p}$ (first case),
+respectively from the edge $\{\LocalBaseVertex{p}, \LocalStdVertex{p}{p}\}$
+(other cases).
+\end{lemma}
+
+\begin{proof}
+The first case is \cref{lem:fixed-principal} (an element $1 + p^kX$ maps a
+lattice $L$ with $p^k\pAdicIntegers{p}^2 \subseteq L$ into
+$L + p^kXL \subseteq L$, so the larger group fixes the same ball). The case
+$k = 0$ is \cref{lem:local-fixed-points} (2). Let $k \geq 1$ in the Iwahori
+case. Since $p\MatRing{2}{\pAdicIntegers{p}} \subseteq \IwahoriOrder{p}$, the
+group contains $1 + p^{k+1}\MatRing{2}{\pAdicIntegers{p}}$ and is contained
+in $1 + p^k\MatRing{2}{\pAdicIntegers{p}}$, so the ball of radius $k$ around
+$\LocalBaseVertex{p}$ is fixed; conjugating by $w = \smallMat{0}{1}{p}{0}$,
+which normalises $\IwahoriOrder{p}$ (\cref{lem:eichler-ideal}) and swaps
+$\LocalBaseVertex{p}$ and $\LocalStdVertex{p}{p}$, so is the ball around
+$\LocalStdVertex{p}{p}$. A remaining vertex at distance at most $k+1$ from
+$\LocalBaseVertex{p}$ is at distance exactly $k+1$, and its first step from
+$\LocalBaseVertex{p}$ is not towards $\LocalStdVertex{p}{p}$; it is the class
+of $\langle v\rangle + p^{k+1}\pAdicIntegers{p}^2$ with $v = \transpose{(a, 1)}$.
+The element $\smallMat{1}{p^k}{0}{1}$, of determinant one, maps it to the class
+for $\transpose{(a + p^k, 1)}$, which is different. By \cref{lem:fixed-shape}
+the fixed set is the subtree spanned by the fixed vertices, and it contains
+no vertex at distance $k+1$ from the fixed ball, hence none further away.
+The determinant one subgroups fix the same sets, since all elements used
+have determinant one.
+\end{proof}
+
+\begin{corollary}\label{cor:fixed-gamma-NM}
+Let $k_p = \val{p}{M}$. Then $\FixedSet{\GammaPrincipal[ad]{N}{M}}$ is the
+product over $p \in S$ of the sets $F_p$ of
+\cref{lem:fixed-principal-iwahori} (for $1 + p^{k_p}\IwahoriOrder{p}$ if
+$p \mid N$ and $1 + p^{k_p}\MatRing{2}{\pAdicIntegers{p}}$ otherwise) and of
+$\{\LocalBaseVertex{p}\}$ for $p \notin S$. The same holds for the closure
+of $\GammaPrincipal[lift]{N}{M}$, the determinant one part of
+$\GammaPrincipal[ad]{N}{M}$ (strong approximation,
+\cref{lem:strong-approx-eichler}).
+\end{corollary}
+
+\subsection{Centring}
+
+Let $H \subseteq \AdelicQuotientGroup{N}{M}$ be a subgroup and $U$ its
+preimage in $\MaxCompact{N}$; in the classical case let
+$H \subseteq \LiftedQuotientGroup{N}{M}$ and $U$ the closure of its preimage
+in $\GammaZeroStar[lift]{N}$.
+
+\begin{lemma}[Classical fixed sets]\label{lem:classical-fix}
+In the classical case $\FixedSet{U} = \FixedSet{U'}$, where $U'$ is the
+preimage in $\MaxCompact{N}$ of the image of $H$ in
+$\AdelicQuotientGroup{N}{M}$. In particular the centre and the Helling level of
+$H$ may be computed adelically.
+\end{lemma}
+
+\begin{proof}
+$U$ is generated by rational lifts of generators of $H$ and the closure of
+$\GammaPrincipal[lift]{N}{M}$; $U'$ by the same lifts and
+$\GammaPrincipal[ad]{N}{M}$. Both closures have the same fixed set
+(\cref{cor:fixed-gamma-NM}).
+\end{proof}
+
+This avoids the question in the remark after \cref{def:centred-level}, which
+concerns lifted versions of arbitrary centred groups and remains open.
+
+\begin{lemma}[Local action of generators]\label{lem:local-action}
+Let $x = (e, u) \in \AdelicQuotientGroup{N}{M}$ and $p \in S$. Put
+$\tilde u = \smallMat{a}{b}{Nc}{d}$ with $a, b, c, d$ the coordinates of $u$
+if $p \mid M$, and $\tilde u = 1$ if $p \nmid M$. Every element of $U$ mapping
+to $x$ acts on $F_p$ (\cref{cor:fixed-gamma-NM}) as $\tilde u\ALmatrix{e}$.
+\end{lemma}
+
+\begin{proof}
+Two such elements differ by an element of $\GammaPrincipal[ad]{N}{M}$ on the
+right, which fixes $F_p$ pointwise; and the component at $p$ of an element
+mapping to $x$ lies in $\tilde u\ALmatrix{e}(1 + p^{k_p}\Lambda)$ with
+$\Lambda$ the local Eichler order (for $p \nmid M$: in
+$\ALmatrix{e}\unit{\IwahoriOrder{p}}$, the local component being determined
+modulo $\unit{\IwahoriOrder{p}}$ by whether it flips).
+\end{proof}
+
+\begin{procedure}
+\textbf{Centring, version 1} (\texttt{centring\_conjugator}, v1). Input: $H$ by
+generators $x_1, \ldots, x_r$.
+\begin{enumerate}
+\item \emph{Fixed sets.} For $p \in S$ let $V_p$ be the set of vertices of
+  $F_p$ fixed by all $\tilde u_i\ALmatrix{e_i}$ (\cref{lem:local-action});
+  vertices of $F_p$ are enumerated from $\LocalBaseVertex{p}$ (and
+  $\LocalStdVertex{p}{p}$ if $p \mid N$) with \cref{lem:neighbours}. If
+  $V_p = \emptyset$ then $p \mid N$ and $\FixedSet{U_p}$ is the midpoint of
+  the standard edge (\cref{lem:fixed-shape}; $U$ fixes $\StdConfig{N}$).
+  Otherwise $\FixedSet{U_p}$ is the subtree spanned by $V_p$.
+\item \emph{Centre.} $c_p$ is the midpoint of a longest path in
+  $\FixedSet{U_p}$ (\cref{lem:centre}): a vertex, or the midpoint of an edge
+  $\{x_p, y_p\}$. The Helling level $N'$ is the product of the $p$ of the
+  second kind. For $p \notin S$, $c_p = \LocalBaseVertex{p}$.
+\item \emph{Base vertices.} For $p \in S$ let $v_p = c_p$ if $c_p$ is a
+  vertex, and otherwise the endpoint of its edge closest to
+  $\LocalBaseVertex{p}$ (the two distances differ by one). Write
+  $v_p = (m_p, b_p)$.
+\item \emph{The lattice.} Put $q = \prod_{p \in S} p^{m_p}$ and let $b$ be the
+  unique rational number with $0 \leq b < q$, $b \equiv b_p \bmod
+  p^{m_p}\pAdicIntegers{p}$ for $p \in S$ and $\val{\ell}{b} \geq 0$ for
+  $\ell \notin S$. Put $\gamma = \smallMat{q}{b}{0}{1}$. Then
+  $\gamma\LocalBaseVertex{p} = v_p$ for all $p$, and $\det\gamma > 0$.
+\item \emph{The lines.} For $p \mid N'$ the point $\gamma^{-1}c_p$ is the
+  midpoint of an edge from $\LocalBaseVertex{p}$ to a neighbour, which is
+  $(1, t_p)$ or $(-1, 0)$ (\cref{lem:neighbours}). Put
+  $\sigma_p = \smallMat{0}{1}{-1}{t_p}$ in the first case and $\sigma_p = 1$
+  in the second; then $\sigma_p \in \SL{2}{\FF{p}}$ maps the line of the
+  neighbour to $\FF{p}\StdBasis{1}$.
+\item \emph{The lift.} Let $\bar\sigma \in \SL{2}{\ResidueRing{N'}}$ be the
+  matrix with entries in $[0, N')$ reducing to $\sigma_p$ for every $p \mid N'$,
+  and $\sigma = \mathrm{lift}(\bar\sigma) \in \SL{2}{\ZZ}$ as in
+  \cref{lem:sl2-lift}.
+\item \emph{The conjugator.} $g$ is $\sigma\gamma^{-1}$, scaled by the
+  positive rational number that makes it a primitive integral matrix.
+\end{enumerate}
+\end{procedure}
+
+\begin{proposition}\label{prop:centring-algorithm}
+The matrix $g$ satisfies $g\Centre{U} = \StdConfig{N'}$, so $gUg^{-1}$ is
+centred of Helling level $N'$ and contained in $\MaxCompact{N'}$; in the
+classical case also $g\lifted{U}g^{-1} \subseteq \GammaZeroStar[lift]{N'}$.
+\end{proposition}
+
+\begin{proof}
+At $\ell \notin S$, $\gamma$ and $\sigma$ lie in $\GL{2}{\ZZ_\ell}$ and fix
+$\LocalBaseVertex{\ell} = c_\ell$. At $p \in S$ we have
+$\gamma^{-1}v_p = \LocalBaseVertex{p}$, because
+$\gamma\pAdicIntegers{p}^2 = \smallMat{p^{m_p}}{b_p}{0}{1}\pAdicIntegers{p}^2$
+($q/p^{m_p}$ is a $p$-adic unit and $b - b_p \in p^{m_p}\pAdicIntegers{p}$).
+If $p \nmid N'$ then $c_p = v_p$ and $\sigma \in \SL{2}{\pAdicIntegers{p}}$
+fixes $\LocalBaseVertex{p}$. If $p \mid N'$ then $\sigma$ maps the edge from
+$\LocalBaseVertex{p}$ to the neighbour with line $\ell_p$ to the edge with
+line $\FF{p}\StdBasis{1}$, i.e.\ to the standard edge. Hence
+$g\Centre{U} = \StdConfig{N'}$; the rest is \cref{prop:centring} and
+\cref{cor:classical-centring} ($g$ is rational).
+\end{proof}
+
+\begin{lemma}[Deterministic lift to $\SL{2}{\ZZ}$]\label{lem:sl2-lift}
+Let $n \geq 1$ and $\smallMat{a}{b}{c}{d}$ with entries in $[0, n)$ and
+$ad - bc \equiv 1 \bmod n$. Put $c' = c$ if $c \neq 0$ and $c' = n$ otherwise,
+and let $d' = d + tn$ with $t \geq 0$ least such that $\gcd(c', d') = 1$. Let
+$(x, y)$ be the solution of $xd' - yc' = 1$ given by the extended Euclidean
+algorithm, and $\alpha, \beta$ with $\alpha c' + \beta d' = 1$ likewise. Let
+$j \in [0, n)$ with $j \equiv \alpha(a - x) + \beta(b - y) \bmod n$. Then
+$\mathrm{lift} = \smallMat{x + jc'}{y + jd'}{c'}{d'} \in \SL{2}{\ZZ}$ reduces to
+the given matrix.
+\end{lemma}
+
+\begin{proof}
+Since $\gcd(c, d, n) = 1$, some $t$ works (choose $t$ divisible by the primes
+dividing $c'$ but not $d$). The determinant is $xd' - yc' = 1$. Modulo $n$,
+$(a - x)d - (b - y)c \equiv 0$, and since $(c, d)$ is unimodular modulo $n$
+this forces $(a - x, b - y) \equiv \mu(c, d)$ with
+$\mu \equiv \alpha(a-x) + \beta(b-y)$; so $j \equiv \mu$ works.
+\end{proof}
+
+\subsection{The centred level}
+
+Let $D = \det g$ for the primitive integral $g$ above; all its prime factors
+lie in $S$.
+
+\begin{lemma}[Bounds]\label{lem:centring-bounds}
+Put $B = NMD$ and $M_2 = BDN'$. Then
+\begin{enumerate}
+\item $\GammaPrincipal[ad]{N'}{B} \subseteq gUg^{-1}$;
+\item $g\GammaPrincipal[ad]{N}{M_2}g^{-1} \subseteq \GammaPrincipal[ad]{N'}{B}$;
+\end{enumerate}
+and likewise for the lifted groups.
+\end{lemma}
+
+\begin{proof}
+(1) $\GammaPrincipal[ad]{N'}{B} \subseteq \GammaFull[ad]{B}$ and
+$g^{-1}(1 + BX)g = 1 + NM\,\adjugate{g}Xg$, so
+$g^{-1}\GammaFull[ad]{B}g \subseteq \GammaFull[ad]{NM} \subseteq
+\GammaPrincipal[ad]{N}{M} \subseteq U$. (2) $g(1 + M_2X)g^{-1} =
+1 + BN'\,gX\adjugate{g}$ and $N'\MatRing{2}{\ProfiniteIntegers} \subseteq
+\AdelicEichlerOrder{N'}$. Determinants are preserved, which gives the lifted
+statements.
+\end{proof}
+
+Hence conjugation by $g$ induces a homomorphism
+$\phi \colon H_2 \to \AdelicQuotientGroup{N'}{B}$, where $H_2$ is the preimage
+of $H$ in $\AdelicQuotientGroup{N}{M_2}$, and the image of $gUg^{-1}$ in
+$\AdelicQuotientGroup{N'}{B}$ is $H'_B = \phi(H_2)$. It is generated by the
+images of lifts of the generators of $H$ and of generators of the kernel
+$\ker(\AdelicQuotientGroup{N}{M_2} \to \AdelicQuotientGroup{N}{M})$
+(\cref{lem:kernel-generators}). To evaluate $\phi$ on $(e, u)$, take
+$\tilde u \in \MatRing{2}{\ZZ}$ with coordinates $\equiv u \bmod M$ and
+$\equiv (1, 0, 0, 1)$ modulo the primes dividing $M_2$ but not $M$ (Chinese
+remainder theorem, least nonnegative representatives), conjugate
+$Y = g\tilde u\ALmatrix{e}g^{-1}$, and read off $Y$ in
+$\AdelicQuotientGroup{N'}{B}$: the type $e'$ is the product of the $p \mid N'$
+with $\val{p}{\det Y}$ odd, and for $p \mid B$ the matrix
+$p^{-\val{p}{\det(Y\adjugate{\ALmatrix{e'}})}/2}\,Y\adjugate{\ALmatrix{e'}}$
+lies in $\unit{(\AdelicEichlerOrder{N'}\otimes\pAdicIntegers{p})}$; its
+coordinates modulo $p^{\val{p}{B}}$, combined over $p \mid B$, give $u'$. In
+the lifted case the rational lift of $(e, u)$ is
+$\gamma_u\ALmatrix{e}$ with $\gamma_u \in \GammaZero[lift]{N}$ lifting $u$
+(\cref{lem:strong-approx-eichler}, constructed as in \cref{lem:sl2-lift}), and
+$Y$ is read off with \texttt{from\_matrix}.
+
+\begin{lemma}[Kernel generators]\label{lem:kernel-generators}
+Let $p$ be a prime, $\Lambda = \MatRing{2}{\pAdicIntegers{p}}$ or
+$\IwahoriOrder{p}$, and $1 \leq i < j$. The group
+$(1 + p^i\Lambda)/(1 + p^j\Lambda)$ is generated by the elements $1 + p^{l}E$
+for $i \leq l < j$ and $E$ in the basis
+$\{E_{11}, E_{12}, \epsilon E_{21}, E_{22}\}$ of $\Lambda$ ($\epsilon = 1$ or
+$p$). The group $\unit{\Lambda}/(1 + p^j\Lambda)$ is generated by these with
+$i = 1$, the matrices $\smallMat{1}{1}{0}{1}$, $\smallMat{1}{0}{\epsilon}{1}$,
+and $\Diagonal{t}{1}$, $\Diagonal{1}{t}$ for $t$ running through generators
+of $\unit{(\ResidueRing{p^j})}$. Their determinant one versions are generated
+by the determinant one elements $\smallMat{1}{p^l}{0}{1}$,
+$\smallMat{1}{0}{\epsilon p^l}{1}$, $(1 + p^lE_{11})(1 + p^lE_{22})^{-1}$
+(and, for $\unit{\Lambda}$, the unipotent matrices and
+$\Diagonal{t}{t^{-1}}$).
+\end{lemma}
+
+\begin{proof}[Sketch]
+For $l \geq 1$ the quotient $(1 + p^l\Lambda)/(1 + p^{l+1}\Lambda)$ is
+isomorphic to $\Lambda/p\Lambda$ via $1 + p^lX \mapsto X$, so the elements
+$1 + p^lE$ generate each layer. For $\unit{\Lambda}$ use the Iwahori (or
+Bruhat) decomposition: $\unit{\Lambda}$ modulo $1 + p\Lambda$ is generated by
+the torus and the unipotent matrices listed. The determinant one statements
+follow in the same way from the layers of $\SL{2}{}$ and the Lie algebra of
+trace zero matrices.
+\end{proof}
+
+The kernel of $\AdelicQuotientGroup{N}{M_2} \to \AdelicQuotientGroup{N}{M}$ is
+the product over $p \mid M_2$ of the local kernels of \cref{lem:kernel-generators}
+($i = \val{p}{M}$ if $p \mid M$; the unit group if $p \nmid M$), embedded with
+the Chinese remainder theorem (the other components equal to $1$), all of
+type $1$.
+
+\begin{procedure}
+\textbf{Centred level.} Compute $H'_B$. For the divisors $M'$ of $B$ in
+increasing order, test whether the generators of
+$\ker(\AdelicQuotientGroup{N'}{B} \to \AdelicQuotientGroup{N'}{M'})$
+(\cref{lem:kernel-generators}) lie in $H'_B$; the first $M'$ that passes is
+$\CentredLevelQuotient{U}$ (\cref{lem:centred-level-well-defined}; $B$ passes
+by \cref{lem:centring-bounds}). The output is $(N', M')$, the centre data, and
+$H'$, the image of $H'_B$ in $\AdelicQuotientGroup{N'}{M'}$, together with $g$.
+In the classical case the same computation is done in the lifted groups.
+\end{procedure}
+
+\begin{remark}[Determinacy]
+$N'$, $M'$, the Atkin--Lehner image and the centre (in the vertex coordinates
+of \cref{def:vertex-coordinates}) are canonical. The conjugator $g$ and the
+centred group $H'$ are deterministic: another conjugator differs by an element
+of $\MaxCompact{N'}$ (\cref{prop:centring}), so $H'$ is canonical only up to
+conjugation in $\AdelicQuotientGroup{N'}{M'}$. Changing any choice in steps
+3--7 requires a new version number.
+\end{remark}
+
+\begin{remark}[Checks from the examples]
+\Cref{ex:centring-examples,ex:centred-levels} give test cases: for $p \geq 3$
+the image of $\GammaZero[ad]{p^2}$ in $\AdelicQuotientGroup{1}{p^2}$ has
+$N' = 1$, $M' = p$, and that of $\GammaZero[ad]{p^3}$ in
+$\AdelicQuotientGroup{1}{p^3}$ has $N' = p$, $M' = p$.
+\end{remark}
