@@ -56,7 +56,10 @@ def evaluate_external(
         inputs_path = pathlib.Path(f.name)
     try:
         proc = subprocess.run(
-            [*command, str(runner), str(recipe_path), str(inputs_path)], capture_output=True, text=True, check=True
+            [*command, str(runner), str(recipe_path), str(inputs_path)],
+            capture_output=True,
+            text=True,
+            check=True,
         )
     finally:
         inputs_path.unlink()
