@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import datetime
 import json
+import os
 import pathlib
 import socket
 import subprocess
@@ -41,6 +42,14 @@ def evaluate_python(system: str, template: str, inputs: list[dict[str, Any]]) ->
     return outputs, f"{system} 0.1.0 (python {sys.version.split()[0]})"
 
 
+def _clean_environment() -> dict[str, str]:
+    """os.environ without the variables of our virtualenv."""
+    env = {k: v for k, v in os.environ.items() if k not in ("VIRTUAL_ENV", "PYTHONPATH", "PYTHONHOME")}
+    venv_bin = str(REPO / ".venv" / "bin")
+    env["PATH"] = os.pathsep.join(p for p in env.get("PATH", "").split(os.pathsep) if p != venv_bin)
+    return env
+
+
 def evaluate_external(
     system: str, recipe_path: pathlib.Path, inputs: list[dict[str, Any]]
 ) -> tuple[list[object], str]:
@@ -48,7 +57,9 @@ def evaluate_external(
     runner = CROSSCHECK / system / "run.py"
     if not runner.exists():
         raise SystemExit(f"no runner for system {system!r}")
-    command = {"sage": ["/opt/sage/bin/conda", "run", "-n", "sage", "python"]}.get(system)
+    # The Python of the Sage conda env, called directly: `conda run` from inside our virtualenv
+    # would inherit VIRTUAL_ENV and PATH and start the wrong interpreter.
+    command = {"sage": ["/opt/sage/envs/sage/bin/python"]}.get(system)
     if command is None:
         raise SystemExit(f"do not know how to start {system!r}")
     with tempfile.NamedTemporaryFile("w", suffix=".jsonl", dir=REPO / "tmp", delete=False) as f:
@@ -60,6 +71,7 @@ def evaluate_external(
             capture_output=True,
             text=True,
             check=False,
+            env=_clean_environment(),
         )
     finally:
         inputs_path.unlink()
