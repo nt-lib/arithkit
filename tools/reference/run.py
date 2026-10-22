@@ -43,10 +43,17 @@ def evaluate_python(system: str, template: str, inputs: list[dict[str, Any]]) ->
 
 
 def _clean_environment() -> dict[str, str]:
-    """os.environ without the variables of our virtualenv."""
-    env = {k: v for k, v in os.environ.items() if k not in ("VIRTUAL_ENV", "PYTHONPATH", "PYTHONHOME")}
-    venv_bin = str(REPO / ".venv" / "bin")
-    env["PATH"] = os.pathsep.join(p for p in env.get("PATH", "").split(os.pathsep) if p != venv_bin)
+    """os.environ without our virtualenv and active conda env, so CAS envs activate cleanly."""
+    drop_prefixes = [str(REPO / ".venv")]
+    if "CONDA_PREFIX" in os.environ:
+        drop_prefixes.append(os.environ["CONDA_PREFIX"])
+    env = {
+        k: v
+        for k, v in os.environ.items()
+        if k not in ("VIRTUAL_ENV", "PYTHONPATH", "PYTHONHOME") and not k.startswith(("CONDA_", "UV_"))
+    }
+    path = env.get("PATH", "").split(os.pathsep)
+    env["PATH"] = os.pathsep.join(p for p in path if not any(p.startswith(d) for d in drop_prefixes))
     return env
 
 
@@ -57,9 +64,8 @@ def evaluate_external(
     runner = CROSSCHECK / system / "run.py"
     if not runner.exists():
         raise SystemExit(f"no runner for system {system!r}")
-    # The Python of the Sage conda env, called directly: `conda run` from inside our virtualenv
-    # would inherit VIRTUAL_ENV and PATH and start the wrong interpreter.
-    command = {"sage": ["/opt/sage/envs/sage/bin/python"]}.get(system)
+    # Run inside the activated Sage conda env, with our virtualenv removed from the environment.
+    command = {"sage": ["/opt/sage/bin/conda", "run", "-n", "sage", "python"]}.get(system)
     if command is None:
         raise SystemExit(f"do not know how to start {system!r}")
     with tempfile.NamedTemporaryFile("w", suffix=".jsonl", dir=REPO / "tmp", delete=False) as f:
