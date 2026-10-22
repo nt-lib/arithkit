@@ -1,0 +1,194 @@
+\section{Centred groups and the Helling level}\label{sec:centring}
+
+\subsection{Centres of groups}
+
+\begin{lemma}[Fixed sets of compact open subgroups]\label{lem:fix-compact-open}
+\slogan{A compact open subgroup of $\AdelicGroup$ has a finite fixed set,
+which is a product of local subtrees or midpoints.}
+Let $U \subseteq \AdelicGroup$ be a compact open subgroup and let $U_p$ be
+the image of $U$ in $\PGL{2}{\pAdicNumbers{p}}$. Then
+$\FixedSet{U} = \prod_p \FixedSet{U_p}$, each $\FixedSet{U_p}$ is a nonempty
+bounded closed convex subset of $\TreeRealization{p}$ as in
+\cref{lem:fixed-shape} (1) or (2), $\FixedSet{U_p} = \{\LocalBaseVertex{p}\}$
+for almost all $p$, and $\FixedSet{U}$ is finite.
+\end{lemma}
+
+\begin{proof}
+The action is coordinatewise, so the fixed set is the product of the
+local fixed sets, each of which is nonempty by
+\cref{lem:compact-fixes-type}. Since $U$ is open it contains
+$\AdelicProjection\{g \in \GL{2}{\ProfiniteIntegers} : g \equiv 1 \bmod M\}$ for
+some $M$, so $\FixedSet{U_p}$ is contained in the ball of radius
+$\val{p}{M}$ around $\LocalBaseVertex{p}$ by the fixed sets of principal
+congruence subgroups (\cref{lem:fixed-principal}).
+\end{proof}
+
+\begin{definition}[Centre and Helling level]\label{def:helling-level}
+Let $U \subseteq \AdelicGroup$ be a compact open subgroup. Its
+\emph{centre} is $\Centre{U} := (\Centre{\FixedSet{U_p}})_p \in \BigPicture$,
+with notation as in \cref{lem:fix-compact-open}. Its \emph{Helling level}
+$\HellingLevel{U}$ is the product of the primes $p$ for which
+$\Centre{U}_p$ is the midpoint of an edge; so $\Centre{U}$ is a point of
+type $\HellingLevel{U}$. The group $U$ is \emph{centred} if
+$\Centre{U} = \StdConfig{\HellingLevel{U}}$. For a subgroup
+$\Gamma \subseteq \RationalProjGroup$ commensurable with $\PSL{2}{\ZZ}$ the
+same definitions are applied to the closure of $\lifted{\Gamma}$ in
+$\AdelicGroup$ (\cref{lem:closure-commensurable}).
+\end{definition}
+
+\begin{lemma}[Centres are equivariant]\label{lem:centre-equivariant}
+Let $U \subseteq \AdelicGroup$ be a compact open subgroup and
+$g \in \AdelicGroup$. Then $\FixedSet{gUg^{-1}} = g\FixedSet{U}$,
+$\Centre{gUg^{-1}} = g\Centre{U}$ and $\HellingLevel{gUg^{-1}} =
+\HellingLevel{U}$.
+\end{lemma}
+
+\begin{proof}
+Equivariance of centres (\cref{lem:centre}); being a midpoint is preserved
+by isometries.
+\end{proof}
+
+\subsection{Centring}
+
+\begin{proposition}[Centring]\label{prop:centring}
+\slogan{Every conjugacy class has centred members, and they form a single
+conjugacy class under the Atkin--Lehner group.}
+Let $U \subseteq \AdelicGroup$ be a compact open subgroup and
+$N := \HellingLevel{U}$. Then there is $g \in \AdelicGroup$ with
+$gUg^{-1}$ centred, and $gUg^{-1} \subseteq \MaxCompact{N}$. If $U$ and
+$U' = hUh^{-1}$, $h \in \AdelicGroup$, are both centred, then
+$h \in \MaxCompact{N}$.
+\end{proposition}
+
+\begin{proof}
+Choose $g$ with $g\Centre{U} = \StdConfig{N}$ by transitivity on points of
+type $N$ (\cref{lem:transitive}); then $gUg^{-1}$ is centred by
+equivariance of centres (\cref{lem:centre-equivariant}), and it fixes its
+centre. If $U$ and $hUh^{-1}$ are centred then $h\StdConfig{N} =
+\StdConfig{N}$.
+\end{proof}
+
+\begin{corollary}[Classical centring]\label{cor:classical-centring}
+Let $\Gamma \subseteq \RationalProjGroup$ be commensurable with
+$\PSL{2}{\ZZ}$ and $N := \HellingLevel{\Gamma}$. Then there is
+$\gamma \in \RationalProjGroup$ with $\gamma\Gamma\gamma^{-1}$ centred and
+contained in $\GammaZeroStar{N}$. Two centred subgroups of
+$\RationalProjGroup$ commensurable with $\PSL{2}{\ZZ}$ are conjugate in
+$\RationalProjGroup$ if and only if they are conjugate in
+$\GammaZeroStar{N}$.
+\end{corollary}
+
+\begin{proof}
+As in \cref{prop:centring}, using rational transitivity on points of type
+$N$ (\cref{lem:transitive}) and $\MaxCompact{N} \cap (\RationalLiftGroup) =
+\GammaZeroStar[lift]{N}$.
+\end{proof}
+
+\begin{proposition}[Normalisers are confined]\label{prop:normaliser-confined}
+\slogan{The normaliser of a centred group lies in the Atkin--Lehner group
+of its Helling level.}
+Let $U \subseteq \AdelicGroup$ be a centred compact open subgroup and
+$N := \HellingLevel{U}$. Then $\Normalizer{\AdelicGroup}{U} \subseteq
+\MaxCompact{N}$. Likewise, for a centred $\Gamma \subseteq \RationalProjGroup$
+commensurable with $\PSL{2}{\ZZ}$ one has
+$\Normalizer{\RationalProjGroup}{\Gamma} \subseteq \GammaZeroStar{N}$.
+\end{proposition}
+
+\begin{proof}
+An element of the normaliser preserves $\FixedSet{U}$, hence fixes its
+centre $\StdConfig{N}$ by equivariance of centres (\cref{lem:centre}).
+\end{proof}
+
+\begin{proposition}[Normalisers of compact open subgroups]
+\label{prop:normaliser-compact-open}
+\slogan{In $\AdelicGroup$ normalisers of compact open subgroups are compact
+open.}
+Let $U \subseteq \AdelicGroup$ be a compact open subgroup. Then
+$\Normalizer{\AdelicGroup}{U}$ is a compact open subgroup and
+$\Normalizer{\AdelicGroup}{U}/U$ is finite.
+\end{proposition}
+
+\begin{proof}
+Conjugating, we may assume $U$ centred by \cref{prop:centring}. The
+normaliser is open since $U$ is, and contained in the compact group
+$\MaxCompact{\HellingLevel{U}}$ by \cref{prop:normaliser-confined}.
+\end{proof}
+
+\subsection{The Atkin--Lehner image}
+
+\begin{definition}[Atkin--Lehner image]\label{def:al-image}
+Let $U \subseteq \AdelicGroup$ be a centred compact open subgroup with
+$N := \HellingLevel{U}$. Its \emph{Atkin--Lehner image} is
+$\ALimage{U} := \TypeMap(U) \subseteq \TypeGroup{N}$ and
+$\ALdim{U} := \dim_{\FF{2}}\ALimage{U}$. The same definitions apply to
+centred $\Gamma \subseteq \RationalProjGroup$ commensurable with
+$\PSL{2}{\ZZ}$, via $\lifted{\Gamma} \subseteq \GammaZeroStar[lift]{N}$.
+\end{definition}
+
+\begin{lemma}[Index formula]\label{lem:index-formula}
+Let $U \subseteq \AdelicGroup$ be a centred compact open subgroup with
+$N := \HellingLevel{U}$. Then
+$\Index{\MaxCompact{N}}{U} = 2^{\NumPrimeFactors{N}-\ALdim{U}}
+\Index{\GammaZero[ad]{N}}{U \cap \GammaZero[ad]{N}}$.
+\end{lemma}
+
+\begin{proof}
+The type map identifies $\MaxCompact{N}/\GammaZero[ad]{N}$ with
+$\TypeGroup{N}$ (\cref{lem:U_N}), and $U\cap\GammaZero[ad]{N}$ is the kernel
+of $\TypeMap|_{U}$.
+\end{proof}
+
+\begin{remark}
+The Atkin--Lehner image need not be all of $\TypeGroup{N}$: a midpoint
+centre can come from an inverted edge, but also from a fixed subtree of
+odd diameter. For example $\GammaZero[ad]{p}$ is centred with Helling level
+$p$ and $\ALdim{\GammaZero[ad]{p}} = 0$ (\cref{ex:centring-examples}).
+\end{remark}
+
+\begin{example}[Centring examples]\label{ex:centring-examples}
+Let $p$ be a prime.
+\begin{enumerate}
+\item $\FixedSet{\GammaZero[ad]{p}}$ is the edge from $\BaseVertex$ to
+  $\StdVertex{p}$ (\cref{lem:local-fixed-points}), so $\GammaZero[ad]{p}$
+  is centred, $\HellingLevel{\GammaZero[ad]{p}} = p$ and
+  $\ALimage{\GammaZero[ad]{p}} = 0$. The group $\GammaZeroStar[ad]{p}$ is
+  centred with the same Helling level and $\ALdim{} = 1$.
+\item Let $p \geq 3$ and $k \geq 1$. Then $\FixedSet{\GammaZero[ad]{p^{k}}}$
+  is the local snake from $\LocalBaseVertex{p}$ to $\LocalStdVertex{p^{k}}{p}$:
+  at an interior vertex $\LocalStdVertex{p^{j}}{p}$ the group acts on the
+  remaining $p-1$ neighbours through the diagonal torus of
+  $\GL{2}{\FF{p}}$, which has no fixed point there when $p \geq 3$, and at
+  the endpoints one argues as for the Iwahori subgroup. Hence
+  $\HellingLevel{\GammaZero[ad]{p^{k}}} = 1$ for $k$ even and $p$ for $k$
+  odd.
+\item Let $p \geq 3$. Conjugating $\GammaZero[ad]{p^{2}}$ by
+  $\Diagonal{1}{p^{-1}}$, which maps $\StdVertex{p}$ to $\BaseVertex$, gives
+  the centred group
+  $\{\smallMat{a}{b}{c}{d} : b \equiv c \equiv 0 \bmod p\} =
+  \GammaZero[ad]{p}\cap\GammaUpperZero[ad]{p}$, where $\GammaUpperZero[ad]{p}$
+  is defined like $\GammaZero[ad]{p}$ with the condition on $b$ instead of
+  $c$. It has Helling level $1$.
+\item Let $p \geq 3$. Conjugating $\GammaZero[ad]{p^{3}}$ by
+  $\Diagonal{1}{p^{-1}}$, which
+  maps $\StdVertex{p}, \StdVertex{p^{2}}$ to $\BaseVertex, \StdVertex{p}$,
+  gives the centred group $\{\smallMat{a}{b}{c}{d} : b \equiv 0 \bmod p,\
+  c \equiv 0 \bmod p^{2}\}$, of Helling level $p$.
+\end{enumerate}
+\todo[inline]{For $p \in \{2, 3\}$ the fixed sets of $\GammaZero{p^{k}}$
+can be larger than the snake (e.g.\ $\GammaZero{4}$ is conjugate to
+$\GammaFull{2}$, and classically $\GammaZero{9}$ to $\GammaFull{3}$); this
+is the source of the divisors of $24$ in Conway's normaliser theorem. Work
+out the centres in these cases.}
+\end{example}
+
+\begin{remark}[Moduli interpretation]\label{rem:moduli-up-to-isogeny}
+The group $\PGL{2}{\FiniteAdeles{\QQ}}$ acts on the projective level
+structures of an isogeny class of elliptic curves, and the vertices of
+$\BigPicture$ attached to an isogeny class are the curves in it (up to
+isomorphism). From this point of view a point of
+$\OpenModCurve{\MaxCompact{N}}$ is an unordered pair of $N$-isogenous curves,
+up to the dual isogeny; the rational points of $\ModCurve{\GammaZeroStar{N}}$
+are, away from cusps and CM points, essentially $\QQ$-curves of degree $N$
+\cite{Elkies2004}. For compact open subgroups of nontrivial type there is
+no universal elliptic curve.
+\end{remark}

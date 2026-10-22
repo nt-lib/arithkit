@@ -1,0 +1,274 @@
+\section{Modular automorphisms}\label{sec:automorphisms}
+
+\subsection{Modular automorphisms over $\CC$}
+
+\begin{lemma}[Right translation]\label{lem:right-translation}
+Let $U \subseteq \AdelicGroup$ be a compact open subgroup and
+$g \in \Normalizer{\AdelicGroup}{U}$, and let $\hat g \in \GL{2}{\FiniteAdeles{\QQ}}$
+be a lift of $g$. Then $(\tau, x) \mapsto (\tau, x\hat g)$ induces a
+bijection $\ModAut{g}$ of $\OpenModCurve{U}(\CC)$ which does not depend on
+the choice of $\hat g$, and $g \mapsto \ModAut{g}^{-1}$ is a homomorphism.
+\end{lemma}
+
+\begin{proof}
+Since $\hat g$ normalises $\AdelicProjection^{-1}(U)$, the map is
+compatible with the right action of $\AdelicProjection^{-1}(U)$, and it
+commutes with the left action of $\GL{2}{\QQ}$. Two lifts differ by
+$q \in \PositiveRationals \subseteq \GL{2}{\QQ}$, which acts trivially on
+$\SlitPlane$.
+\end{proof}
+
+\begin{proposition}[The kernel of right translation]\label{prop:kernel-right-translation}
+\slogan{Right translation by $g$ is trivial exactly when $g \in \pm U$.}
+Let $U \subseteq \AdelicGroup$ be a compact open subgroup and
+$g \in \Normalizer{\AdelicGroup}{U}$. Then $\ModAut{g}$ is the identity if
+and only if $g \in U\cdot\{\pm 1\}$.
+\end{proposition}
+
+\begin{proof}
+If $g = \pm u$ then $\ModAut{g}$ is trivial by \cref{lem:minus-one-trivial}.
+Conversely choose $\tau \in \UpperHalfPlane$ whose stabiliser in
+$\GLplus{2}{\QQ}$ consists of scalars (any $\tau$ not quadratic over $\QQ$).
+If $(\tau, \hat g) = \gamma\cdot(\tau, 1)\cdot u$ with $\gamma \in \GL{2}{\QQ}$,
+$u \in \AdelicProjection^{-1}(U)$, then $\gamma \in \unit{\QQ}$, so
+$g \in \AdelicProjection(\unit{\QQ})U = \{\pm 1\}U$.
+\end{proof}
+
+\begin{definition}[Modular automorphism group]\label{def:modular-aut}
+For a compact open subgroup $U \subseteq \AdelicGroup$ let
+$\ModularAut{U} := \Normalizer{\AdelicGroup}{U}/(U\cdot\{\pm 1\})$, acting
+faithfully on $\OpenModCurve{U}(\CC)$ by \cref{prop:kernel-right-translation}.
+\end{definition}
+
+\begin{proposition}[Computing modular automorphisms]
+\label{prop:computing-modular-aut}
+\slogan{Modular automorphisms of a centred group are computed in the finite
+quotient of its Helling and centred level.}
+Let $U \subseteq \AdelicGroup$ be a centred compact open subgroup with
+$N := \HellingLevel{U}$ and $M := \CentredLevelQuotient{U}$, and let
+$\overline{U}$ be its image in $\AdelicQuotientGroup{N}{M}$. Then
+$\ModularAut{U}$ is finite and
+\[
+  \ModularAut{U} \cong
+  \Normalizer{\AdelicQuotientGroup{N}{M}}{\overline{U}}\big/
+  \overline{U}\cdot\langle\overline{-1}\rangle .
+\]
+Likewise, for a centred $\Gamma \subseteq \RationalProjGroup$ commensurable
+with $\PSL{2}{\ZZ}$ and containing a principal congruence subgroup, with
+image $\overline{\Gamma}$ in $\QuotientGroup{N}{M}$, one has
+$\Normalizer{\RationalProjGroup}{\Gamma}/\Gamma \cong
+\Normalizer{\QuotientGroup{N}{M}}{\overline{\Gamma}}/\overline{\Gamma}$, and
+this is also $\Normalizer{\PSL{2}{\RR}}{\Gamma}/\Gamma$.
+\end{proposition}
+
+\begin{proof}
+By the confinement of normalisers (\cref{prop:normaliser-confined}) the
+normaliser lies in $\MaxCompact{N}$, which contains
+$\GammaPrincipal[ad]{N}{M}$ as a normal subgroup contained in $U$
+(\cref{prop:principal-normal}). Finiteness is
+\cref{prop:normaliser-compact-open}. The last statement uses that the
+normaliser in $\PSL{2}{\RR}$ lies in the commensurator $\RationalProjGroup$.
+\end{proof}
+
+\begin{remark}
+In particular the quotient of $\OpenModCurve{U}$ by all its modular
+automorphisms is $\OpenModCurve{\Normalizer{\AdelicGroup}{U}}$, again a curve
+attached to a compact open subgroup of $\AdelicGroup$ (compare
+\cref{rem:shimura-varieties}). Faithfulness of the action of modular
+automorphisms on cusps is not discussed here.
+\end{remark}
+
+\subsection{Galois action}
+
+\begin{lemma}[Semilinear automorphisms]\label{lem:semilinear-sequence}
+\slogan{Automorphisms of $X_L$ over $K$ are geometric automorphisms
+extended by Galois.}
+Let $L/K$ be a Galois extension of fields and $X$ a scheme over $K$ with
+$\mathcal{O}(X_L) = L$, e.g.\ proper, geometrically connected and
+geometrically reduced. Then every automorphism of the $K$-scheme
+$X_L := X\times_K L$ induces an automorphism of $L/K$, giving an exact
+sequence
+\[
+  1 \to \Aut_L(X_L) \to \Aut_K(X_L) \to \Gal(L/K) \to 1
+\]
+which is split by $\sigma \mapsto \mathrm{id}_X \times \mathrm{Spec}(\sigma)$
+(up to the convention $\sigma$ versus $\sigma^{-1}$). The resulting action of
+$\Gal(L/K)$ on $\Aut_L(X_L)$ is the usual Galois action
+$\phi \mapsto \phi^{\sigma}$. For $X$ of finite type, $\Aut_L(X_L)$ is the
+union of the $\Aut_{L'}(X_{L'})$ over the finite subextensions $L'$.
+\end{lemma}
+
+\begin{proof}
+An automorphism acts on $\Gamma(X_L, \mathcal{O}) = L$ fixing $K$. The rest
+is formal.
+\end{proof}
+
+\begin{setup}[Type-trivial level]\label{setup:galois}
+Let $n \geq 1$ and let $\hat H \subseteq \GL{2}{\ProfiniteIntegers}$ be an open
+subgroup containing $\{g : g \equiv 1 \bmod n\}$. Put
+$U := \AdelicProjection(\hat H)$, $U^{1} := U \cap
+\AdelicProjection(\SL{2}{\FiniteAdeles{\QQ}})$, and let $\Gamma^{1}$ be the
+classical version of $U^{1}$, i.e.\ the image in $\PSL{2}{\ZZ}$ of
+$\hat H\cap\SL{2}{\ZZ}$. Identify $\Gal(\MaxAbelian/\QQ)$ with
+$\unit{\FiniteAdeles{\QQ}}/\PositiveRationals$ via the Artin map, and let
+$\ConstantField{U}$ be the subfield of $\MaxAbelian$ fixed by the image of
+$\DetClass(U)$. Then $\ModCurve{U}$ is a geometrically connected curve over
+$\ConstantField{U}$, and its geometric components over $\CC$ are
+$\Gamma^{1}\backslash\ExtendedUpperHalfPlane$ \cite{DeligneRapoport1973}.
+\end{setup}
+
+\begin{proposition}[Geometric modular automorphisms and their Galois
+action]\label{prop:galois-action}
+\slogan{The modular automorphisms of $X_U$ over $\QQ^{\mathrm{ab}}$ with
+their Galois action form a split extension inside
+$\GL{2}{\FiniteAdeles{\QQ}}/\PositiveRationals$.}
+In \cref{setup:galois} let
+\[
+  N_U := \{g \in \Normalizer{\AdelicGroup}{U^{1}} : \DetClass(g) \in \DetClass(U)\},
+  \qquad
+  \GeomModularAut{U} := \bigl(\Normalizer{\AdelicGroup}{U^{1}}\cap\DetClass^{-1}(1)\bigr)
+  \big/ \{\pm 1\}U^{1}.
+\]
+Then $\GeomModularAut{U} \cong \Normalizer{\RationalProjGroup}{\Gamma^{1}}/\Gamma^{1}$,
+the group of modular automorphisms of a geometric component, and there is
+a split exact sequence
+\[
+  1 \to \GeomModularAut{U} \to N_U/\{\pm 1\}U^{1}
+  \xrightarrow{\ \DetClass\ } \DetClass(U) \cong \Gal(\MaxAbelian/\ConstantField{U}) \to 1,
+\]
+split by $U/U^{1}$. This is the modular part of the sequence of
+semilinear automorphisms (\cref{lem:semilinear-sequence}) for
+$X = \ModCurve{U}$ over $K = \ConstantField{U}$ and $L = \MaxAbelian$, the
+splitting corresponding to the $\ConstantField{U}$-structure. In particular
+for $h \in U$ and $g \in \Normalizer{\RationalProjGroup}{\Gamma^{1}}$,
+\[
+  \Reciprocity{\DetClass(h)}(\ModAut{g}) = \ModAut{hgh^{-1}},
+\]
+where $hgh^{-1} \in \Normalizer{\AdelicGroup}{U^{1}}\cap\DetClass^{-1}(1)$ is
+written as an element of $\RationalLiftGroup$ times an element of $U^{1}$
+(strong approximation).
+\end{proposition}
+
+\begin{proof}[Sketch]
+Strong approximation for $\SL{2}{}$ gives
+$\AdelicProjection(\SL{2}{\FiniteAdeles{\QQ}}) = \SL{2}{\QQ}\,U^{1}$, from which
+the description of $\GeomModularAut{U}$ follows: an element of
+$\Normalizer{\AdelicGroup}{U^{1}}$ with determinant class $1$ is a rational
+element of $\RationalLiftGroup$ times an element of $U^{1}$, and the
+rational element normalises $\Gamma^{1} = U^{1}\cap\SL{2}{\QQ}$. The curve
+$\ModCurve{U}$ base changed to $\MaxAbelian$ is the limit of the curves
+$\ModCurve{U_m}$ with $U_m := U\cap\DetClass^{-1}(\text{image of }
+1 + m\ProfiniteIntegers)$, on which right translation by $N_U$ acts. The
+splitting comes from the fact that right translation by $U$ is trivial on
+$\ModCurve{U}$, and the Galois action is conjugation in the semidirect
+product.
+\end{proof}
+
+\todo[inline]{Fix the sign: whether $\Reciprocity{\DetClass(h)}$ or its
+inverse appears depends on the normalisation of the Artin map
+(arithmetic versus geometric Frobenius). The local idele $p$ at $p$ equals,
+modulo $\PositiveRationals$, the unit idele equal to $p^{-1}$ away from $p$.}
+
+\begin{proposition}[Field of definition of modular automorphisms]
+\label{prop:field-of-definition}
+\slogan{All geometric modular automorphisms of a level $n$ curve are
+defined over $K(\zeta_{n^{2}})$.}
+In \cref{setup:galois} let $g \in \Normalizer{\RationalProjGroup}{\Gamma^{1}}$
+and let $\hat g \in \MatRing{2}{\ZZ}$ be a primitive integral matrix
+representing $g$. Then $\det\hat g$ divides $n$, and $\ModAut{g}$ is defined
+over $\ConstantField{U}(\RootOfUnity{n\det\hat g}) \subseteq
+\ConstantField{U}(\RootOfUnity{n^{2}})$.
+\end{proposition}
+
+\begin{proof}
+The closure of $\Gamma^{1}$ contains the principal congruence subgroup of
+level $n$, so its fixed set is contained in the product of the balls of
+radius $\val{p}{n}$ around the $\LocalBaseVertex{p}$
+(\cref{lem:fixed-principal}), and it contains $\BaseVertex$. The element
+$g$ preserves the fixed set, so $\HyperDistance{\BaseVertex}{g\BaseVertex}$
+divides $n$; for a primitive integral $\hat g$ this hyperdistance is
+$\det\hat g$ (Smith normal form and \cref{lem:hyperdistance-index}). Let
+$h \in \hat H$ with $h \equiv 1 \bmod n\det\hat g$. Since
+$\hat g^{-1} = \adjugate{\hat g}/\det\hat g$, one gets
+$\hat g h\hat g^{-1} \equiv 1 \bmod n$, so $hgh^{-1}g^{-1} \in
+\AdelicProjection\{k \equiv 1 \bmod n\} \subseteq U$, and it has
+determinant class $1$, so it lies in $U^{1}$. Hence
+$\ModAut{hgh^{-1}} = \ModAut{g}$, and by the Galois action
+(\cref{prop:galois-action}) $\ModAut{g}$ is fixed by
+$\Gal(\MaxAbelian/\ConstantField{U}(\RootOfUnity{n\det\hat g}))$.
+\end{proof}
+
+\begin{remark}[Larger Galois groups and descent]\label{rem:descent}
+Elements of $\Normalizer{\AdelicGroup}{U^{1}}$ whose determinant class lies
+outside $\DetClass(U)$ give isomorphisms from $\ModCurve{U}$ to its Galois
+conjugates over $\ConstantField{U}$, and a compatible choice of these over
+a larger subgroup of $\Gal(\MaxAbelian/\QQ)$ amounts to a descent datum,
+i.e.\ to a model of $\ModCurve{U}$ over a smaller field. A sufficient
+condition is the existence of an open $\hat H' \supseteq \hat H$ inside the
+normaliser with the same intersection with $\SL{2}{}$ and larger
+determinant.
+\todo[inline]{Find an example where no modular descent exists, or show
+there is none.}
+\end{remark}
+
+\subsection{Atkin--Lehner operators on $\ModCurve{1}(N)$}
+
+\begin{example}[Atkin--Lehner operators on $\ModCurve{1}(N)$]
+\label{ex:al-x1}
+Let $N \geq 1$ and let $Q$ be a Hall divisor of $N$ with $Q > 1$.
+\begin{enumerate}
+\item The local flips $\ALflip{p,N}$, $p \mid Q$, do not normalise
+  $\GammaOne[ad]{N}$: conjugation by $\smallMat{0}{-1}{p^{k}}{0}$ interchanges
+  the roles of $a$ and $d$ at $p$, mapping the condition $a \equiv 1$ to
+  $d \equiv 1$. So the Atkin--Lehner operators $w_Q$ on $\ModCurve{1}(N)$ are
+  not right translations by elements of $\Normalizer{\AdelicGroup}{\GammaOne[ad]{N}}$;
+  in accordance with \cref{prop:galois-action} they are only defined over
+  a cyclotomic extension \cite[Rem.~7.3.2]{DiamondIm1995}.
+\item They are right translations on the disconnected curve attached to
+  $\hat H' := \{g \in \GammaOne[ad]{N} : \det g \equiv 1 \bmod N\}$, whose
+  elements satisfy $a \equiv d \equiv 1 \bmod N$ and which is normalised by
+  the $\ALflip{p,N}$. Its complex points are $\varphi(N)$ copies of
+  $\ModCurve{1}(N)(\CC)$, permuted by the local flips through their
+  determinant class. Choose an Atkin--Lehner matrix
+  $\ALmatrix{Q} = \smallMat{Qx}{y}{Nz}{Qw}$ with $w \equiv 1 \bmod N/Q$ and
+  $y \equiv -1 \bmod Q$ (possible: take $w = 1$, $y \equiv -1 \bmod Q$ and
+  solve $Qx - (N/Q)yz = 1$). Then
+  $\ALmatrix{Q} \in \GammaOne[ad]{N}\prod_{p\mid Q}\ALflip{p,N}$:
+  at $\ell \mid N/Q$ one has $Qx \equiv 1$ by the determinant condition, and
+  at $p \mid Q$ the matrix $\ALmatrix{Q}\smallMat{0}{-1}{p^{k}}{0}^{-1} =
+  \smallMat{-y}{Qxp^{-k}}{-Qw}{Nzp^{-k}}$ has upper left entry $\equiv 1$.
+  Since $\det\ALmatrix{Q} \in \PositiveRationals$, right translation by
+  $\ALmatrix{Q}$ preserves every component, on which it induces $w_Q$.
+\item With this normalisation $\ALmatrix{Q}^{2} = Q\gamma$ with
+  $\gamma \in \GammaZero[lift]{N}$ whose lower right entry
+  $(N/Q)yz + Qw^{2}$ is $\equiv -1 \bmod Q$ and $\equiv Q \bmod N/Q$. Hence
+  on $\ModCurve{1}(N)$ the square of $w_Q$ is a diamond operator, and $w_Q$
+  is an involution only in special cases.
+\end{enumerate}
+\todo[inline]{Compare (3) with the formula for $W_Q^{2}$ in
+\cite{AtkinLi1978}, fix the diamond operator convention (here
+$\gamma \in \GammaZero{N}$ acts on $(E, P)$, $P = \StdLevel{\tau}{N}(\StdBasis{1})$,
+by $P \mapsto dP$), and determine the field of definition of $w_Q$
+($\QQ(\RootOfUnity{Q})$ or $\QQ(\RootOfUnity{N/Q})$ in our conventions).}
+\end{example}
+
+\begin{remark}[Normalisers and the centre]\label{rem:normaliser-centre}
+For a compact open $U \subseteq \AdelicGroup$ one has
+$\Normalizer{\AdelicGroup}{U} \subseteq \Normalizer{\AdelicGroup}{U\cdot Z}$, with
+$Z = \AdelicProjection(\unit{\FiniteAdeles{\QQ}})$ the centre, but equality can
+fail: for $U = \GammaOne[ad]{N}$ one has $U\cdot Z = \GammaZero[ad]{N}$, and
+for $p \mid N$ the local flip normalises $\GammaZero[ad]{N}$ but not $U$
+(\cref{ex:al-x1}). Equality holds when $U \supseteq Z$. So passing to
+$\PGL{2}{}$ is only harmless for groups containing the centre.
+\end{remark}
+
+\begin{remark}[Compact open versus commensurable]\label{rem:compact-vs-commensurable}
+A compact open subgroup of $\GL{2}{\FiniteAdeles{\QQ}}$ is commensurable with
+$\GL{2}{\ProfiniteIntegers}$, and conversely a closed subgroup commensurable
+with $\GL{2}{\ProfiniteIntegers}$ is compact open. Without closedness the
+converse fails: composing $\det$ with
+$\unit{\ProfiniteIntegers} \to \prod_{p \text{ odd}}
+\unit{\FF{p}}/(\unit{\FF{p}})^{2} \cong \prod_{p\text{ odd}}\ZZ/2\ZZ$ and a
+non-continuous linear functional to $\ZZ/2\ZZ$ (which exists by the axiom
+of choice) gives a dense subgroup of index $2$ in $\GL{2}{\ProfiniteIntegers}$.
+\end{remark}

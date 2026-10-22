@@ -1,0 +1,145 @@
+\section{Fixed points and centres in trees}\label{sec:trees}
+
+\begin{setup}[Trees]\label{setup:trees}
+Let $T$ be a locally finite tree and $|T|$ its geometric realisation, a
+metric space in which every edge is isometric to $[0,1]$. Groups act on
+$|T|$ through automorphisms of $T$; such an automorphism \emph{inverts} an
+edge if it maps the edge to itself and swaps its endpoints. For a group
+$G$ acting on $|T|$ let $\FixedSet{G} \subseteq |T|$ be its fixed set.
+\end{setup}
+
+\begin{lemma}[Fixed sets are convex]\label{lem:fixed-convex}
+In the situation of \cref{setup:trees}, $\FixedSet{G}$ is convex: it
+contains the geodesic between any two of its points.
+\end{lemma}
+
+\begin{proof}
+Geodesics in $|T|$ are unique and isometries map geodesics to geodesics.
+\end{proof}
+
+\begin{lemma}[Shape of fixed sets]\label{lem:fixed-shape}
+\slogan{A group acting on a tree fixes a subtree, or the midpoint of one
+inverted edge, or nothing.}
+In the situation of \cref{setup:trees}, exactly one of the following
+holds:
+\begin{enumerate}
+\item $\FixedSet{G}$ contains a vertex; then $\FixedSet{G}$ is the
+  realisation of the full subgraph spanned by the fixed vertices, which is
+  a subtree;
+\item $\FixedSet{G}$ contains no vertex and is nonempty; then
+  $\FixedSet{G}$ is the midpoint of a single edge which some element of
+  $G$ inverts;
+\item $\FixedSet{G} = \emptyset$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+An automorphism fixing a point in the interior of an edge maps that edge
+to itself; if the point is not the midpoint, or if an endpoint is also
+fixed, then both endpoints are fixed and so is the whole edge. If a
+midpoint $m$ and a vertex $v$ are both fixed, the geodesic from $v$ to $m$
+passes through an endpoint of the edge of $m$, which is fixed by
+convexity (\cref{lem:fixed-convex}), so the edge is fixed pointwise. This
+gives (1) and (2); in case (2) two distinct fixed midpoints would force a
+fixed vertex between them.
+\end{proof}
+
+\begin{definition}[Centre]\label{def:centre}
+Let $Y \subseteq |T|$ be nonempty, bounded and convex. Its
+\emph{diameter} $\Diameter{Y}$ is the supremum of the distances between
+its points, and its \emph{centre} $\Centre{Y}$ is the unique point
+$c \in |T|$ with $\sup_{y \in Y} d(c, y) \leq \Diameter{Y}/2$
+(\cref{lem:centre}).
+\end{definition}
+
+\begin{lemma}[Centres exist and are equivariant]\label{lem:centre}
+\slogan{A bounded convex subset of a tree has a unique centre, and it is a
+vertex or an edge midpoint when the set is a subtree.}
+Let $Y \subseteq |T|$ be nonempty, bounded, convex and closed. Then there
+is a unique point $c$ with $\sup_{y\in Y} d(c,y) \leq \Diameter{Y}/2$; it is
+the midpoint of every geodesic in $Y$ of length $\Diameter{Y}$. If $Y$ is a
+finite subtree, or the midpoint of an edge, then $\Centre{Y}$ is a vertex
+or the midpoint of an edge. For every automorphism $\phi$ of $T$ one has
+$\Centre{\phi Y} = \phi\Centre{Y}$.
+\end{lemma}
+
+\begin{proof}
+Let $[a,b] \subseteq Y$ be a geodesic of length $D = \Diameter{Y}$ (it
+exists since $Y$ is compact) with midpoint $m$. For $y \in Y$ let $q$ be
+the point where the geodesic from $y$ to $m$ first meets $[a,b]$; if
+$d(y,m) > D/2$ then $d(y,a)$ or $d(y,b)$ exceeds $D$. Conversely if
+$\sup_{y} d(c, y) \leq D/2$ then $d(a,c) + d(c,b) \leq D = d(a,b)$, so $c$
+lies on $[a,b]$ at distance $D/2$ from $a$, i.e.\ $c = m$. For a finite
+subtree $D$ is an integer, so $m$ is a vertex or a midpoint. Equivariance
+holds because the defining property is preserved by isometries.
+\end{proof}
+
+\begin{lemma}[Groups with a finite orbit fix a point]\label{lem:finite-orbit}
+\slogan{A group with a finite vertex orbit fixes the centre of its convex
+hull.}
+In the situation of \cref{setup:trees}, if $G$ has a finite orbit $O$ on
+the vertices of $T$, then $G$ fixes $\Centre{\ConvexHull{O}}$, which is a
+vertex or the midpoint of an edge.
+\end{lemma}
+
+\begin{proof}
+$\ConvexHull{O}$ is a finite subtree preserved by $G$; apply the
+equivariance of centres (\cref{lem:centre}).
+\end{proof}
+
+\begin{lemma}[Fixed points of the standard local groups]
+\label{lem:local-fixed-points}
+\slogan{$\SL{2}{\pAdicIntegers{p}}$ fixes only the standard vertex, the
+Iwahori subgroup only the standard edge, and its normaliser only the
+midpoint.}
+Let $p$ be a prime and let $\IwahoriOrder{p} := \{\smallMat{a}{b}{c}{d}
+\in \MatRing{2}{\pAdicIntegers{p}} : p \mid c\}$. Acting on
+$\TreeRealization{p}$:
+\begin{enumerate}
+\item every subgroup of $\PGL{2}{\pAdicNumbers{p}}$ containing the image of
+  $\SL{2}{\pAdicIntegers{p}}$ and fixing $\LocalBaseVertex{p}$ has fixed set
+  $\{\LocalBaseVertex{p}\}$;
+\item every subgroup of the image of $\unit{\IwahoriOrder{p}}$ containing the
+  image of $\unit{\IwahoriOrder{p}} \cap \SL{2}{\pAdicIntegers{p}}$ has fixed
+  set the closed edge between $\LocalBaseVertex{p}$ and
+  $\LocalStdVertex{p}{p}$;
+\item every subgroup as in (2), extended by an element inverting that
+  edge, has fixed set $\{\Midpoint{\LocalBaseVertex{p}}{\LocalStdVertex{p}{p}}\}$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+The neighbours of $\LocalBaseVertex{p}$ correspond to the lines in
+$\StdModule{\FF{p}}{2}$, via $L \mapsto L/p\StdModule{\pAdicIntegers{p}}{2}$;
+the neighbour $\LocalStdVertex{p}{p}$ corresponds to the line spanned by
+$\StdBasis{1}$. (1): $\SL{2}{\FF{p}}$ acts transitively on lines, so by
+\cref{lem:fixed-shape} the fixed set contains no other vertex and no
+midpoint. (2): the group fixes $\LocalBaseVertex{p}$ and $\LocalStdVertex{p}{p}$
+by $\GammaZero{}$ as a fixer (\cref{lem:gamma0-fixer}). The matrices
+$\smallMat{1}{b}{0}{1}$ act transitively on the $p$ lines other than
+$\FF{p}\StdBasis{1}$, and the matrices $\smallMat{1}{0}{pc}{1}$ act
+transitively on the $p$ neighbours of $\LocalStdVertex{p}{p}$ other than
+$\LocalBaseVertex{p}$ (conjugate by a local flip). Hence no further vertex
+is fixed. (3) follows from (2) and \cref{lem:fixed-shape}.
+\end{proof}
+
+\begin{lemma}[Fixed sets of principal congruence subgroups]
+\label{lem:fixed-principal}
+Let $p$ be a prime and $k \geq 0$. The image in $\PGL{2}{\pAdicNumbers{p}}$
+of $\{g \in \SL{2}{\pAdicIntegers{p}} : g \equiv 1 \bmod p^{k}\}$ has as fixed
+set the ball of radius $k$ around $\LocalBaseVertex{p}$ in
+$\TreeRealization{p}$.
+\end{lemma}
+
+\begin{proof}
+The vertices at distance at most $k$ from $\LocalBaseVertex{p}$ are the
+classes of lattices $L$ with $p^{k}\StdModule{\pAdicIntegers{p}}{2} \subseteq L
+\subseteq \StdModule{\pAdicIntegers{p}}{2}$ (up to scaling), all of which are
+fixed. A vertex at distance $k+1$ corresponds to a cyclic submodule of
+$\StdModule{(\ResidueRing{p^{k+1}})}{2}$ of order $p^{k+1}$, and the group
+acts on these through the matrices $\equiv 1 \bmod p^{k}$, which act
+nontrivially, e.g.\ $\smallMat{1}{p^{k}}{0}{1}$ or $\smallMat{1}{0}{p^{k}}{1}$
+moves every such submodule other than possibly $\langle\StdBasis{1}\rangle$
+respectively $\langle\StdBasis{2}\rangle$. Conclude with
+\cref{lem:fixed-shape}.
+\end{proof}

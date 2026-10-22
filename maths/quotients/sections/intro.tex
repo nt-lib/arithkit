@@ -1,0 +1,45 @@
+\section{Introduction}
+
+The databases of Cummins--Pauli \cite{CumminsPauli2003} and of the LMFDB
+\cite{LMFDB,RSZB2022} list congruence subgroups of $\PSL{2}{\ZZ}$ and open
+subgroups of $\GL{2}{\ProfiniteIntegers}$ respectively, together with the
+modular curves they define. The aim of this document is to set up the theory
+needed to extend these databases to quotients of modular curves, such as
+$\ModCurve{0}(N)/\langle\ALmatrix{e}\rangle$ or $\ModCurve{\mathrm{ns}}^{+}(p)$
+modulo extra automorphisms.
+
+The guiding picture is Conway's ``big picture'' \cite{Conway1996}: the set
+of homothety classes of lattices in $\QQ^{2}$, on which
+$\RationalProjGroup$, the commensurator of $\PSL{2}{\ZZ}$, acts. Conway
+used it to describe the groups $\GammaZero{N}$, their Atkin--Lehner
+extensions and their normalisers, and to explain the role of the number
+$24$. We work instead with lattices in $\FiniteAdeles{\QQ}^{2}$ and the group
+\[
+  \AdelicGroup = \GL{2}{\FiniteAdeles{\QQ}}/\PositiveRationals ,
+\]
+and deduce the classical statements by intersecting with
+$\RationalLiftGroup$. The group $\AdelicGroup$ contains
+$\GL{2}{\ProfiniteIntegers}$, so that the subgroups studied in the LMFDB
+appear unchanged, and it contains elements of finite order that act as
+Atkin--Lehner involutions, so that quotients by them appear as
+(compact open) levels as well.
+
+\subsection*{Overview}
+\Cref{sec:conventions} fixes all conventions (column vectors, left actions,
+level structures, the lattice attached to $\tau$) and compares them with
+the literature. \Cref{sec:ambient} introduces the ambient groups and the
+three versions $\adelic{\Gamma}$, $\lifted{\Gamma}$, $\Gamma$ of a group.
+\Cref{sec:bigpicture} describes the adelic big picture and the standard
+groups in it, and \cref{sec:trees} collects facts about fixed points in
+trees. \Cref{sec:helling} proves an adelic version of Helling's theorem
+\cite{Helling1970}, from which the classical one follows.
+\Cref{sec:centring} defines centred groups and the Helling level,
+\cref{sec:principal} the principal congruence subgroups
+$\GammaPrincipal{N}{M}$ of the Atkin--Lehner groups, and
+\cref{sec:quotients} describes the finite quotients they give rise to,
+including a computational model. \Cref{sec:conjugacy} explains conjugacy
+classes in fibre products, \cref{sec:automorphisms} modular automorphisms
+and their Galois action, and \cref{sec:labels} summarises the state of the
+labelling scheme.
+
+\todo[inline]{Introduction to be expanded once the content has stabilised.}

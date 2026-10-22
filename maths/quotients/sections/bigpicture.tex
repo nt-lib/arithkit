@@ -1,0 +1,292 @@
+\section{The adelic big picture}\label{sec:bigpicture}
+
+Conway's big picture \cite{Conway1996} is the set of homothety classes of
+lattices in $\QQ^{2}$ with its natural action of $\RationalProjGroup$. We
+describe it adelically.
+
+\subsection{Lattices and vertices}
+
+\begin{definition}[Lattices]\label{def:lattices}
+A \emph{lattice} in $\StdModule{\FiniteAdeles{\QQ}}{2}$ is a compact open
+$\ProfiniteIntegers$-submodule. For a prime $p$ a lattice in
+$\StdModule{\pAdicNumbers{p}}{2}$ is a compact open
+$\pAdicIntegers{p}$-submodule.
+\end{definition}
+
+\begin{lemma}[Lattices are translates of the standard lattice]
+\label{lem:lattices-translates}
+The lattices in $\StdModule{\FiniteAdeles{\QQ}}{2}$ are the sets
+$g\StdModule{\ProfiniteIntegers}{2}$ with $g \in \GL{2}{\FiniteAdeles{\QQ}}$, the
+stabiliser of $\StdModule{\ProfiniteIntegers}{2}$ is
+$\GL{2}{\ProfiniteIntegers}$, and $L \mapsto (L\otimes\pAdicIntegers{p})_p$ is
+a bijection onto the families of lattices $L_p \subseteq
+\StdModule{\pAdicNumbers{p}}{2}$ with $L_p = \StdModule{\pAdicIntegers{p}}{2}$
+for almost all $p$. The map $L \mapsto L \otimes \ProfiniteIntegers$ is a
+bijection from lattices in $\StdModule{\QQ}{2}$ to lattices in
+$\StdModule{\FiniteAdeles{\QQ}}{2}$.
+\end{lemma}
+
+\begin{proof}
+Standard; the last statement is class number one for $\GL{2}{}$
+(\cref{lem:gl2-class-number-one}).
+\end{proof}
+
+\begin{definition}[Vertices of the big picture]\label{def:big-picture-vertices}
+Let $\BigPictureVertices$ be the set of lattices in
+$\StdModule{\FiniteAdeles{\QQ}}{2}$ modulo homothety by
+$\unit{\FiniteAdeles{\QQ}}$, and write $\LatticeClass{L}$ for the class of $L$.
+For a prime $p$ let $\LocalVertexSet{p}$ be the set of lattices in
+$\StdModule{\pAdicNumbers{p}}{2}$ modulo $\unit{\pAdicNumbers{p}}$; it is the
+vertex set of the Bruhat--Tits tree $\Tree{p}$ of $\PGL{2}{\pAdicNumbers{p}}$,
+a $(p+1)$-regular tree in which two classes are adjacent if they have
+representatives $L \supsetneq L' \supsetneq pL$. The \emph{base vertex} is
+$\BaseVertex := \LatticeClass{\StdModule{\ProfiniteIntegers}{2}}$ and
+$\LocalBaseVertex{p} := \LatticeClass{\StdModule{\pAdicIntegers{p}}{2}}$.
+For $t \in \PositiveRationals$ let
+$\StdLattice{t} := \ProfiniteIntegers \oplus t\ProfiniteIntegers =
+\Diagonal{1}{t}\StdModule{\ProfiniteIntegers}{2}$ (column vectors) and
+$\StdVertex{t} := \LatticeClass{\StdLattice{t}}$, with local components
+$\LocalStdVertex{t}{p}$.
+\end{definition}
+
+\begin{lemma}[The big picture is a restricted product of trees]
+\label{lem:restricted-product}
+The map $\LatticeClass{L} \mapsto (\LatticeClass{L\otimes\pAdicIntegers{p}})_p$
+is a bijection from $\BigPictureVertices$ onto the restricted product of
+the $\LocalVertexSet{p}$ with respect to the $\LocalBaseVertex{p}$. Via
+\cref{lem:lattices-translates} it identifies $\BigPictureVertices$ with the
+set of lattices in $\QQ^{2}$ modulo $\unit{\QQ}$, i.e.\ with Conway's big
+picture (in the column convention).
+\end{lemma}
+
+\begin{proof}
+The first statement follows from \cref{lem:lattices-translates} because
+$\unit{\FiniteAdeles{\QQ}}$ is the restricted product of the
+$\unit{\pAdicNumbers{p}}$ with respect to the $\unit{\pAdicIntegers{p}}$. For
+the second, $\unit{\FiniteAdeles{\QQ}} = \PositiveRationals\unit{\ProfiniteIntegers}$
+(\cref{lem:rational-scalars-discrete}) and $\unit{\ProfiniteIntegers}$ fixes
+every lattice.
+\end{proof}
+
+\begin{definition}[Hyperdistance]\label{def:hyperdistance}
+For $x, y \in \BigPictureVertices$ let
+$\HyperDistance{x}{y} := \prod_p p^{\TreeDistance{p}{x_p}{y_p}}$, where
+$\TreeDistance{p}{}{}$ is the distance in $\Tree{p}$.
+\end{definition}
+
+\begin{lemma}[Hyperdistance as an index]\label{lem:hyperdistance-index}
+Let $x, y \in \BigPictureVertices$. There are representatives $L \supseteq L'$
+of $x$ and $y$ with $L/L'$ cyclic, and then
+$\HyperDistance{x}{y} = \#(L/L')$. For $t \mid t'$ positive integers,
+$\HyperDistance{\StdVertex{t}}{\StdVertex{t'}} = t'/t$.
+\end{lemma}
+
+\begin{proof}
+This is the corresponding standard statement for $\Tree{p}$, applied to
+each prime separately.
+\end{proof}
+
+\begin{definition}[Geometric realisation]\label{def:big-picture}
+Let $\TreeRealization{p}$ be the geometric realisation of $\Tree{p}$, in
+which every edge is isometric to $[0,1]$. The \emph{big picture} is
+\[
+  \BigPicture := \Bigl\{ (x_p)_p \in \prod_p \TreeRealization{p} :
+  x_p = \LocalBaseVertex{p} \text{ for almost all } p \Bigr\} .
+\]
+The group $\AdelicGroup$ acts on $\BigPicture$ through
+$\ProjectionToPGL \colon \AdelicGroup \to \PGL{2}{\FiniteAdeles{\QQ}}$, the
+component at $p$ acting on $\TreeRealization{p}$ by isometries. For
+$x \in \TreeRealization{p}$ and adjacent vertices $u, v$ write
+$\Midpoint{u}{v}$ for the midpoint of the edge between them.
+\end{definition}
+
+\begin{lemma}[Stabiliser of the base vertex]\label{lem:stab-base-vertex}
+\slogan{The stabiliser of the standard lattice class is
+$\GL{2}{\ProfiniteIntegers}$.}
+$\Stab_{\AdelicGroup}(\BaseVertex) = \AdelicProjection(\GL{2}{\ProfiniteIntegers})$.
+\end{lemma}
+
+\begin{proof}
+If $g\StdModule{\ProfiniteIntegers}{2} = \lambda\StdModule{\ProfiniteIntegers}{2}$
+with $\lambda \in \unit{\FiniteAdeles{\QQ}}$, write $\lambda = qu$ with
+$q \in \PositiveRationals$ and $u \in \unit{\ProfiniteIntegers}$
+(\cref{lem:rational-scalars-discrete}); then $q^{-1}g \in \GL{2}{\ProfiniteIntegers}$.
+\end{proof}
+
+\subsection{The standard groups}
+
+\begin{definition}[Adelic standard groups]\label{def:adelic-standard-groups}
+Let $N \geq 1$. Define the following subgroups of $\AdelicGroup$, all
+contained in $\AdelicProjection(\GL{2}{\ProfiniteIntegers})$:
+\begin{align*}
+  \GammaZero[ad]{N} &:= \AdelicProjection\{\smallMat{a}{b}{c}{d} \in \GL{2}{\ProfiniteIntegers} : c \in N\ProfiniteIntegers\},\\
+  \GammaOne[ad]{N} &:= \AdelicProjection\{g \in \GL{2}{\ProfiniteIntegers} : g \equiv \smallMat{1}{*}{0}{*} \bmod N\},\\
+  \GammaFull[ad]{N} &:= \AdelicProjection\{g \in \GL{2}{\ProfiniteIntegers} : g \equiv 1 \bmod N\}.
+\end{align*}
+Their lifted and classical versions (\cref{def:versions}) are denoted
+$\GammaZero[lift]{N}$, $\GammaZero{N}$, and so on.
+\end{definition}
+
+\begin{lemma}[Classical versions of the standard groups]
+\label{lem:classical-standard-groups}
+Let $N \geq 1$. Then $\GammaZero[lift]{N}$, $\GammaOne[lift]{N}$ and
+$\GammaFull[lift]{N}$ are the usual subgroups of $\SL{2}{\ZZ}$ defined by
+$c \equiv 0$, by $c \equiv 0, a \equiv d \equiv 1$, and by
+$\gamma \equiv 1$ modulo $N$, and $\GammaZero{N}$, $\GammaOne{N}$,
+$\GammaFull{N}$ are their images in $\PSL{2}{\ZZ} \subseteq \RationalProjGroup$.
+\end{lemma}
+
+\begin{proof}
+By the description of rational elements of $\GL{2}{\ProfiniteIntegers}$
+(\cref{lem:rational-points-glzhat}); for $\GammaOne{}$ note that $a d \equiv 1$
+when $c \equiv 0$ and $\det = 1$.
+\end{proof}
+
+\begin{lemma}[{$\GammaZero[ad]{N}$ fixes the snake}]\label{lem:gamma0-fixer}
+\slogan{$\GammaZero{N}$ is the fixer of the lattice classes
+$\StdVertex{1}$ and $\StdVertex{N}$.}
+Let $N \geq 1$ and $t$ a positive integer. An element
+$g = \smallMat{a}{b}{c}{d} \in \GL{2}{\ProfiniteIntegers}$ fixes
+$\StdVertex{t}$ if and only if $c \in t\ProfiniteIntegers$. Consequently
+\[
+  \GammaZero[ad]{N} = \Stab_{\AdelicGroup}(\StdVertex{1}) \cap \Stab_{\AdelicGroup}(\StdVertex{N}),
+\]
+and $\GammaZero[ad]{N}$ fixes $\StdVertex{d}$ for every divisor $d$ of $N$.
+\end{lemma}
+
+\begin{proof}
+One has $g\smallColVec{1}{0} = \smallColVec{a}{c}$ and
+$g\smallColVec{0}{t} = \smallColVec{tb}{td}$, so
+$g\StdLattice{t} \subseteq \StdLattice{t}$ if and only if
+$c \in t\ProfiniteIntegers$, and then equality holds since $g^{-1}$ has the
+same shape. Combine with the stabiliser of the base vertex
+(\cref{lem:stab-base-vertex}).
+\end{proof}
+
+\begin{definition}[Snake]\label{def:snake}
+For $N \geq 1$ the \emph{snake} of $N$ is
+$\Snake{N} := \{\StdVertex{d} : d \mid N\} \subseteq \BigPictureVertices$.
+Its local component at $p$ is the geodesic segment from
+$\LocalBaseVertex{p}$ to $\LocalStdVertex{N}{p}$, of length $\val{p}{N}$.
+\end{definition}
+
+\begin{definition}[Local flips and the Atkin--Lehner group]
+\label{def:atkin-lehner-group}
+Let $N \geq 1$ and let $p$ be a prime with $k := \val{p}{N} \geq 1$. The
+\emph{local flip} $\ALflip{p,N} \in \AdelicGroup$ is the image of the
+element of $\GL{2}{\FiniteAdeles{\QQ}}$ equal to
+$\smallMat{0}{-1}{p^{k}}{0}$ at $p$ and to $1$ at all other primes. The
+\emph{Atkin--Lehner group} is the setwise stabiliser
+\[
+  \GammaZeroStar[ad]{N} := \Stab_{\AdelicGroup}(\Snake{N}).
+\]
+\end{definition}
+
+\begin{lemma}[Structure of the Atkin--Lehner group]
+\label{lem:atkin-lehner-group}
+\slogan{The setwise stabiliser of the snake is $\GammaZero{N}$ extended by
+independent flips at the primes dividing $N$.}
+Let $N \geq 1$. The local flip $\ALflip{p,N}$ preserves the local snake at
+$p$ and reverses it. The pointwise stabiliser of $\Snake{N}$ is
+$\GammaZero[ad]{N}$, and the map recording at which primes an element
+reverses the snake induces an isomorphism
+$\GammaZeroStar[ad]{N}/\GammaZero[ad]{N} \cong \bigoplus_{p \mid N}\ZZ/2\ZZ$,
+with $\ALflip{p,N}$ mapping to the generator at $p$. If $N$ is squarefree,
+this isomorphism is the type map
+$\GammaZeroStar[ad]{N} \to \TypeGroup{N}$.
+\end{lemma}
+
+\begin{proof}
+At $p$ one computes $\smallMat{0}{-1}{p^{k}}{0}\smallColVec{x}{y} =
+\smallColVec{-y}{p^{k}x}$, so the flip maps
+$\StdModule{\pAdicIntegers{p}}{2}$ to $\pAdicIntegers{p}\oplus p^{k}\pAdicIntegers{p}$
+and $\pAdicIntegers{p}\oplus p^{j}\pAdicIntegers{p}$ to the class of
+$\pAdicIntegers{p}\oplus p^{k-j}\pAdicIntegers{p}$. An isometry
+preserving a segment either fixes it pointwise or reverses it, and it fixes
+it pointwise if it fixes one endpoint. The pointwise stabiliser is
+$\GammaZero[ad]{N}$ by \cref{lem:gamma0-fixer}. For squarefree $N$ the
+element $\ALflip{p,N}$ has determinant of valuation $1$ at $p$, and elements
+of $\GammaZero[ad]{N}$ have trivial type.
+\end{proof}
+
+\begin{definition}[Global Atkin--Lehner matrices]\label{def:global-al}
+Let $N \geq 1$ and let $e$ be a Hall divisor of $N$, i.e.\ $e \mid N$ and
+$\gcd(e, N/e) = 1$. An \emph{Atkin--Lehner matrix} for $e$ is a matrix
+$\ALmatrix{e} = \smallMat{ex}{y}{Nz}{ew}$ with $x,y,z,w \in \ZZ$ and
+$\det\ALmatrix{e} = e$.
+\end{definition}
+
+\begin{lemma}[Atkin--Lehner matrices exist and flip]
+\label{lem:global-al}
+\slogan{The lifted Atkin--Lehner group is generated by $\GammaZero{N}$ and
+the classical Atkin--Lehner matrices.}
+Let $N \geq 1$ and $e$ a Hall divisor of $N$. An Atkin--Lehner matrix
+$\ALmatrix{e}$ exists, and $\AdelicProjection(\ALmatrix{e}) \in
+\GammaZero[ad]{N}\prod_{p \mid e}\ALflip{p,N}$. Moreover
+\[
+  \GammaZeroStar[lift]{N} = \bigcup_{e} \GammaZero[lift]{N}\,\ALmatrix{e},
+\]
+the union over the Hall divisors $e$ of $N$, for any choice of the
+$\ALmatrix{e}$.
+\end{lemma}
+
+\begin{proof}
+Since $\gcd(e, N/e) = 1$ choose $w$ with $ew \equiv 1 \bmod N/e$ and put
+$x = 1$, $z = 1$, $y = (ew-1)/(N/e)$; then $e^{2}xw - Nyz = e$. Locally at
+$p \mid e$ with $k = \val{p}{N}$ one computes
+$\ALmatrix{e}\smallMat{0}{-1}{p^{k}}{0}^{-1} =
+\smallMat{-y}{ex p^{-k}}{-ew}{Nzp^{-k}}$, which is integral with lower left
+entry divisible by $p^{k}$ and unit determinant $e/p^{k}$. At primes
+$p \nmid e$ the matrix $\ALmatrix{e}$ lies in $\GL{2}{\pAdicIntegers{p}}$
+with lower left entry divisible by $p^{\val{p}{N}}$. This proves the first
+two statements. If $g \in \GammaZeroStar[lift]{N}$ reverses the snake
+exactly at the primes dividing $e$, then $g\ALmatrix{e}^{-1}$ is a rational
+element of $\GammaZero[ad]{N}$, i.e.\ an element of $\GammaZero[lift]{N}$ by
+\cref{lem:classical-standard-groups}.
+\end{proof}
+
+\begin{remark}
+The classical group $\GammaZeroStar{N}$ is the group usually denoted
+$\GammaZero{N}+$ (all Atkin--Lehner involutions), in Conway's notation
+\cite{Conway1996}. Its subgroups containing $\GammaZero{N}$ are the groups
+$\GammaZero{N}+e,f,\ldots$.
+\end{remark}
+
+\begin{definition}[Conway's groups]\label{def:conway-groups}
+Let $h, n$ be positive integers with $h \mid n$. Define
+\[
+  \GammaConway[ad]{n}{h} := \Stab_{\AdelicGroup}(\StdVertex{h}) \cap
+  \Stab_{\AdelicGroup}(\StdVertex{n}).
+\]
+\end{definition}
+
+\begin{lemma}[Conway's groups are conjugates of $\GammaZero{}$]
+\label{lem:conway-groups}
+Let $h \mid n$ be positive integers and $D := \Diagonal{1}{h}$. Then
+$\GammaConway[ad]{n}{h} = D\,\GammaZero[ad]{n/h}\,D^{-1}$, and
+\[
+  \GammaConway[lift]{n}{h} = \Bigl\{\smallMat{a}{b/h}{nc}{d} :
+  a,b,c,d \in \ZZ,\ ad - \tfrac{n}{h}bc = 1\Bigr\}.
+\]
+\end{lemma}
+
+\begin{proof}
+$D\Diagonal{1}{t} = \Diagonal{1}{ht}$, so $D$ maps $\StdVertex{1}$ and
+$\StdVertex{n/h}$ to $\StdVertex{h}$ and $\StdVertex{n}$; apply
+$\GammaZero{}$ as a fixer (\cref{lem:gamma0-fixer}). Since $D$ is rational,
+$\GammaConway[lift]{n}{h} = D\GammaZero[lift]{n/h}D^{-1}$, and
+$D\smallMat{a}{b}{(n/h)c}{d}D^{-1} = \smallMat{a}{b/h}{nc}{d}$.
+\end{proof}
+
+\begin{remark}[Conway's normaliser theorem]\label{rem:conway-normaliser}
+Conway \cite{Conway1996} shows that the normaliser of $\GammaZero{N}$ in
+$\PSL{2}{\RR}$ is $\GammaConway{N/h}{h}+$, the extension of
+$\GammaConway{N/h}{h}$ by all its Atkin--Lehner involutions, where $h$ is
+the largest divisor of $24$ with $h^{2} \mid N$ (see also
+\cite{AtkinLehner1970}). The number $24$ enters because $h \mid 24$ is
+equivalent to $u^{2} \equiv 1 \bmod h$ for all units $u$. We do not reprove
+this here.
+\todo[inline]{Conway works with row vectors; check that his labelling of
+the fixed classes of $\GammaConway{n}{h}$ agrees with
+\cref{def:conway-groups}.}
+\end{remark}

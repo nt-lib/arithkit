@@ -1,0 +1,236 @@
+\section{The ambient groups}\label{sec:ambient}
+
+\subsection{Definitions}
+
+\begin{definition}[Ambient groups]\label{def:ambient}
+Identify $\unit{\FiniteAdeles{\QQ}}$ with the scalar matrices in
+$\GL{2}{\FiniteAdeles{\QQ}}$, and $\unit{\QQ}$, $\PositiveRationals$ with
+their (diagonal) images in it. Define
+\[
+  \AdelicGroup := \GL{2}{\FiniteAdeles{\QQ}}/\PositiveRationals, \qquad
+  \AdelicGroupCoarse := \GL{2}{\FiniteAdeles{\QQ}}/\unit{\QQ},
+\]
+and write $\AdelicProjection \colon \GL{2}{\FiniteAdeles{\QQ}} \to \AdelicGroup$,
+$\CoarseningMap \colon \AdelicGroup \to \AdelicGroupCoarse$ and
+$\ProjectionToPGL \colon \AdelicGroup \to \PGL{2}{\FiniteAdeles{\QQ}}$ for the
+quotient maps. The \emph{rational lift} is the group
+$\RationalLiftGroup$, and the \emph{classical group} is
+$\RationalProjGroup = \GLplus{2}{\QQ}/\unit{\QQ}$.
+\end{definition}
+
+The group $\AdelicGroup$ is the primary ambient group of this document;
+$\AdelicGroupCoarse$ is the group that acts faithfully on the tower of
+modular curves (\cref{rem:shimura-varieties}).
+
+\begin{lemma}[Rational scalars are discrete]\label{lem:rational-scalars-discrete}
+\slogan{$\unit{\QQ}$ meets $\unit{\ProfiniteIntegers}$ only in $\pm 1$.}
+Inside $\unit{\FiniteAdeles{\QQ}}$ one has
+$\unit{\QQ} \cap \unit{\ProfiniteIntegers} = \{\pm 1\}$ and
+$\PositiveRationals \cap \unit{\ProfiniteIntegers} = \{1\}$, and
+$\unit{\FiniteAdeles{\QQ}} = \PositiveRationals \times \unit{\ProfiniteIntegers}$
+as topological groups. Consequently $\unit{\QQ}$ and $\PositiveRationals$
+are discrete, closed, central subgroups of $\GL{2}{\FiniteAdeles{\QQ}}$.
+\end{lemma}
+
+\begin{proof}
+A rational number which is a $p$-adic unit for all $p$ is $\pm 1$. Every
+finite idele $x$ is uniquely $q u$ with $q = \prod_p p^{\val{p}{x_p}}$ and
+$u \in \unit{\ProfiniteIntegers}$, and $\unit{\FiniteAdeles{\QQ}}/\unit{\ProfiniteIntegers}
+\cong \bigoplus_p \ZZ$ is discrete. Since $\unit{\ProfiniteIntegers}$ is
+open, the first statement shows that $\unit{\QQ}$ is discrete; discrete
+subgroups of Hausdorff groups are closed.
+\end{proof}
+
+\begin{lemma}[Structure of $\AdelicGroup$]\label{lem:structure-G-plus}
+\slogan{$\AdelicGroup$ is a totally disconnected locally compact group with
+compact centre containing $\GL{2}{\ProfiniteIntegers}$.}
+\begin{enumerate}
+\item $\AdelicGroup$ and $\AdelicGroupCoarse$ are Hausdorff, locally
+  compact and totally disconnected, and $\AdelicProjection$ is a covering
+  map.
+\item $\AdelicProjection$ restricts to an isomorphism of topological groups
+  from $\GL{2}{\ProfiniteIntegers}$ onto a compact open subgroup of
+  $\AdelicGroup$.
+\item The centre of $\AdelicGroup$ is
+  $\AdelicProjection(\unit{\FiniteAdeles{\QQ}}) \cong \unit{\ProfiniteIntegers}$;
+  in particular it is compact.
+\item $\CoarseningMap$ is surjective with kernel $\{\pm 1\}$.
+\item $\ProjectionToPGL$ is surjective with compact kernel
+  $\AdelicProjection(\unit{\FiniteAdeles{\QQ}})$; in particular it is
+  proper.
+\item $\AdelicProjection$ restricts to an injection of
+  $\GLplus{2}{\QQ}$ modulo $\PositiveRationals$, i.e.\ the rational lift
+  $\RationalLiftGroup$ is a subgroup of $\AdelicGroup$, and $\CoarseningMap$
+  maps it onto $\RationalProjGroup \subseteq \AdelicGroupCoarse$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(1) follows from the discreteness of rational scalars
+(\cref{lem:rational-scalars-discrete}). (2): $\GL{2}{\ProfiniteIntegers}$ is
+compact open and meets the kernel $\PositiveRationals$ trivially. (3): if
+$x$ is central modulo $\PositiveRationals$, then every commutator
+$x h x^{-1}h^{-1}$ lies in $\PositiveRationals$ and has determinant $1$, so
+it is $1$; hence $x$ is a scalar. Moreover
+$\unit{\FiniteAdeles{\QQ}}/\PositiveRationals \cong \unit{\ProfiniteIntegers}$ by
+\cref{lem:rational-scalars-discrete}. (4) holds since
+$\unit{\QQ}/\PositiveRationals = \{\pm 1\}$. (5): the kernel of
+$\GL{2}{\FiniteAdeles{\QQ}} \to \PGL{2}{\FiniteAdeles{\QQ}}$ is
+$\unit{\FiniteAdeles{\QQ}}$; a quotient map by a compact normal subgroup is
+proper. (6): $\GLplus{2}{\QQ}\cap\PositiveRationals = \PositiveRationals$, and
+$-1 \in \GLplus{2}{\QQ}$.
+\end{proof}
+
+\begin{definition}[The three versions of a group]\label{def:versions}
+For a subgroup $\adelic{\Gamma} \subseteq \AdelicGroup$ define its
+\emph{lifted version}
+$\lifted{\Gamma} := \adelic{\Gamma} \cap (\RationalLiftGroup)$ and its
+\emph{classical version} $\Gamma := \CoarseningMap(\lifted{\Gamma}) \subseteq
+\RationalProjGroup$. Its \emph{$\SL{2}{}$-version} is
+$\slversion{\Gamma}$, using the embedding of $\SL{2}{\QQ}$ in
+$\RationalLiftGroup$.
+\end{definition}
+
+\subsection{The type map}
+
+\begin{definition}[Type]\label{def:type}
+Let $\TypeGroupAll := \bigoplus_p \ZZ/2\ZZ$, the sum over all primes. The
+\emph{type} of $g \in \AdelicGroup$ is
+$\TypeMap(g) := (\val{p}{\det \hat g} \bmod 2)_p \in \TypeGroupAll$ for any
+$\hat g \in \AdelicProjection^{-1}(g)$. For a squarefree integer $N \geq 1$
+let $\TypeGroup{N} := \bigoplus_{p \mid N}\ZZ/2\ZZ \subseteq \TypeGroupAll$,
+identified with the set of positive divisors $e$ of $N$, with group law
+$\TypeProduct{e}{e'} := ee'/\gcd(e,e')^{2}$. The \emph{determinant class}
+of $g$ is $\DetClass(g) := \det\hat g \bmod \PositiveRationals \in
+\unit{\FiniteAdeles{\QQ}}/\PositiveRationals$.
+\end{definition}
+
+\begin{lemma}[The type is a continuous homomorphism]\label{lem:type-hom}
+The type $\TypeMap \colon \AdelicGroup \to \TypeGroupAll$ and the
+determinant class $\DetClass$ are well defined continuous homomorphisms,
+and $\TypeMap$ factors through $\DetClass$.
+\end{lemma}
+
+\begin{proof}
+Changing $\hat g$ by $q \in \PositiveRationals$ multiplies $\det\hat g$ by
+$q^{2}$, which has even valuations and lies in $\PositiveRationals$.
+Continuity holds because $\unit{\ProfiniteIntegers}$ is open.
+\end{proof}
+
+\begin{lemma}[Type-trivial compact subgroups lift]\label{lem:type-trivial-lift}
+\slogan{A compact subgroup of $\AdelicGroup$ of trivial type comes from a
+compact subgroup of $\GL{2}{\FiniteAdeles{\QQ}}$.}
+Let $U \subseteq \AdelicGroup$ be a compact (respectively compact open)
+subgroup with $\TypeMap(U) = 0$. Then
+$\hat U := \AdelicProjection^{-1}(U) \cap \det^{-1}(\unit{\ProfiniteIntegers})$
+is a compact (respectively compact open) subgroup of
+$\GL{2}{\FiniteAdeles{\QQ}}$ which $\AdelicProjection$ maps isomorphically
+onto $U$.
+\end{lemma}
+
+\begin{proof}
+The set $D := \det^{-1}(\unit{\ProfiniteIntegers})$ is an open subgroup with
+$D \cap \PositiveRationals = \{1\}$, so $\AdelicProjection|_{D}$ is an
+injective open map, i.e.\ a homeomorphism onto its image. If
+$\TypeMap(\AdelicProjection(g)) = 0$ then all valuations of $\det g$ are
+even, and there is a unique $q \in \PositiveRationals$ with
+$\det(qg) \in \unit{\ProfiniteIntegers}$. Hence $U \subseteq \AdelicProjection(D)$
+and $\hat U = (\AdelicProjection|_{D})^{-1}(U)$.
+\end{proof}
+
+\begin{lemma}[Rational elements of $\GL{2}{\ProfiniteIntegers}$]
+\label{lem:rational-points-glzhat}
+\slogan{The lifted version of a subgroup of $\GL{2}{\ProfiniteIntegers}$ is a
+subgroup of $\SL{2}{\ZZ}$.}
+Let $\adelic{\Gamma} \subseteq \AdelicProjection(\GL{2}{\ProfiniteIntegers})$
+be a subgroup. Then $\lifted{\Gamma}$, viewed inside $\RationalLiftGroup$,
+is the image of
+$\{\gamma \in \SL{2}{\ZZ} : \AdelicProjection(\gamma) \in \adelic{\Gamma}\}$,
+and $\lifted{\Gamma} = \slversion{\Gamma}$.
+\end{lemma}
+
+\begin{proof}
+If $g \in \GLplus{2}{\QQ}$ and $\AdelicProjection(g) = \AdelicProjection(k)$
+with $k \in \GL{2}{\ProfiniteIntegers}$, then $g = qk$ with
+$q \in \PositiveRationals$ and $q^{-1}g \in \GLplus{2}{\QQ}\cap\GL{2}{\ProfiniteIntegers}
+= \SL{2}{\ZZ}$.
+\end{proof}
+
+\begin{lemma}[The $\SL{2}{}$-version is the type-trivial part]
+\label{lem:sl-version-type-trivial}
+Let $\adelic{\Gamma} \subseteq \AdelicGroup$ be a subgroup. Then
+$\slversion{\Gamma} = \{g \in \lifted{\Gamma} : \TypeMap(g) = 0\}$. In
+particular $\slversion{\Gamma} = \lifted{\Gamma}$ if $\TypeMap(\adelic{\Gamma}) = 0$.
+\end{lemma}
+
+\begin{proof}
+An element of $\RationalLiftGroup$ has a representative of determinant $1$
+if and only if its determinant is a square in $\PositiveRationals$, i.e.\ if
+and only if its type is trivial.
+\end{proof}
+
+\subsection{Modular curves attached to compact open subgroups}
+
+\begin{definition}[Modular curve of a compact open subgroup]
+\label{def:modular-curve-of-U}
+For a compact open subgroup $U \subseteq \AdelicGroup$ let
+$\OpenModCurve{U}(\CC) := \OpenModCurve{\AdelicProjection^{-1}(U)}(\CC)$,
+the adelic double coset of \cref{def:adelic-double-coset}.
+\end{definition}
+
+\begin{lemma}[$-1$ acts trivially]\label{lem:minus-one-trivial}
+Let $U \subseteq \AdelicGroup$ be a compact open subgroup. Then the
+identity induces a bijection
+$\OpenModCurve{U}(\CC) = \OpenModCurve{U\cdot\{\pm 1\}}(\CC)$.
+\end{lemma}
+
+\begin{proof}
+The element $-1 \in \GL{2}{\QQ}$ acts trivially on $\SlitPlane$, so
+$(\tau, g) \sim (\tau, -g)$.
+\end{proof}
+
+\begin{lemma}[Finite quotients]\label{lem:finite-quotients}
+\slogan{Every curve $\OpenModCurve{U}$ is a quotient of a classical modular
+curve by a finite group.}
+Let $U \subseteq \AdelicGroup$ be a compact open subgroup.
+\begin{enumerate}
+\item If $U' \subseteq U$ is an open normal subgroup, then $U/U'$ acts on
+  $\OpenModCurve{U'}(\CC)$ by right multiplication and
+  $\OpenModCurve{U}(\CC) = \OpenModCurve{U'}(\CC)/(U/U')$.
+\item There is an open normal subgroup $U' \subseteq U$ with
+  $\TypeMap(U') = 0$; for such $U'$ one has
+  $\OpenModCurve{U'}(\CC) = \OpenModCurve{\hat U'}(\CC)$ with $\hat U'$ the
+  compact open subgroup of $\GL{2}{\FiniteAdeles{\QQ}}$ of
+  \cref{lem:type-trivial-lift}.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(1) is formal. (2): $U$ contains $\AdelicProjection(\ker(\GL{2}{\ProfiniteIntegers}
+\to \GL{2}{\ResidueRing{M}}))$ for some $M$; the normaliser of this open
+subgroup is open, so it has finitely many $U$-conjugates, whose
+intersection $U'$ is open, normal in $U$ and of trivial type. Finally
+$\AdelicProjection^{-1}(U') = \PositiveRationals\cdot\hat U'$ and
+$\PositiveRationals \subseteq \GL{2}{\QQ}$ acts trivially on $\SlitPlane$.
+\end{proof}
+
+\begin{remark}[Relation with Shimura varieties]\label{rem:shimura-varieties}
+For a Shimura datum $(G, X)$ the group $G(\FiniteAdeles{\QQ})$ acts on
+$\varprojlim_K \mathrm{Sh}_K(G,X)$ with kernel the closure $Z(\QQ)^{-}$ of
+$Z(\QQ)$ in $Z(\FiniteAdeles{\QQ})$ \cite{DeligneVarietes1979,Milne2005}.
+For $G = \GL{2}{}$ the subgroup $\unit{\QQ}$ is already closed
+(\cref{lem:rational-scalars-discrete}), so $\AdelicGroupCoarse$ is the group
+acting faithfully on the modular tower. The levels in
+\cite{Milne2005,DeligneRapoport1973} are compact open subgroups of
+$\GL{2}{\FiniteAdeles{\QQ}}$, i.e.\ compact open subgroups of $\AdelicGroup$
+of trivial type (\cref{lem:type-trivial-lift}), and levels for the Shimura
+datum $(\PGL{2}{}, \UpperHalfPlane^{\pm})$ correspond to compact open
+subgroups of $\AdelicGroup$ containing the centre. Compact open subgroups
+of $\AdelicGroup$ interpolate between the two, and by
+\cref{lem:finite-quotients} they only add finite quotients of classical
+modular curves. Unlike either extreme, this class is closed under
+passing to the quotient by all modular automorphisms
+(\cref{prop:normaliser-compact-open}). We use $\AdelicGroup$ rather than
+$\AdelicGroupCoarse$ so that $\GL{2}{\ProfiniteIntegers}$ embeds and the
+distinction between $H$ and $\langle H, -1\rangle$ is kept.
+\end{remark}

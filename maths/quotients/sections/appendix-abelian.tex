@@ -1,0 +1,764 @@
+\section{Complex abelian varieties without coordinates}\label{app:abelian}
+
+The purpose of this appendix is to explain in which space every object of
+\cref{sec:conventions} naturally lives. We start from an abstract complex
+abelian variety, with no basis and no presentation as a quotient
+$\CC^{g}/\Lambda$, and introduce coordinates only by choosing a
+\emph{frame} of the first homology group. The main point is that the period
+map $\Homology{A}{\ZZ} \to \LieAlg{A}$ is canonical, whereas a formula like
+$v \mapsto \int_v dz$ already involves the choice of a differential
+$dz$, i.e.\ of a coordinate on $\LieAlg{A}$. References for the standard
+facts are \cite[\S\S 1--4]{Mumford1974} and \cite[Ch.~1, 2, 4]{BirkenhakeLange2004}.
+
+\subsection{The canonical objects}
+
+\begin{setup}[Complex abelian variety]\label{setup:abelian}
+Let $A$ be a complex abelian variety of dimension $g \geq 1$. We use:
+\begin{enumerate}
+\item $\LieAlg{A}$, the tangent space of $A$ at the origin, a complex vector
+  space of dimension $g$;
+\item $\Differentials{A}$, the space of holomorphic $1$-forms on $A$;
+\item $\Homology{A}{\ZZ} := H_1(A(\CC), \ZZ)$, a free $\ZZ$-module of rank
+  $2g$, and $\Homology{A}{R} := \Homology{A}{\ZZ}\otimes_{\ZZ} R$ for
+  $R \in \{\QQ, \RR, \CC, \ProfiniteIntegers, \FiniteAdeles{\QQ}\}$;
+\item $\Cohomology{A}{R} := \Hom(\Homology{A}{\ZZ}, R)$;
+\item $\ExpMap{A} \colon \LieAlg{A} \to A(\CC)$, the exponential map of the
+  connected commutative complex Lie group $A(\CC)$.
+\end{enumerate}
+\end{setup}
+
+\begin{lemma}[Differentials are the cotangent space]\label{lem:differentials-cotangent}
+\slogan{A holomorphic $1$-form on an abelian variety is determined by its
+value at the origin.}
+In \cref{setup:abelian}, every $\omega \in \Differentials{A}$ is invariant
+under translations, and $\omega \mapsto \omega(0)$ is an isomorphism
+$\Differentials{A} \to \Hom_{\CC}(\LieAlg{A}, \CC)$.
+\end{lemma}
+
+\begin{proof}
+\cite[\S 1]{Mumford1974}, \cite[\S 1.4]{BirkenhakeLange2004}.
+\end{proof}
+
+\begin{lemma}[Uniformisation]\label{lem:uniformisation}
+\slogan{$A(\CC)$ is its Lie algebra modulo its first homology.}
+In \cref{setup:abelian}, $\ExpMap{A}$ is a surjective holomorphic
+homomorphism and a universal covering. For a loop $\gamma$ in $A(\CC)$ based
+at $0$ let $\PeriodInclusion{A}([\gamma]) \in \LieAlg{A}$ be the endpoint of
+the lift of $\gamma$ through $\ExpMap{A}$ starting at $0$. Then
+$\PeriodInclusion{A}$ is a well defined injective homomorphism, the sequence
+\[
+  0 \to \Homology{A}{\ZZ} \xrightarrow{\ \PeriodInclusion{A}\ } \LieAlg{A}
+  \xrightarrow{\ \ExpMap{A}\ } A(\CC) \to 0
+\]
+is exact, and the $\RR$-linear extension
+$\Homology{A}{\RR} \to \LieAlg{A}$ of $\PeriodInclusion{A}$ is an isomorphism
+of real vector spaces.
+\end{lemma}
+
+\begin{proof}
+\cite[\S 1]{Mumford1974}: $\ExpMap{A}$ is the universal covering, its kernel
+is the group of deck transformations, which is
+$\pi_1(A(\CC), 0) = \Homology{A}{\ZZ}$ since $\pi_1$ is abelian, and the
+kernel is a lattice because $A(\CC)$ is compact. Compare
+\cite[IV.5.1]{DeligneRapoport1973}.
+\end{proof}
+
+\begin{proposition}[The period map is canonical]\label{prop:canonical-period-map}
+\slogan{Integrating differentials over cycles is the inclusion of the
+homology into the Lie algebra; no choice of differential is needed.}
+In \cref{setup:abelian}, for $v \in \Homology{A}{\ZZ}$ and
+$\omega \in \Differentials{A}$ one has
+$\Period{v}{\omega} = \omega(0)\bigl(\PeriodInclusion{A}(v)\bigr)$. Hence,
+under the identification $\LieAlg{A} = \Hom_{\CC}(\Differentials{A}, \CC)$
+given by the cotangent space description of differentials
+(\cref{lem:differentials-cotangent}),
+\[
+  \PeriodInclusion{A}(v) = \bigl(\omega \mapsto \Period{v}{\omega}\bigr).
+\]
+If $g = 1$ and $\omega \in \Differentials{A}$ is nonzero, then $\omega(0)$ is
+a linear coordinate $z$ on $\LieAlg{A}$ with $\ExpMap{A}^{*}\omega = dz$,
+and $v \mapsto \Period{v}{\omega}$ identifies $\Homology{A}{\ZZ}$ with a
+lattice $\Lambda_{\omega} \subseteq \CC$ such that $A(\CC) \cong \CC/\Lambda_{\omega}$.
+\end{proposition}
+
+\begin{proof}
+Since $\ExpMap{A}$ is a homomorphism and $\omega$ is translation invariant,
+$\ExpMap{A}^{*}\omega$ is the translation invariant $1$-form on the vector
+space $\LieAlg{A}$ with value $\omega(0)$ at $0$, i.e.\ the constant form
+$\omega(0)$. If $\tilde\gamma$ is the lift of a loop $\gamma$ starting at
+$0$, then
+$\Period{\gamma}{\omega} = \Period{\tilde\gamma}{\ExpMap{A}^{*}\omega} =
+\omega(0)(\PeriodInclusion{A}([\gamma]) - 0)$. The last statement follows
+from uniformisation (\cref{lem:uniformisation}).
+\end{proof}
+
+\begin{remark}
+So writing an elliptic curve as $\CC/\Lambda$ and integrating $dz$ amounts
+to choosing a nonzero element of the one-dimensional space
+$\Differentials{A}$; the canonical object is the map
+$\PeriodInclusion{A} \colon \Homology{A}{\ZZ} \to \LieAlg{A}$.
+\end{remark}
+
+\subsection{The Hodge filtration}
+
+\begin{definition}[Complex structure and Hodge decomposition]\label{def:hodge}
+In \cref{setup:abelian}, let $\ComplexStructure{A}$ be the $\RR$-linear
+automorphism of $\Homology{A}{\RR}$ corresponding to multiplication by $i$
+on $\LieAlg{A}$ under the isomorphism of \cref{lem:uniformisation}. On
+$\Homology{A}{\CC} = \Homology{A}{\RR}\otimes_{\RR}\CC$ let
+$\HodgePiece{A}{-1}{0}$ and $\HodgePiece{A}{0}{-1}$ be the eigenspaces of
+$\ComplexStructure{A}\otimes\CC$ for the eigenvalues $i$ and $-i$. The
+\emph{Hodge filtration} is $\HodgeFiltration{A} := \HodgePiece{A}{0}{-1}$.
+Let $\Complexification{\PeriodInclusion{A}} \colon \Homology{A}{\CC} \to
+\LieAlg{A}$ be the $\CC$-linear extension of $\PeriodInclusion{A}$, and
+$\HodgeOneZero{A} \subseteq \Cohomology{A}{\CC}$ the set of functionals
+$v \mapsto \Period{v}{\omega}$ with $\omega \in \Differentials{A}$.
+\end{definition}
+
+\begin{lemma}[The Hodge filtration is the kernel of the period map]
+\label{lem:hodge-kernel}
+\slogan{$\LieAlg{A} = \Homology{A}{\CC}/F^{0}$ and the holomorphic
+differentials are the functionals vanishing on $F^{0}$.}
+In \cref{setup:abelian},
+$\Homology{A}{\CC} = \HodgePiece{A}{-1}{0}\oplus\HodgePiece{A}{0}{-1}$, both
+summands have dimension $g$ and are interchanged by complex conjugation,
+$\HodgeFiltration{A} = \{x + i\ComplexStructure{A}x : x \in \Homology{A}{\RR}\}$,
+the map $\Complexification{\PeriodInclusion{A}}$ is surjective with kernel
+$\HodgeFiltration{A}$, and $\HodgeOneZero{A}$ is the annihilator of
+$\HodgeFiltration{A}$ in $\Cohomology{A}{\CC}$. In particular
+$\HodgeFiltration{A} \cap \Homology{A}{\RR} = 0$.
+\end{lemma}
+
+\begin{proof}
+$\ComplexStructure{A}^{2} = -1$, so the eigenspace decomposition exists,
+and $\ComplexStructure{A}(x + i\ComplexStructure{A}x) =
+-i(x + i\ComplexStructure{A}x)$ shows the description of
+$\HodgeFiltration{A}$ and the dimension count. By definition of
+$\ComplexStructure{A}$ one has $\Complexification{\PeriodInclusion{A}}\circ
+(\ComplexStructure{A}\otimes\CC) = i\,\Complexification{\PeriodInclusion{A}}$;
+on the $(-i)$-eigenspace this forces
+$\Complexification{\PeriodInclusion{A}} = 0$. The map is surjective since
+its restriction to $\Homology{A}{\RR}$ is, so its kernel has dimension $g$
+and equals $\HodgeFiltration{A}$. By the canonical period map
+(\cref{prop:canonical-period-map}) $\HodgeOneZero{A}$ consists of the
+functionals $\lambda\circ\Complexification{\PeriodInclusion{A}}$ with
+$\lambda \in \Hom_{\CC}(\LieAlg{A}, \CC)$, i.e.\ of the functionals
+vanishing on the kernel. A real vector $x$ with
+$\ComplexStructure{A}x = -ix$ is zero.
+\end{proof}
+
+\begin{remark}
+\todo[inline]{Check that the labelling of $\HodgePiece{A}{-1}{0}$ and
+$\HodgePiece{A}{0}{-1}$ agrees with Deligne's conventions for the Hodge
+structure on $H_1$ in \cite{DeligneVarietes1979}.}
+\end{remark}
+
+\subsection{Riemann forms}
+
+\begin{definition}[Riemann form]\label{def:riemann-form}
+In \cref{setup:abelian}, a \emph{Riemann form} on $A$ is an alternating
+bilinear form
+$\RiemannForm{} \colon \Homology{A}{\ZZ}\times\Homology{A}{\ZZ} \to \ZZ$ such
+that, for its $\RR$-bilinear extension,
+$\RiemannForm{}(\ComplexStructure{A}x, \ComplexStructure{A}y) =
+\RiemannForm{}(x,y)$ for all $x, y$ and
+$\RiemannForm{}(\ComplexStructure{A}x, x) > 0$ for all $x \neq 0$. It is
+\emph{principal} if it is unimodular. We write $\RiemannForm{}$ also for
+its $\CC$-bilinear extension to $\Homology{A}{\CC}$.
+\end{definition}
+
+\begin{remark}[Sign convention]\label{rem:riemann-sign}
+This is the sign convention of \cite[\S 2]{Mumford1974} and
+\cite[\S 2.1]{BirkenhakeLange2004}: the form
+$H(x,y) := \RiemannForm{}(\ComplexStructure{A}x, y) + i\RiemannForm{}(x,y)$
+on $\LieAlg{A}$ is hermitian (complex linear in $x$) and positive definite.
+For an elliptic curve and a basis $a, b$ of $\Homology{A}{\ZZ}$ with
+intersection number $\IntersectionPairing{a}{b} = 1$ for the complex
+orientation, one finds $\RiemannForm{}(a,b) = -1$ for the principal Riemann
+form of \cref{lem:elliptic-riemann-form}: the principal Riemann form is
+\emph{minus} the intersection pairing.
+\todo[inline]{Double check the sign relative to the intersection pairing
+against a standard reference.}
+\end{remark}
+
+\begin{lemma}[Riemann relations]\label{lem:riemann-relations}
+\slogan{The Hodge filtration is a positive Lagrangian.}
+In \cref{setup:abelian}, let $\RiemannForm{}$ be a Riemann form on $A$.
+Then $\HodgeFiltration{A}$ is a Lagrangian subspace of $\Homology{A}{\CC}$
+for $\RiemannForm{}$, and $-i\,\RiemannForm{}(u, \overline{u}) > 0$ for every
+nonzero $u \in \HodgeFiltration{A}$.
+\end{lemma}
+
+\begin{proof}
+Write $u = x + i\ComplexStructure{A}x$ and $u' = y + i\ComplexStructure{A}y$
+(\cref{lem:hodge-kernel}). Using the invariance of $\RiemannForm{}$ under
+$\ComplexStructure{A}$ and $\ComplexStructure{A}^{2} = -1$ one gets
+$\RiemannForm{}(u, u') = i(\RiemannForm{}(x, \ComplexStructure{A}y) +
+\RiemannForm{}(\ComplexStructure{A}x, y)) = 0$ and
+$\RiemannForm{}(u, \overline{u}) = 2i\,\RiemannForm{}(\ComplexStructure{A}x, x)$.
+Isotropic of dimension $g$ in dimension $2g$ means Lagrangian.
+\end{proof}
+
+\begin{proposition}[Poincar\'e duality for the Hodge filtration]
+\label{prop:poincare-hodge}
+\slogan{Given a Riemann form, a holomorphic differential is the same thing
+as a vector in the Hodge filtration of $H_1$.}
+In \cref{setup:abelian}, let $\RiemannForm{}$ be a Riemann form on $A$. For
+every $\omega \in \Differentials{A}$ there is a unique
+$\PoincareDual{\RiemannForm{}}{\omega} \in \HodgeFiltration{A}$ with
+\[
+  \Period{v}{\omega} = \RiemannForm{}\bigl(\PoincareDual{\RiemannForm{}}{\omega}, v\bigr)
+  \qquad\text{for all } v \in \Homology{A}{\ZZ},
+\]
+and $\omega \mapsto \PoincareDual{\RiemannForm{}}{\omega}$ is a $\CC$-linear
+isomorphism $\Differentials{A} \to \HodgeFiltration{A}$.
+\end{proposition}
+
+\begin{proof}
+By positivity $\RiemannForm{}$ is nondegenerate, so
+$\PoincareMap{\RiemannForm{}} \colon \Homology{A}{\CC} \to \Cohomology{A}{\CC}$,
+$u \mapsto \RiemannForm{}(u, \cdot)$, is an isomorphism. By the Riemann
+relations (\cref{lem:riemann-relations}) it maps $\HodgeFiltration{A}$ into
+the annihilator of $\HodgeFiltration{A}$, which has the same dimension $g$
+and equals $\HodgeOneZero{A}$ by \cref{lem:hodge-kernel}. Finally
+$\omega \mapsto (v \mapsto \Period{v}{\omega})$ is an isomorphism
+$\Differentials{A} \to \HodgeOneZero{A}$ by the same lemma.
+\end{proof}
+
+\begin{lemma}[The Riemann form of an elliptic curve]\label{lem:elliptic-riemann-form}
+\slogan{An elliptic curve has a canonical principal Riemann form.}
+In \cref{setup:abelian} with $g = 1$ there is a unique principal Riemann
+form $\RiemannForm{A}$. For every $\CC$-linear isomorphism
+$z \colon \LieAlg{A} \to \CC$, with $\Lambda := z(\PeriodInclusion{A}(\Homology{A}{\ZZ}))$,
+\[
+  \RiemannForm{A}(x, y) = \frac{\mathrm{Im}\bigl(z(\PeriodInclusion{A}x)\,
+  \overline{z(\PeriodInclusion{A}y)}\bigr)}{\Covolume{\Lambda}} .
+\]
+\end{lemma}
+
+\begin{proof}
+The alternating forms on a free module of rank $2$ are the multiples of a
+generator of $\Hom(\textstyle\bigwedge^{2}\Homology{A}{\ZZ}, \ZZ) \cong \ZZ$, so
+the unimodular ones are $\pm$ a generator. Invariance under
+$\ComplexStructure{A}$ is automatic since $\det\ComplexStructure{A} = 1$, and
+positivity fixes the sign. The displayed form is independent of $z$
+(rescaling $z$ by $\lambda$ multiplies numerator and covolume by
+$|\lambda|^{2}$), alternating, $\ComplexStructure{A}$-invariant, and
+satisfies $\RiemannForm{A}(\ComplexStructure{A}x, x) =
+|z(\PeriodInclusion{A}x)|^{2}/\Covolume{\Lambda} > 0$; for a basis
+$\lambda_1, \lambda_2$ of $\Lambda$ one has
+$|\mathrm{Im}(\lambda_1\overline{\lambda_2})| = \Covolume{\Lambda}$, so it is
+unimodular.
+\end{proof}
+
+\subsection{Torsion points and Tate modules}
+
+We first describe the construction abstractly.
+
+\begin{setup}[Free module]\label{setup:free-module}
+Let $\FreeModule$ be a free $\ZZ$-module of finite rank. Put
+\[
+  \DivisibleGroup{\FreeModule} := (\FreeModule\otimes\QQ)/\FreeModule,
+  \qquad
+  \DivTorsion{\FreeModule}{N} := \{x \in \DivisibleGroup{\FreeModule} : Nx = 0\}
+  \quad (N \geq 1),
+\]
+and let $\AbstractTate{\FreeModule} := \varprojlim_N \DivTorsion{\FreeModule}{N}$
+and $\pAdicTate{p}{\FreeModule} := \varprojlim_k \DivTorsion{\FreeModule}{p^{k}}$
+($p$ prime) be the Tate modules, the transition maps
+$\DivTorsion{\FreeModule}{NM} \to \DivTorsion{\FreeModule}{N}$ being
+multiplication by $M$. For $N \geq 1$ let
+$\DivisionMap{N} \colon \FreeModule/N\FreeModule \to
+\tfrac{1}{N}\FreeModule/\FreeModule$ be division by $N$,
+$v \bmod N\FreeModule \mapsto v/N \bmod \FreeModule$.
+\end{setup}
+
+\begin{lemma}[Torsion of $(\FreeModule\otimes\QQ)/\FreeModule$]\label{lem:divisible-torsion}
+\slogan{The $N$-torsion of $(\mathcal{H}\otimes\QQ)/\mathcal{H}$ is
+$\frac{1}{N}\mathcal{H}/\mathcal{H}$.}
+In \cref{setup:free-module}, $\DivisibleGroup{\FreeModule}$ is a divisible
+torsion group,
+$\DivTorsion{\FreeModule}{N} = \tfrac{1}{N}\FreeModule/\FreeModule$, the
+inclusion $\DivTorsion{\FreeModule}{N} \subseteq \DivTorsion{\FreeModule}{NM}$
+is the inclusion of subgroups, multiplication by $M$ maps
+$\DivTorsion{\FreeModule}{NM}$ onto $\DivTorsion{\FreeModule}{N}$, and
+$\DivisibleGroup{\FreeModule} = \bigcup_N \DivTorsion{\FreeModule}{N}
+\cong \FreeModule\otimes\QQ/\ZZ$.
+\end{lemma}
+
+\begin{proof}
+$x \in \FreeModule\otimes\QQ$ satisfies $Nx \in \FreeModule$ if and only if
+$x \in \tfrac{1}{N}\FreeModule$. Divisibility and the last isomorphism hold
+because $\FreeModule \cong \ZZ^{r}$ and $\QQ/\ZZ$ is divisible.
+\end{proof}
+
+\begin{lemma}[Division by $N$]\label{lem:division-by-N}
+\slogan{Division by powers of $p$ identifies the tower of reductions of
+$\mathcal{H}$ with the tower of $p$-power torsion of
+$(\mathcal{H}\otimes\QQ)/\mathcal{H}$ under multiplication by $p$.}
+In \cref{setup:free-module}, $\DivisionMap{N}$ is an isomorphism for every
+$N \geq 1$. For $N, M \geq 1$ it transforms reduction
+$\FreeModule/NM\FreeModule \to \FreeModule/N\FreeModule$ into
+multiplication by $M$ from $\DivTorsion{\FreeModule}{NM}$ to
+$\DivTorsion{\FreeModule}{N}$, and multiplication by $M$ from
+$\FreeModule/N\FreeModule$ to $\FreeModule/NM\FreeModule$ into the inclusion
+$\DivTorsion{\FreeModule}{N} \subseteq \DivTorsion{\FreeModule}{NM}$. In
+particular, for a prime $p$ the following diagram commutes and its
+vertical maps are isomorphisms:
+\[
+\begin{tikzcd}[column sep=large]
+  \cdots \arrow[r, "\cdot p"] &
+  \tfrac{1}{p^{3}}\FreeModule/\FreeModule \arrow[r, "\cdot p"] &
+  \tfrac{1}{p^{2}}\FreeModule/\FreeModule \arrow[r, "\cdot p"] &
+  \tfrac{1}{p}\FreeModule/\FreeModule \arrow[r] & 0 \\
+  \cdots \arrow[r, "\mathrm{red}"] &
+  \FreeModule/p^{3}\FreeModule \arrow[r, "\mathrm{red}"]
+    \arrow[u, "\DivisionMap{p^{3}}"', "\wr"] &
+  \FreeModule/p^{2}\FreeModule \arrow[r, "\mathrm{red}"]
+    \arrow[u, "\DivisionMap{p^{2}}"', "\wr"] &
+  \FreeModule/p\FreeModule \arrow[r]
+    \arrow[u, "\DivisionMap{p}"', "\wr"] & 0
+\end{tikzcd}
+\]
+Here $\mathrm{red}$ denotes reduction and $\cdot p$ multiplication by $p$.
+\end{lemma}
+
+\begin{proof}
+$\DivisionMap{N}$ is well defined and bijective since multiplication by
+$1/N$ is a bijection $\FreeModule \to \tfrac{1}{N}\FreeModule$ mapping
+$N\FreeModule$ onto $\FreeModule$. For $v \in \FreeModule$ one has
+$M\cdot(v/NM) = v/N$, which is the first compatibility, and
+$(Mv)/(NM) = v/N$, which is the second.
+\end{proof}
+
+\begin{corollary}[Tate modules of $(\FreeModule\otimes\QQ)/\FreeModule$]
+\label{cor:abstract-tate}
+\slogan{The Tate module of $(\mathcal{H}\otimes\QQ)/\mathcal{H}$ is
+$\mathcal{H}\otimes\widehat{\ZZ}$.}
+In \cref{setup:free-module}, the division maps (\cref{lem:division-by-N})
+induce isomorphisms
+$\FreeModule\otimes\ProfiniteIntegers = \varprojlim_N\FreeModule/N\FreeModule
+\to \AbstractTate{\FreeModule}$ and
+$\FreeModule\otimes\pAdicIntegers{p} \to \pAdicTate{p}{\FreeModule}$. They
+extend to an isomorphism
+$\FreeModule\otimes\FiniteAdeles{\QQ} \to \AbstractTate{\FreeModule}\otimes\QQ$,
+and $(\FreeModule\otimes\FiniteAdeles{\QQ})/(\FreeModule\otimes\ProfiniteIntegers)
+\cong \DivisibleGroup{\FreeModule}$.
+\end{corollary}
+
+\begin{proof}
+The inverse limits agree by the compatibility of division with the
+transition maps (\cref{lem:division-by-N}); $\varprojlim_N \FreeModule/N\FreeModule
+= \FreeModule\otimes\ProfiniteIntegers$ because $\FreeModule$ is free of finite
+rank. Tensor with $\QQ$, and use
+$\FiniteAdeles{\QQ}/\ProfiniteIntegers \cong \QQ/\ZZ$ and the torsion of
+$\DivisibleGroup{\FreeModule}$ (\cref{lem:divisible-torsion}).
+\end{proof}
+
+We now apply this to $\FreeModule = \Homology{A}{\ZZ}$.
+
+\begin{lemma}[Torsion points are rational homology modulo integral homology]
+\label{lem:torsion-points}
+\slogan{$A(\CC)_{\mathrm{tors}} = H_1(A,\QQ)/H_1(A,\ZZ)$ and
+$A[N] = \tfrac{1}{N}H_1(A,\ZZ)/H_1(A,\ZZ)$.}
+In \cref{setup:abelian}, the $\QQ$-linear extension of $\PeriodInclusion{A}$
+followed by $\ExpMap{A}$ induces an isomorphism
+$\DivisibleGroup{\Homology{A}{\ZZ}} = \Homology{A}{\QQ}/\Homology{A}{\ZZ}
+\to A(\CC)_{\mathrm{tors}}$ of groups, which restricts to isomorphisms
+$\tfrac{1}{N}\Homology{A}{\ZZ}/\Homology{A}{\ZZ} \to \Torsion{A}{N}(\CC)$.
+\end{lemma}
+
+\begin{proof}
+Uniformisation (\cref{lem:uniformisation}): the kernel of $\ExpMap{A}$ is
+$\PeriodInclusion{A}(\Homology{A}{\ZZ})$, and a point $\ExpMap{A}(x)$ is
+torsion if and only if $nx \in \PeriodInclusion{A}(\Homology{A}{\ZZ})$ for
+some $n \geq 1$. Then use the torsion of
+$\DivisibleGroup{\Homology{A}{\ZZ}}$ (\cref{lem:divisible-torsion}).
+Compare \cite[IV.5.2]{DeligneRapoport1973}.
+\end{proof}
+
+\begin{corollary}[Tate modules are completed homology]\label{cor:torsion-homology}
+\slogan{$A[N] \cong H_1(A,\ZZ)/N$ via division by $N$, and
+$\widehat{T}(A) \cong H_1(A,\widehat{\ZZ})$.}
+In \cref{setup:abelian}, for $N \geq 1$ the map
+$v \mapsto \ExpMap{A}(\PeriodInclusion{A}(v)/N)$ is an isomorphism
+$\Homology{A}{\ZZ}/N\Homology{A}{\ZZ} \to \Torsion{A}{N}(\CC)$; it is the
+division map $\DivisionMap{N}$ followed by the description of torsion
+points (\cref{lem:torsion-points}). Consequently
+$\TateModule{A} := \varprojlim_N \Torsion{A}{N}(\CC) \cong \Homology{A}{\ProfiniteIntegers}$,
+$\RationalTateModule{A} := \TateModule{A}\otimes\QQ \cong
+\Homology{A}{\FiniteAdeles{\QQ}}$ and
+$\RationalTateModule{A}/\TateModule{A} \cong A(\CC)_{\mathrm{tors}}$.
+\end{corollary}
+
+\begin{proof}
+Combine the description of torsion points (\cref{lem:torsion-points}),
+which is compatible with multiplication maps, with the Tate modules of
+$(\FreeModule\otimes\QQ)/\FreeModule$ (\cref{cor:abstract-tate}).
+\end{proof}
+
+\begin{remark}
+The intrinsic description of $\Torsion{A}{N}$ is the subgroup
+$\tfrac{1}{N}\Homology{A}{\ZZ}/\Homology{A}{\ZZ}$ of
+$\Homology{A}{\QQ}/\Homology{A}{\ZZ}$, adapted to the direct system of the
+$\Torsion{A}{N}$ under inclusions. The description $\Homology{A}{\ZZ}/N$
+uses division by $N$ and is adapted to the inverse system under
+multiplication maps, i.e.\ to the Tate module. The factor $1/N$ in the
+standard level structure $\StdLevel{\tau}{N}$ is this division by $N$
+(\cref{prop:level-from-frames}).
+\end{remark}
+
+\begin{lemma}[Weil pairing and Riemann form]\label{lem:weil-riemann}
+\slogan{The Weil pairing is the Riemann form modulo $N$.}
+In \cref{setup:abelian} with $g = 1$, normalise the Weil pairing as in
+\cite{DiamondShurman2005}, so that $\WeilPairing{N}(\tau/N, 1/N) =
+\exp(2\pi i/N)$ on $\CC/(\ZZ+\ZZ\tau)$ for $\tau \in \UpperHalfPlane$. Then
+under the description of torsion points (\cref{lem:torsion-points}),
+$\WeilPairing{N}(x, y) = \exp(2\pi i N\,\RiemannForm{A}(x,y))$ for
+$x, y \in \tfrac{1}{N}\Homology{A}{\ZZ}/\Homology{A}{\ZZ}$, where
+$\RiemannForm{A}$ is extended $\QQ$-bilinearly. Equivalently, under the
+isomorphism $\Homology{A}{\ZZ}/N \cong \Torsion{A}{N}(\CC)$ given by
+division by $N$ (\cref{cor:torsion-homology}),
+$\WeilPairing{N}(x, y) = \exp(2\pi i\,\RiemannForm{A}(x,y)/N)$ for
+$x, y \in \Homology{A}{\ZZ}/N$.
+\end{lemma}
+
+\begin{proof}
+The right hand sides are well defined since $N\RiemannForm{A}(x,y) \in \ZZ$
+for $x \in \Homology{A}{\ZZ}$, $y \in \frac{1}{N}\Homology{A}{\ZZ}$. Both
+sides are bilinear and alternating, so it suffices to compare them on one
+basis. Choose $z$ with $z(\PeriodInclusion{A}(\Homology{A}{\ZZ})) =
+\ZZ+\ZZ\tau$, $\tau \in \UpperHalfPlane$, and the elements of
+$\tfrac{1}{N}\Homology{A}{\ZZ}$ mapping to $\tau/N, 1/N$; by the formula
+for the Riemann form of an elliptic curve (\cref{lem:elliptic-riemann-form})
+$\RiemannForm{A}$ takes the value $\mathrm{Im}(\tau)/(N^{2}\mathrm{Im}(\tau)) = N^{-2}$
+on them.
+\end{proof}
+
+\subsection{Frames of elliptic curves}
+
+\begin{definition}[Frames]\label{def:frames}
+In \cref{setup:abelian}, a \emph{frame} of $A$ is a group isomorphism
+$\Frame \colon \StdModule{\ZZ}{2g} \to \Homology{A}{\ZZ}$, where
+$\StdModule{\ZZ}{2g}$ consists of column vectors (\cref{conv:columns}).
+Write $\Complexification{\Frame}$ for its $\CC$-linear extension. The group
+$\GL{2g}{\ZZ}$ acts on the set of frames on the right by
+$\Frame \mapsto \Frame\circ\gamma$. Let
+$\StdSymplectic{g} := \smallMat{0}{\IdentityBlock{g}}{-\IdentityBlock{g}}{0}$.
+For a Riemann form $\RiemannForm{}$, the frame is
+\emph{$\RiemannForm{}$-symplectic} if
+$\RiemannForm{}(\Frame v, \Frame w) = \transpose{v}\StdSymplectic{g}w$ for all
+$v, w$. If $g = 1$, a frame is \emph{oriented} if it is
+$\RiemannForm{A}$-symplectic for the principal Riemann form of
+\cref{lem:elliptic-riemann-form}.
+\end{definition}
+
+Note that $\StdSymplectic{1} = \Sform$ is the matrix of \cref{lem:S-identity}
+and $\transpose{v}\StdSymplectic{1}w = \DetPair{v}{w}$.
+
+\begin{definition}[Period point of a frame]\label{def:period-point}
+In \cref{setup:abelian} with $g = 1$, the \emph{period point} of a frame
+$\Frame$ is the unique $\PeriodPoint{\Frame} \in \SlitPlane$ with
+$\Complexification{\Frame}^{-1}(\HodgeFiltration{A}) =
+\CC\,\PeriodVector{\PeriodPoint{\Frame}}$.
+\end{definition}
+
+\begin{lemma}[Period points exist]\label{lem:period-point-exists}
+\cref{def:period-point} makes sense.
+\end{lemma}
+
+\begin{proof}
+$\Complexification{\Frame}^{-1}(\HodgeFiltration{A})$ is a line in
+$\StdModule{\CC}{2}$ containing no nonzero real vector
+(\cref{lem:hodge-kernel}). If it is spanned by $\transpose{(p,q)}$ then
+$q \neq 0$ and $p/q \notin \RR$, since otherwise $\transpose{(1,0)}$
+respectively $\transpose{(p/q,1)}$ would be a real vector in it. Put
+$\PeriodPoint{\Frame} := p/q$.
+\end{proof}
+
+\begin{proposition}[Frames and points of the slit plane]\label{prop:frame-tau}
+\slogan{An elliptic curve with a frame of its homology is a point of
+$\CC \setminus \RR$; the period vector spans the Hodge filtration, and the
+lattice map is the period map of a normalised differential.}
+\begin{enumerate}
+\item Let $\tau \in \SlitPlane$ and identify
+  $\Homology{\EllCurve{\tau}}{\ZZ} = \LatticeOf{\tau}$ and
+  $\LieAlg{\EllCurve{\tau}} = \CC$ via the uniformisation of
+  $\EllCurve{\tau} = \CC/\LatticeOf{\tau}$ (\cref{def:lattice-of-tau}). Then
+  $\LatticeBasis{\tau}$ is a frame of $\EllCurve{\tau}$ with period point
+  $\tau$, and
+  $\RiemannForm{\EllCurve{\tau}}(\LatticeBasis{\tau}v, \LatticeBasis{\tau}w) =
+  \mathrm{sign}(\mathrm{Im}\,\tau)\DetPair{v}{w}$. In particular
+  $\LatticeBasis{\tau}$ is oriented if and only if $\tau \in \UpperHalfPlane$.
+\item The map $(E, \Frame) \mapsto \PeriodPoint{\Frame}$ is a bijection from
+  the set of isomorphism classes of pairs of a complex elliptic curve $E$
+  and a frame $\Frame$ of $E$ onto $\SlitPlane$, with inverse
+  $\tau \mapsto (\EllCurve{\tau}, \LatticeBasis{\tau})$. It restricts to a
+  bijection from oriented frames onto $\UpperHalfPlane$.
+\item For a frame $\Frame$ and $\gamma \in \GL{2}{\ZZ}$ one has
+  $\PeriodPoint{\Frame\circ\gamma} = \MobiusAction{\gamma^{-1}}{\PeriodPoint{\Frame}}$.
+\item Let $\Frame$ be an oriented frame of $E$ and $\tau := \PeriodPoint{\Frame}$,
+  and let $\FrameDifferential{\Frame} \in \Differentials{E}$ be the
+  differential with
+  $\PoincareDual{\RiemannForm{E}}{\FrameDifferential{\Frame}} =
+  \Complexification{\Frame}(\PeriodVector{\tau})$
+  (\cref{prop:poincare-hodge}). Then
+  \[
+    \Period{\Frame(v)}{\FrameDifferential{\Frame}} = \DetPair{\PeriodVector{\tau}}{v}
+    = \LatticeBasis{\tau}(v) \qquad\text{for } v \in \StdModule{\ZZ}{2};
+  \]
+  in particular $\Period{\Frame(\StdBasis{1})}{\FrameDifferential{\Frame}} = -1$
+  and $\Period{\Frame(\StdBasis{2})}{\FrameDifferential{\Frame}} = \tau$. For
+  $(E, \Frame) = (\EllCurve{\tau}, \LatticeBasis{\tau})$ the differential
+  $\FrameDifferential{\Frame}$ is $dz$.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+(1) By the coordinates of the lattice of $\tau$ (\cref{lem:lattice-coordinates})
+$\LatticeBasis{\tau}$ is a frame, and the $\CC$-linear extension of
+$\PeriodInclusion{\EllCurve{\tau}}\circ\LatticeBasis{\tau}$ is
+$v \mapsto \DetPair{\PeriodVector{\tau}}{v}$, whose kernel is
+$\CC\PeriodVector{\tau}$; this kernel is
+$\Complexification{\LatticeBasis{\tau}}^{-1}(\HodgeFiltration{\EllCurve{\tau}})$
+by the Hodge filtration as kernel of the period map (\cref{lem:hodge-kernel}).
+For the orientation, the formula for the Riemann form of an elliptic curve
+(\cref{lem:elliptic-riemann-form}) with $z = \mathrm{id}$ gives
+$\RiemannForm{\EllCurve{\tau}}(-1, \tau) = \mathrm{Im}(-\overline{\tau})/|\mathrm{Im}\,\tau|
+= \mathrm{sign}(\mathrm{Im}\,\tau)$, and an alternating form on
+$\StdModule{\ZZ}{2}$ is determined by its value on $(\StdBasis{1},\StdBasis{2})$.
+
+(2) Surjectivity is (1). Let $(E,\Frame)$ and $(E', \Frame')$ have the same
+period point. Then $\phi := \Frame'\circ\Frame^{-1}$ is an isomorphism
+$\Homology{E}{\ZZ} \to \Homology{E'}{\ZZ}$ whose complexification maps
+$\HodgeFiltration{E}$ onto $\HodgeFiltration{E'}$. By \cref{lem:hodge-kernel}
+it induces a $\CC$-linear isomorphism
+$\LieAlg{E} = \Homology{E}{\CC}/\HodgeFiltration{E} \to
+\Homology{E'}{\CC}/\HodgeFiltration{E'} = \LieAlg{E'}$ compatible with the
+period inclusions, hence by uniformisation (\cref{lem:uniformisation}) an
+isomorphism $E \to E'$ inducing $\phi$ on homology, i.e.\ carrying $\Frame$
+to $\Frame'$. The statement about oriented frames follows from (1).
+
+(3) $\Complexification{(\Frame\circ\gamma)}^{-1}(\HodgeFiltration{A}) =
+\gamma^{-1}\CC\PeriodVector{\PeriodPoint{\Frame}} =
+\CC\PeriodVector{\gamma^{-1}\PeriodPoint{\Frame}}$ by the M\"obius
+transformations as left action on lines (\cref{lem:mobius}).
+
+(4) By Poincar\'e duality for the Hodge filtration
+(\cref{prop:poincare-hodge}) and since $\Frame$ is oriented,
+$\Period{\Frame(v)}{\FrameDifferential{\Frame}} =
+\RiemannForm{E}(\Frame\PeriodVector{\tau}, \Frame v) =
+\DetPair{\PeriodVector{\tau}}{v}$. For $(\EllCurve{\tau}, \LatticeBasis{\tau})$
+the canonical period map (\cref{prop:canonical-period-map}) gives
+$\Period{\LatticeBasis{\tau}(v)}{dz} = \LatticeBasis{\tau}(v) =
+\DetPair{\PeriodVector{\tau}}{v}$, so $dz$ has the same periods as
+$\FrameDifferential{\Frame}$ and the two are equal.
+\end{proof}
+
+\begin{remark}[Where the $-1$ comes from]\label{rem:minus-one}
+For an oriented frame $\Frame$ with period point $\tau$, the normalised
+differential $\FrameDifferential{\Frame}$ has periods $-1$ and $\tau$ along
+$\Frame(\StdBasis{1})$ and $\Frame(\StdBasis{2})$, and its row of periods
+$(-1, \tau) = \transpose{\PeriodVector{\tau}}\Sform$ is its coordinate vector
+in the dual frame of $\Cohomology{E}{\ZZ}$ (see \cref{rem:homology-cohomology}).
+The sign cannot be removed while keeping the other conventions: the frame
+$\StdBasis{1} \mapsto 1$, $\StdBasis{2} \mapsto \tau$ of
+$\Homology{\EllCurve{\tau}}{\ZZ}$ is $\LatticeBasis{\tau}\circ\Diagonal{-1}{1}$,
+whose period point is $-\tau$ by (3) of \cref{prop:frame-tau}, which is not
+oriented. Classically one normalises a differential by
+$\Period{a}{\omega} = 1$ for a basis $(a, b)$ with intersection number
+$\IntersectionPairing{a}{b} = 1$ and puts $\tau := \Period{b}{\omega}$;
+by the sign convention for Riemann forms (\cref{rem:riemann-sign}) such a
+basis is $(-\Frame(\StdBasis{1}), \Frame(\StdBasis{2}))$ for an oriented
+frame $\Frame$, and then $\omega = \FrameDifferential{\Frame}$ and the
+classical $\tau$ is $\PeriodPoint{\Frame}$. So the $-1$ is the sign
+difference between the Riemann form and the intersection pairing.
+\end{remark}
+
+\begin{remark}[Homology versus cohomology]\label{rem:homology-cohomology}
+The \emph{dual frame} of a frame $\Frame$ is the frame
+$\DualFrame{\Frame}$ of $\Cohomology{A}{\ZZ}$ whose coordinates are the
+coordinates with respect to the dual basis; changing $\Frame$ to
+$\Frame\circ\gamma$ changes $\DualFrame{\Frame}$ to
+$\DualFrame{\Frame}\circ\invtranspose{\gamma}$. The map
+$\PoincareMap{\RiemannForm{}} \colon \Homology{A}{\ZZ} \to \Cohomology{A}{\ZZ}$,
+$v \mapsto \RiemannForm{}(v, \cdot)$, has matrix $\transpose{\StdSymplectic{g}}$
+with respect to $\Frame$ and $\DualFrame{\Frame}$ when $\Frame$ is
+$\RiemannForm{}$-symplectic. The identity
+$\Sform\gamma\Sform^{-1} = \det(\gamma)\invtranspose{\gamma}$ of
+\cref{lem:S-identity} is the statement that Poincar\'e duality intertwines
+the action on homology frames with the contragredient action on cohomology
+frames, up to the similitude factor. Describing $\tau$ through the line
+$\HodgeOneZero{E} \subseteq \Cohomology{E}{\CC}$ in the dual frame (the ``dot
+product'' convention, spanned by $(-1, \tau)$) instead of through
+$\HodgeFiltration{E} \subseteq \Homology{E}{\CC}$ in the frame itself
+(spanned by $\transpose{(\tau, 1)}$) is what produces the transposes in the
+literature (\cref{rem:literature}).
+\end{remark}
+
+\begin{proposition}[Level structures are reductions of frames]
+\label{prop:level-from-frames}
+\slogan{The standard level structure $\beta_{\tau,N}$ is the frame
+$b_{\tau}$ modulo $N$, divided by $N$.}
+Let $\tau \in \SlitPlane$ and $N \geq 1$. Then $\StdLevel{\tau}{N}$ is the
+reduction of $\LatticeBasis{\tau}$ modulo $N$ followed by division by $N$,
+i.e.\ $\StdLevel{\tau}{N}(v) = \LatticeBasis{\tau}(v)/N$ in
+$\tfrac{1}{N}\Homology{\EllCurve{\tau}}{\ZZ}/\Homology{\EllCurve{\tau}}{\ZZ} =
+\Torsion{\EllCurve{\tau}}{N}$ (\cref{lem:torsion-points,cor:torsion-homology}). Consequently, in the complex
+uniformisation (\cref{prop:complex-uniformisation}) the pair $(\tau, g)$
+corresponds to $E = \EllCurve{\tau}$ with the level structure
+$(\LatticeBasis{\tau} \bmod N)\circ g$, the right action of
+$\GL{2}{\ResidueRing{N}}$ is the reduction of the right action of
+$\GL{2}{\ZZ}$ on frames, and the left action of $\gamma \in \GL{2}{\ZZ}$ on
+$\SlitPlane$ corresponds to $\Frame \mapsto \Frame\circ\gamma^{-1}$ by (3)
+of \cref{prop:frame-tau}. By \cref{lem:weil-riemann}, oriented frames
+reduce to level structures with Weil determinant $\exp(2\pi i/N)$
+(compare \cref{lem:weil-determinant}).
+\end{proposition}
+
+\begin{proof}
+By definition $\StdLevel{\tau}{N}(v) = \LatticeBasis{\tau}(v)/N \bmod
+\LatticeOf{\tau} = \ExpMap{\EllCurve{\tau}}(\PeriodInclusion{\EllCurve{\tau}}
+(\LatticeBasis{\tau}v)/N)$.
+\end{proof}
+
+\begin{remark}[Rational frames and the big picture]\label{rem:rational-frames}
+A point $(\tau, g)$ of the adelic double coset (\cref{def:adelic-double-coset})
+gives the curve $\EllCurve{\tau}$, the rational frame
+$\LatticeBasis{\tau}\otimes\QQ \colon \StdModule{\QQ}{2} \to
+\Homology{\EllCurve{\tau}}{\QQ}$ and the adelic level structure
+$\eta := (\LatticeBasis{\tau}\otimes\FiniteAdeles{\QQ})\circ g \colon
+\StdModule{\FiniteAdeles{\QQ}}{2} \to \RationalTateModule{\EllCurve{\tau}}$.
+For $\gamma \in \GLplus{2}{\QQ}$, multiplication by
+$\det(\gamma)(c\tau+d)^{-1}$ maps $\Homology{\EllCurve{\tau}}{\QQ}$ onto
+$\Homology{\EllCurve{\gamma\tau}}{\QQ}$ inside $\CC$ (equivariance of the
+determinant pairing, \cref{lem:det-pairing-equivariance}), i.e.\ it is a
+quasi-isogeny $\EllCurve{\tau} \to \EllCurve{\gamma\tau}$, and it carries
+$\eta$ to the level structure attached to $\gamma\cdot(\tau, g)$. So a point
+of $\OpenModCurve{\mathcal{K}}(\CC)$ is an elliptic curve up to
+quasi-isogeny together with $\eta$ modulo $\mathcal{K}$. The lattices in
+$\Homology{E}{\QQ}$ up to $\unit{\QQ}$ correspond to the curves
+$\LieAlg{E}/\PeriodInclusion{E}(L)$ isogenous to $E$; via $\eta$ they are the
+vertices of the big picture (\cref{lem:restricted-product}). This is the
+intrinsic form of the big picture: it is attached to the isogeny class,
+and the frame only serves to identify it with the standard one.
+\todo[inline]{Compare with the moduli interpretation of Shimura varieties
+in \cite{DeligneVarietes1979,Milne2005}, in particular the direction of
+$\eta$ and the side on which $\mathcal{K}$ acts.}
+\end{remark}
+
+\subsection{Principally polarised abelian varieties}
+
+\begin{proposition}[Siegel period point of a frame]\label{prop:siegel-period-point}
+\slogan{A symplectic frame of a principally polarised abelian variety gives
+a point of Siegel space, and the lattice has basis $-1_g$, $Z$.}
+In \cref{setup:abelian}, let $\RiemannForm{}$ be a principal Riemann form
+and $\Frame$ a $\RiemannForm{}$-symplectic frame. For $Z \in \MatRing{g}{\CC}$
+let $\PeriodBlock{Z} := \smallColVec{Z}{\IdentityBlock{g}} \in
+\MatRing{2g\times g}{\CC}$.
+\begin{enumerate}
+\item There is a unique $\SiegelPoint{\Frame} \in \SiegelSpace{g}$, the space
+  of complex symmetric $g\times g$ matrices with positive definite
+  imaginary part, such that $\Complexification{\Frame}^{-1}(\HodgeFiltration{A})$
+  is the column span of $\PeriodBlock{\SiegelPoint{\Frame}}$.
+\item For $\gamma \in \Sp{2g}{\ZZ}$ one has
+  $\SiegelPoint{\Frame\circ\gamma} = \gamma^{-1}\cdot\SiegelPoint{\Frame}$,
+  where $\smallMat{A'}{B'}{C'}{D'}\cdot Z = (A'Z + B')(C'Z+D')^{-1}$.
+\item Let $\NormalizedDifferential{\Frame}{j} \in \Differentials{A}$ be the
+  differential with $\PoincareDual{\RiemannForm{}}{\NormalizedDifferential{\Frame}{j}}
+  = \Complexification{\Frame}(\PeriodBlock{Z}\StdBasis{j})$, where
+  $Z = \SiegelPoint{\Frame}$. These form a basis of $\Differentials{A}$, and
+  for $x, y \in \StdModule{\ZZ}{g}$
+  \[
+    \Bigl(\Period{\Frame\smallColVec{x}{y}}{\NormalizedDifferential{\Frame}{j}}\Bigr)_{j}
+    = \transpose{\PeriodBlock{Z}}\StdSymplectic{g}\smallColVec{x}{y} = Zy - x .
+  \]
+  Hence $A(\CC) \cong \CC^{g}/(\ZZ^{g} + Z\ZZ^{g})$.
+\end{enumerate}
+For $g = 1$ this recovers (1), (3) and (4) of \cref{prop:frame-tau}, with
+$\SiegelPoint{\Frame} = \PeriodPoint{\Frame}$ and $\PeriodBlock{\tau} =
+\PeriodVector{\tau}$.
+\end{proposition}
+
+\begin{proof}
+(1) $L := \Complexification{\Frame}^{-1}(\HodgeFiltration{A})$ is a Lagrangian
+for $\transpose{v}\StdSymplectic{g}w$ with $-i\,\transpose{u}\StdSymplectic{g}\overline{u} > 0$
+for $u \in L\setminus 0$ (Riemann relations, \cref{lem:riemann-relations}).
+If $u = \smallColVec{x}{0} \in L$, then $\transpose{u}\StdSymplectic{g}\overline{u} = 0$,
+so $u = 0$; hence the projection of $L$ onto the last $g$ coordinates is an
+isomorphism and $L$ is the column span of $\PeriodBlock{Z}$ for a unique
+$Z$. One computes $\transpose{\PeriodBlock{Z}}\StdSymplectic{g}\PeriodBlock{Z}
+= \transpose{Z} - Z$, so isotropy means $Z$ symmetric, and
+$\transpose{\PeriodBlock{Z}}\StdSymplectic{g}\overline{\PeriodBlock{Z}} = 2i\,\mathrm{Im}\,Z$,
+so positivity means $\mathrm{Im}\,Z$ positive definite. (2) The column span
+of $\gamma^{-1}\PeriodBlock{Z}$ is a positive Lagrangian, and writing
+$\gamma^{-1} = \smallMat{A'}{B'}{C'}{D'}$ one has
+$\gamma^{-1}\PeriodBlock{Z} = \PeriodBlock{\gamma^{-1}\cdot Z}(C'Z+D')$, where
+$C'Z+D'$ is invertible by the argument of (1). (3) As in (4) of
+\cref{prop:frame-tau}, using Poincar\'e duality for the Hodge filtration
+(\cref{prop:poincare-hodge}); the computation is
+$\StdSymplectic{g}\smallColVec{x}{y} = \smallColVec{y}{-x}$ and $Z$ symmetric.
+The last statement follows from the canonical period map
+(\cref{prop:canonical-period-map}) using the coordinates
+$\NormalizedDifferential{\Frame}{j}(0)$ on $\LieAlg{A}$; note
+$-\ZZ^{g} = \ZZ^{g}$.
+\end{proof}
+
+\begin{lemma}[Equivariance of the Siegel lattice map]\label{lem:siegel-equivariance}
+\slogan{The higher dimensional version of the equivariance of the
+determinant pairing.}
+Let $g \geq 1$, $Z \in \SiegelSpace{g}$, and define
+$\SiegelLatticeMap{Z} \colon \StdModule{\RR}{2g} \to \CC^{g}$ by
+$\SiegelLatticeMap{Z}(v) := \transpose{\PeriodBlock{Z}}\StdSymplectic{g}v$. Let
+$\gamma = \smallMat{A'}{B'}{C'}{D'} \in \GSp{2g}{\RR}$ with
+$\transpose{\gamma}\StdSymplectic{g}\gamma = \SimilitudeFactor\StdSymplectic{g}$,
+$\SimilitudeFactor > 0$. Then $C'Z+D'$ is invertible, $\gamma\cdot Z \in
+\SiegelSpace{g}$, and
+\[
+  \SiegelLatticeMap{\gamma\cdot Z}(\gamma v) =
+  \SimilitudeFactor\,\invtranspose{(C'Z+D')}\SiegelLatticeMap{Z}(v)
+  \qquad\text{for all } v .
+\]
+For $g = 1$, $\SimilitudeFactor = \det\gamma$ and this is the equivariance
+of the determinant pairing (\cref{lem:det-pairing-equivariance}).
+\end{lemma}
+
+\begin{proof}
+The first two statements are standard. From
+$\gamma\PeriodBlock{Z} = \PeriodBlock{\gamma\cdot Z}(C'Z+D')$ one gets
+$\transpose{\PeriodBlock{\gamma\cdot Z}}\StdSymplectic{g}\gamma v =
+\invtranspose{(C'Z+D')}\transpose{\PeriodBlock{Z}}\transpose{\gamma}
+\StdSymplectic{g}\gamma v$.
+\end{proof}
+
+\begin{remark}
+For non-principal polarisations of type $D = \mathrm{diag}(d_1, \ldots, d_g)$
+one replaces $\StdSymplectic{g}$ by $\smallMat{0}{D}{-D}{0}$; we do not need
+this.
+\end{remark}
+
+\subsection{Dictionary}
+
+The following table summarises where the objects live, for an elliptic
+curve $E$ with an oriented frame $\Frame$ and $\tau := \PeriodPoint{\Frame}$.
+
+\medskip
+\noindent
+\begin{tabular}{L{0.29\textwidth}L{0.33\textwidth}L{0.3\textwidth}}
+\textbf{Object} & \textbf{Canonical home} & \textbf{In the frame $\Frame$}\\ \hline
+cycle & $\Homology{E}{\ZZ}$ & column vector $v \in \StdModule{\ZZ}{2}$\\
+Riemann form $\RiemannForm{E}$ & $\textstyle\bigwedge^{2}\Cohomology{E}{\ZZ}$ & $\DetPair{v}{w} = \transpose{v}\Sform w$\\
+Hodge filtration & line in $\Homology{E}{\CC}$ & $\CC\PeriodVector{\tau}$, $\PeriodVector{\tau} = \transpose{(\tau,1)}$\\
+normalised differential & $\Differentials{E} = \HodgeOneZero{E}$ & row of periods $(-1, \tau)$ in the dual frame\\
+its Poincar\'e dual & $\HodgeFiltration{E}$ & $\PeriodVector{\tau}$\\
+period of $\FrameDifferential{\Frame}$ along $\Frame(v)$ & $\CC$ & $\DetPair{\PeriodVector{\tau}}{v} = \LatticeBasis{\tau}(v)$\\
+Lie algebra & $\Homology{E}{\CC}/\HodgeFiltration{E}$ & $\CC$ with coordinate $z$, $dz = \FrameDifferential{\Frame}$\\
+lattice & $\PeriodInclusion{E}(\Homology{E}{\ZZ}) \subseteq \LieAlg{E}$ & $\LatticeOf{\tau} = \ZZ + \ZZ\tau$\\
+torsion points & $\Homology{E}{\QQ}/\Homology{E}{\ZZ}$ & $\StdModule{\QQ}{2}/\StdModule{\ZZ}{2}$\\
+$N$-torsion & $\tfrac{1}{N}\Homology{E}{\ZZ}/\Homology{E}{\ZZ}$ & $\tfrac{1}{N}\StdModule{\ZZ}{2}/\StdModule{\ZZ}{2}$; $\StdLevel{\tau}{N} = (\Frame \bmod N)/N$\\
+Weil pairing & on $\tfrac{1}{N}\Homology{E}{\ZZ}/\Homology{E}{\ZZ}$ & $\exp(2\pi i N\DetPair{v}{w})$\\
+rational Tate module & $\Homology{E}{\FiniteAdeles{\QQ}}$ & $\StdModule{\FiniteAdeles{\QQ}}{2}$\\
+big picture & lattices in $\Homology{E}{\QQ}$ mod $\unit{\QQ}$ & lattices in $\StdModule{\QQ}{2}$ mod $\unit{\QQ}$\\
+change of frame & $\Frame \mapsto \Frame\circ\gamma$ & $\tau \mapsto \gamma^{-1}\tau$
+\end{tabular}
+\medskip

@@ -1,0 +1,198 @@
+\section{Helling's theorem, adelically}\label{sec:helling}
+
+\begin{definition}[Points of type $N$]\label{def:points-of-type}
+Let $N \geq 1$ be squarefree. A point $x \in \BigPicture$ is \emph{of type
+$N$} if $x_p$ is the midpoint of an edge of $\Tree{p}$ for $p \mid N$ and a
+vertex of $\Tree{p}$ for $p \nmid N$. The \emph{standard point of type $N$}
+is $\StdConfig{N}$ with $(\StdConfig{N})_p =
+\Midpoint{\LocalBaseVertex{p}}{\LocalStdVertex{p}{p}}$ for $p \mid N$ and
+$(\StdConfig{N})_p = \LocalBaseVertex{p}$ for $p \nmid N$. Put
+\[
+  \MaxCompact{N} := \Stab_{\AdelicGroup}(\StdConfig{N}).
+\]
+\end{definition}
+
+\begin{lemma}[The standard maximal compact subgroups]\label{lem:U_N}
+\slogan{$\MaxCompact{N}$ is the adelic Atkin--Lehner group
+$\GammaZeroStar[ad]{N}$, and it is compact open.}
+Let $N \geq 1$ be squarefree. Then $\MaxCompact{N} = \GammaZeroStar[ad]{N}$,
+it is a compact open subgroup of $\AdelicGroup$, and
+$\TypeMap \colon \MaxCompact{N} \to \TypeGroup{N}$ is surjective with kernel
+$\GammaZero[ad]{N}$.
+\end{lemma}
+
+\begin{proof}
+For squarefree $N$ the local snake at $p \mid N$ is the edge from
+$\LocalBaseVertex{p}$ to $\LocalStdVertex{p}{p}$, and stabilising its
+midpoint is the same as stabilising the edge setwise; so
+$\MaxCompact{N} = \GammaZeroStar[ad]{N}$, and the last statement is the
+structure of the Atkin--Lehner group (\cref{lem:atkin-lehner-group}). The
+stabiliser of $(\StdConfig{N})_p$ in $\PGL{2}{\pAdicNumbers{p}}$ is compact
+open and equals $\PGL{2}{\pAdicIntegers{p}}$ for $p \nmid N$, so the stabiliser
+of $\StdConfig{N}$ in $\PGL{2}{\FiniteAdeles{\QQ}}$ is compact open. Its
+preimage under the proper map $\ProjectionToPGL$
+(\cref{lem:structure-G-plus}) is compact open.
+\end{proof}
+
+\begin{lemma}[$\StdConfig{N}$ is the only fixed point]\label{lem:U_N-fixed}
+\slogan{A large enough subgroup of $\MaxCompact{N}$ fixes only the standard
+point.}
+Let $N \geq 1$ be squarefree and let $V \subseteq \MaxCompact{N}$ be a
+subgroup whose image in $\PGL{2}{\pAdicNumbers{p}}$ contains the image of
+$\unit{\IwahoriOrder{p}}\cap\SL{2}{\pAdicIntegers{p}}$ and an element
+inverting the edge from $\LocalBaseVertex{p}$ to $\LocalStdVertex{p}{p}$ for
+every $p \mid N$, and contains the image of $\SL{2}{\pAdicIntegers{p}}$ for
+every $p \nmid N$. Then $\FixedSet{V} = \{\StdConfig{N}\}$. This applies to
+$V = \MaxCompact{N}$ and to the closure of $\GammaZeroStar[lift]{N}$ in
+$\AdelicGroup$.
+\end{lemma}
+
+\begin{proof}
+The action on $\BigPicture$ is coordinatewise, so
+$\FixedSet{V} = \prod_p \FixedSet{V_p}$ with $V_p$ the image at $p$; apply
+the fixed points of the standard local groups
+(\cref{lem:local-fixed-points}). For the closure of $\GammaZeroStar[lift]{N}$
+use that $\GammaZero[lift]{N}$ is dense in the elements of determinant one
+of the preimage of $\GammaZero[ad]{N}$ by strong approximation for
+$\SL{2}{}$ (\cref{lem:strong-approx-eichler}), and that the Atkin--Lehner
+matrices invert the edges (\cref{lem:global-al}).
+\end{proof}
+
+\begin{lemma}[Transitivity on points of type $N$]\label{lem:transitive}
+\slogan{All points of type $N$ are rationally conjugate to the standard
+one.}
+Let $N \geq 1$ be squarefree. The group $\RationalLiftGroup$, and hence
+$\AdelicGroup$, acts transitively on the points of type $N$.
+\end{lemma}
+
+\begin{proof}
+Let $x$ be of type $N$. For $p \mid N$ choose an endpoint $v_p$ of the edge
+containing $x_p$, and let $v \in \BigPictureVertices$ have components $v_p$
+for $p \mid N$ and $x_p$ for $p \nmid N$. By \cref{lem:restricted-product}
+the class $v$ is represented by a lattice $\gamma\StdModule{\ZZ}{2}$ with
+$\gamma \in \GL{2}{\QQ}$, and replacing $\gamma$ by $\gamma\Diagonal{1}{-1}$
+we may assume $\det\gamma > 0$. Then $\gamma^{-1}x$ is a point of type $N$
+whose edges at $p \mid N$ contain $\LocalBaseVertex{p}$, i.e.\ correspond to
+lines $\ell_p \subseteq \StdModule{\FF{p}}{2}$. Choose $\sigma_p \in
+\SL{2}{\FF{p}}$ mapping $\ell_p$ to $\FF{p}\StdBasis{1}$ and a lift
+$\sigma \in \SL{2}{\ZZ}$ of $(\sigma_p)_{p \mid N}$ (reduction
+$\SL{2}{\ZZ} \to \SL{2}{\ResidueRing{N}}$ is surjective). Then
+$\sigma\gamma^{-1}x = \StdConfig{N}$.
+\end{proof}
+
+\begin{lemma}[Compact subgroups fix a point of some type]
+\label{lem:compact-fixes-type}
+\slogan{Every compact subgroup of $\AdelicGroup$ fixes a vertex or edge
+midpoint in every tree, and almost always the base vertex.}
+Let $U \subseteq \AdelicGroup$ be a compact subgroup. Then $U$ fixes a
+point of type $N$ for some squarefree $N \geq 1$.
+\end{lemma}
+
+\begin{proof}
+The image $\ProjectionToPGL(U)$ is compact, so it is contained in
+$\prod_{p \in P} C_p \times \prod_{p \notin P}\PGL{2}{\pAdicIntegers{p}}$ for a
+finite set of primes $P$ and compact sets $C_p$. Hence $U$ fixes
+$\LocalBaseVertex{p}$ for $p \notin P$. For $p \in P$ the orbit of
+$\LocalBaseVertex{p}$ under the compact image of $U$ is finite (vertex
+stabilisers are open), so $U$ fixes a vertex or an edge midpoint of
+$\Tree{p}$ (\cref{lem:finite-orbit}).
+\end{proof}
+
+\begin{theorem}[Adelic Helling theorem]\label{thm:adelic-helling}
+\slogan{The maximal compact subgroups of
+$\GL{2}{\FiniteAdeles{\QQ}}/\PositiveRationals$ are the conjugates of the
+Atkin--Lehner groups $\GammaZeroStar[ad]{N}$, $N$ squarefree.}
+\begin{enumerate}
+\item For squarefree $N \geq 1$ the group $\MaxCompact{N} =
+  \GammaZeroStar[ad]{N}$ is a compact open subgroup of $\AdelicGroup$.
+\item Every compact subgroup of $\AdelicGroup$ is contained in a conjugate
+  of $\MaxCompact{N}$ for some squarefree $N \geq 1$.
+\item The maximal compact subgroups of $\AdelicGroup$ are exactly the
+  conjugates of the $\MaxCompact{N}$, and $\MaxCompact{N}$ is conjugate to
+  $\MaxCompact{N'}$ if and only if $N = N'$.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+(1) is the lemma on the standard maximal compact subgroups
+(\cref{lem:U_N}). (2): by \cref{lem:compact-fixes-type} a compact $U$ fixes
+a point $x$ of some type $N$, and by transitivity on points of type $N$
+(\cref{lem:transitive}) $x = g\StdConfig{N}$, so $U \subseteq
+g\MaxCompact{N}g^{-1}$. (3): if $\MaxCompact{N} \subseteq g\MaxCompact{N'}g^{-1}
+= \Stab(g\StdConfig{N'})$, then $g\StdConfig{N'} = \StdConfig{N}$ because
+$\StdConfig{N}$ is the only fixed point of $\MaxCompact{N}$
+(\cref{lem:U_N-fixed}). Being a vertex or a midpoint at $p$ is preserved
+by isometries, so $N = N'$, and then $g \in \MaxCompact{N}$.
+\end{proof}
+
+\begin{corollary}[Compact subgroups of trivial type]
+\label{cor:type-trivial-in-glzhat}
+Let $U \subseteq \AdelicGroup$ be a compact subgroup with $\TypeMap(U) = 0$.
+Then $U$ is contained in a conjugate of
+$\AdelicProjection(\GL{2}{\ProfiniteIntegers})$.
+\end{corollary}
+
+\begin{proof}
+By the adelic Helling theorem (\cref{thm:adelic-helling}) $U \subseteq
+g\MaxCompact{N}g^{-1}$, and since the type map is a homomorphism to an
+abelian group, $U \subseteq g\GammaZero[ad]{N}g^{-1} \subseteq
+g\AdelicProjection(\GL{2}{\ProfiniteIntegers})g^{-1}$ by \cref{lem:U_N}.
+\end{proof}
+
+\begin{lemma}[Closures of commensurable groups]\label{lem:closure-commensurable}
+\slogan{A subgroup of $\RationalProjGroup$ commensurable with
+$\PSL{2}{\ZZ}$ has compact closure with finite fixed set.}
+Let $\Gamma \subseteq \RationalProjGroup$ be commensurable with
+$\PSL{2}{\ZZ}$ and let $\lifted{\Gamma} := \CoarseningMap^{-1}(\Gamma) \cap
+(\RationalLiftGroup)$. Then the closure $\Closure{\lifted{\Gamma}}$ of
+$\lifted{\Gamma}$ in $\AdelicGroup$ is compact, and $\FixedSet{\Closure{\lifted{\Gamma}}}
+\subseteq \BigPicture$ is finite and nonempty.
+\end{lemma}
+
+\begin{proof}
+The group $\lifted{\Gamma}_0 := \lifted{\Gamma} \cap \SL{2}{\ZZ}$ has finite
+index in $\lifted{\Gamma}$ and in $\SL{2}{\ZZ}$. Its closure is a closed
+subgroup of finite index of $\SL{2}{\ProfiniteIntegers}$, hence open in it,
+hence contains $\{g \in \SL{2}{\ProfiniteIntegers} : g \equiv 1 \bmod M\}$ for
+some $M$. So $\Closure{\lifted{\Gamma}}$ is a finite union of translates of a
+compact group, and its fixed set is contained in the product of the balls
+of radius $\val{p}{M}$ around the $\LocalBaseVertex{p}$
+(\cref{lem:fixed-principal}), which is finite. It is nonempty by
+\cref{lem:compact-fixes-type}.
+\end{proof}
+
+\begin{corollary}[Helling's theorem]\label{cor:helling}
+\slogan{Every group commensurable with $\PSL{2}{\ZZ}$ is conjugate into a
+unique $\GammaZeroStar{N}$, $N$ squarefree, and these are maximal.}
+Let $\Gamma \subseteq \RationalProjGroup$ be commensurable with
+$\PSL{2}{\ZZ}$. Then there are a squarefree $N \geq 1$ and
+$\gamma \in \RationalProjGroup$ with $\gamma\Gamma\gamma^{-1} \subseteq
+\GammaZeroStar{N}$. The groups $\GammaZeroStar{N}$ are maximal among the
+subgroups of $\RationalProjGroup$ commensurable with $\PSL{2}{\ZZ}$, and
+$\GammaZeroStar{N}$, $\GammaZeroStar{N'}$ are conjugate if and only if
+$N = N'$ \cite{Helling1970}.
+\end{corollary}
+
+\begin{proof}
+By \cref{lem:closure-commensurable} and \cref{lem:compact-fixes-type} the
+closure of $\lifted{\Gamma}$ fixes a point $x$ of some type $N$. By rational
+transitivity on points of type $N$ (\cref{lem:transitive}) there is
+$\gamma \in \RationalLiftGroup$ with $\gamma x = \StdConfig{N}$, so
+$\gamma\lifted{\Gamma}\gamma^{-1} \subseteq \MaxCompact{N} \cap
+(\RationalLiftGroup) = \GammaZeroStar[lift]{N}$ by \cref{lem:U_N}. For
+maximality and uniqueness argue as in the adelic Helling theorem
+(\cref{thm:adelic-helling}), using that the closure of
+$\GammaZeroStar[lift]{N}$ has $\StdConfig{N}$ as its only fixed point
+(\cref{lem:U_N-fixed}).
+\end{proof}
+
+\begin{remark}
+By the closure of commensurable groups (\cref{lem:closure-commensurable}),
+the argument applies equally to non-congruence subgroups. Since the
+normaliser in $\PSL{2}{\RR}$ of a subgroup commensurable with
+$\PSL{2}{\ZZ}$ is contained in the commensurator $\RationalProjGroup$ of
+$\PSL{2}{\ZZ}$, statements about normalisers in $\PSL{2}{\RR}$ follow from
+the corresponding statements in $\RationalProjGroup$.
+\todo[inline]{Add a reference for the commensurator of $\PSL{2}{\ZZ}$ in
+$\PSL{2}{\RR}$.}
+\end{remark}

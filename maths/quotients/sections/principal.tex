@@ -1,0 +1,212 @@
+\section{Principal congruence subgroups of the Atkin--Lehner groups}
+\label{sec:principal}
+
+\subsection{Definitions}
+
+\begin{definition}[Eichler orders]\label{def:eichler-order}
+For $N \geq 1$ the \emph{Eichler order of level $N$} is
+$\EichlerOrder{N} := \{\smallMat{a}{b}{Nc}{d} : a,b,c,d \in \ZZ\} \subseteq
+\MatRing{2}{\ZZ}$, and $\AdelicEichlerOrder{N} := \EichlerOrder{N}
+\otimes\ProfiniteIntegers \subseteq \MatRing{2}{\ProfiniteIntegers}$. For a prime
+$p$ the \emph{Iwahori order} is $\IwahoriOrder{p} = \EichlerOrder{p}\otimes
+\pAdicIntegers{p}$ (as in \cref{lem:local-fixed-points}).
+\end{definition}
+
+\begin{definition}[Principal congruence subgroups of level $(N;M)$]
+\label{def:principal-NM}
+Let $N, M \geq 1$ with $N$ squarefree. Define
+\begin{align*}
+  \GammaPrincipal[ad]{N}{M} &:= \AdelicProjection\{g \in \unit{\AdelicEichlerOrder{N}} :
+  g \equiv 1 \bmod M\AdelicEichlerOrder{N}\} \subseteq \AdelicGroup,\\
+  \GammaPrincipal[lift]{N}{M} &:= \GammaFull[lift]{M}\cap\GammaZero[lift]{NM}
+  = \{\gamma \in \SL{2}{\ZZ} : \gamma \equiv 1 \bmod M\EichlerOrder{N}\}.
+\end{align*}
+\end{definition}
+
+\begin{lemma}[{Lifted version of $\GammaPrincipal[ad]{N}{M}$}]
+\label{lem:principal-lifted}
+Let $N, M \geq 1$ with $N$ squarefree. The lifted version of
+$\GammaPrincipal[ad]{N}{M}$ in the sense of \cref{def:versions} is
+$\GammaPrincipal[lift]{N}{M}$. Moreover $\GammaPrincipal[ad]{N}{1} =
+\GammaZero[ad]{N}$, $\GammaPrincipal[ad]{1}{M} = \GammaFull[ad]{M}$, and
+$M\EichlerOrder{N}$ is the set of matrices $X \in \MatRing{2}{\ZZ}$ with
+$X \equiv 0 \bmod M$ and $X_{21} \equiv 0 \bmod NM$.
+\end{lemma}
+
+\begin{proof}
+The rational elements are described by \cref{lem:rational-points-glzhat};
+the rest is immediate from the definitions.
+\end{proof}
+
+\begin{lemma}[$M\EichlerOrder{N}$ is a two-sided ideal]\label{lem:eichler-ideal}
+Let $N, M \geq 1$. Then $M\EichlerOrder{N}$ is a two-sided ideal of
+$\EichlerOrder{N}$, and for every prime $p$ the Iwahori order satisfies
+$\IwahoriOrder{p} w = w\IwahoriOrder{p} =: \IwahoriRadical{p}$ and
+$\IwahoriRadical{p}^{2} = p\IwahoriOrder{p}$, where $w = \smallMat{0}{1}{p}{0}$
+and $\IwahoriRadical{p} = \{X \in \MatRing{2}{\pAdicIntegers{p}} :
+p \mid X_{11}, X_{21}, X_{22}\}$ is the Jacobson radical of
+$\IwahoriOrder{p}$. In particular $w$ normalises $\IwahoriOrder{p}$ and
+$p^{k}\IwahoriOrder{p}$ for all $k \geq 0$.
+\end{lemma}
+
+\begin{proof}
+The first statement is clear. One computes
+$\smallMat{a}{b}{pc}{d}w = \smallMat{pb}{a}{pd}{pc}$ and
+$w\smallMat{a}{b}{pc}{d} = \smallMat{pc}{d}{pa}{pb}$, both of which run
+through $\IwahoriRadical{p}$. Then $\IwahoriRadical{p}^{2} =
+\IwahoriOrder{p}w^{2}\IwahoriOrder{p} = p\IwahoriOrder{p}$ since $w^{2} = p$.
+The quotient $\IwahoriOrder{p}/\IwahoriRadical{p} \cong \FF{p}\times\FF{p}$
+(diagonal entries) is semisimple and $\IwahoriRadical{p}$ is topologically
+nilpotent, so it is the Jacobson radical.
+\end{proof}
+
+\subsection{Normality and the core}
+
+\begin{proposition}[{$\GammaPrincipal[ad]{N}{M}$ is normal in the
+Atkin--Lehner group}]\label{prop:principal-normal}
+\slogan{$\GammaPrincipal{N}{M}$ is normal in $\GammaZeroStar{N}$.}
+Let $N, M \geq 1$ with $N$ squarefree. Then $\GammaPrincipal[ad]{N}{M}$ is a
+normal compact open subgroup of $\MaxCompact{N} = \GammaZeroStar[ad]{N}$ of
+trivial type, and $\GammaPrincipal[lift]{N}{M}$ is a normal subgroup of
+$\GammaZeroStar[lift]{N}$.
+\end{proposition}
+
+\begin{proof}
+$\GammaPrincipal[ad]{N}{M}$ is the image of the product over $p$ of the
+groups $1 + p^{\val{p}{M}}(\EichlerOrder{N}\otimes\pAdicIntegers{p})$ (unit
+groups), which is compact open. It is normalised by
+$\unit{(\EichlerOrder{N}\otimes\pAdicIntegers{p})}$ because
+$M\EichlerOrder{N}$ is a two-sided ideal, and by the local flips at
+$p \mid N$ because they normalise $\IwahoriOrder{p}$ and its ideals
+$p^{k}\IwahoriOrder{p}$ (\cref{lem:eichler-ideal}; the local flip differs
+from $w$ by an element of $\unit{\IwahoriOrder{p}}$ up to scalars). By the
+structure of the Atkin--Lehner group (\cref{lem:atkin-lehner-group}) these
+generate $\MaxCompact{N}$ together with the centre. The lifted statement
+follows by intersecting with $\RationalLiftGroup$
+(\cref{lem:principal-lifted}).
+\end{proof}
+
+\begin{proposition}[$\GammaPrincipal{N}{M}$ is a core]\label{prop:principal-core}
+\slogan{$\GammaPrincipal{N}{M}$ is the largest subgroup of $\GammaFull{M}$
+normal in $\GammaZeroStar{N}$.}
+Let $N, M \geq 1$ with $N$ squarefree. Then
+\[
+  \GammaPrincipal[ad]{N}{M} = \Core{\MaxCompact{N}}{\GammaFull[ad]{M}\cap\MaxCompact{N}},
+  \qquad
+  \GammaPrincipal[lift]{N}{M} = \Core{\GammaZeroStar[lift]{N}}{\GammaFull[lift]{M}}.
+\]
+\end{proposition}
+
+\begin{proof}
+The inclusions $\subseteq$ hold because the left hand sides are normal
+(\cref{prop:principal-normal}) and contained in the principal congruence
+subgroup. Conversely the core is contained in
+$\GammaFull[ad]{M} \cap w\GammaFull[ad]{M}w^{-1}$ for every local flip
+$w = \ALflip{p,N}$; at $p$ one has
+$\MatRing{2}{\pAdicIntegers{p}} \cap w\MatRing{2}{\pAdicIntegers{p}}w^{-1} =
+\IwahoriOrder{p}$, since conjugation by $w$ maps
+$\smallMat{a}{b}{c}{d}$ to $\smallMat{d}{-c/p}{-pb}{a}$. Hence the local
+component at $p$ of an element of the core lies in
+$1 + p^{\val{p}{M}}\IwahoriOrder{p}$ (for $\val{p}{M} = 0$: in
+$\unit{\IwahoriOrder{p}}$). For the lifted statement use that
+$\ALmatrix{N}$ maps to $\GammaZero[ad]{N}\prod_{p\mid N}\ALflip{p,N}$
+(\cref{lem:global-al}) and that $\GammaZero[ad]{N}$ normalises
+$\GammaFull[ad]{M}$.
+\end{proof}
+
+\begin{lemma}[Strong approximation for Eichler orders]
+\label{lem:strong-approx-eichler}
+Let $N, n \geq 1$. Reduction induces a surjection from
+$\GammaZero[lift]{N}$ onto the group of elements of determinant $1$ in
+$\unit{(\EichlerOrder{N}/n\EichlerOrder{N})}$.
+\end{lemma}
+
+\begin{proof}
+By strong approximation for $\SL{2}{}$, $\SL{2}{\QQ}$ is dense in
+$\SL{2}{\FiniteAdeles{\QQ}}$; hence $\GammaZero[lift]{N} = \SL{2}{\QQ} \cap
+\unit{\AdelicEichlerOrder{N}}$ is dense in the open subgroup of determinant
+one elements of $\unit{\AdelicEichlerOrder{N}}$, which surjects onto the
+determinant one elements of the finite quotient.
+\end{proof}
+
+\begin{proposition}[Intersections and products]\label{prop:lcm-gcd}
+\slogan{$\GammaPrincipal{N}{M}$ satisfies the lcm and gcd laws in $M$.}
+Let $N, M, M' \geq 1$ with $N$ squarefree. Then
+\begin{align*}
+  \GammaPrincipal[ad]{N}{M} \cap \GammaPrincipal[ad]{N}{M'} &=
+  \GammaPrincipal[ad]{N}{\mathrm{lcm}(M,M')},\\
+  \GammaPrincipal[ad]{N}{M}\,\GammaPrincipal[ad]{N}{M'} &=
+  \GammaPrincipal[ad]{N}{\gcd(M,M')},
+\end{align*}
+and the same holds for the lifted versions.
+\end{proposition}
+
+\begin{proof}
+Adelically the groups are images of products of local groups
+$1 + p^{k}(\EichlerOrder{N}\otimes\pAdicIntegers{p})$, which form a decreasing
+chain in $k$; intersections and products are computed prime by prime. For
+the lifted versions, the intersection is immediate. For the product, both
+groups contain $C := \GammaPrincipal[lift]{N}{\mathrm{lcm}(M,M')}$, which is
+normal in $\GammaZero[lift]{N}$, and $\GammaZero[lift]{N}/C$ is the product
+over $p$ of the determinant one parts of the local quotients by strong
+approximation for Eichler orders (\cref{lem:strong-approx-eichler}); the
+images of $\GammaPrincipal[lift]{N}{M}$ and $\GammaPrincipal[lift]{N}{M'}$ are
+products of local subgroups, and the adelic argument applies.
+\end{proof}
+
+\subsection{The centred level}
+
+\begin{definition}[Centred level]\label{def:centred-level}
+Let $U \subseteq \AdelicGroup$ be a centred compact open subgroup with
+$N := \HellingLevel{U}$. Let $\CentredLevelQuotient{U}$ be the least
+$M \geq 1$ with $\GammaPrincipal[ad]{N}{M} \subseteq U$, and
+$\CentredLevel{U} := N\cdot\CentredLevelQuotient{U}$ the \emph{centred
+level}. For a centred $\Gamma \subseteq \RationalProjGroup$ commensurable
+with $\PSL{2}{\ZZ}$ and containing a principal congruence subgroup, define
+$\CentredLevelQuotient{\Gamma}$ and $\CentredLevel{\Gamma}$ in the same way
+using $\GammaPrincipal[lift]{N}{M} \subseteq \lifted{\Gamma}$.
+\end{definition}
+
+\begin{lemma}[The centred level is well defined]\label{lem:centred-level-well-defined}
+In the situation of \cref{def:centred-level}, the set of $M$ with
+$\GammaPrincipal[ad]{N}{M} \subseteq U$ is nonempty and consists of the
+multiples of $\CentredLevelQuotient{U}$; likewise in the classical case.
+Moreover $\CentredLevel{U}$ is the level of the core
+$\GammaPrincipal{N}{\CentredLevelQuotient{U}}$, i.e.\ the least $L$ with
+$\GammaFull[lift]{L} \subseteq \GammaPrincipal[lift]{N}{\CentredLevelQuotient{U}}$,
+and it only depends on the conjugacy class of $U$.
+\end{lemma}
+
+\begin{proof}
+Nonempty since $U$ is open; closed under gcd by the product law
+(\cref{prop:lcm-gcd}); closed under multiples since the groups decrease.
+The statement about levels follows from the description of
+$M\EichlerOrder{N}$ in \cref{lem:principal-lifted}. Conjugacy invariance:
+centred conjugates are conjugate under $\MaxCompact{N}$ (\cref{prop:centring}),
+which normalises $\GammaPrincipal[ad]{N}{M}$ (\cref{prop:principal-normal}).
+\end{proof}
+
+\begin{example}[Centred levels]\label{ex:centred-levels}
+\begin{enumerate}
+\item $\GammaZeroStar[ad]{N}$ and $\GammaZero[ad]{N}$ ($N$ squarefree) have
+  Helling level $N$ and $\CentredLevelQuotient{} = 1$, so centred level $N$.
+\item For $p \geq 3$ the centred conjugate of $\GammaZero[ad]{p^{2}}$ in
+  \cref{ex:centring-examples} contains $\GammaFull[ad]{p}$ but not
+  $\GammaPrincipal[ad]{1}{1}$, so it has centred level $p$.
+\item For $p \geq 3$ the centred conjugate of $\GammaZero[ad]{p^{3}}$ in
+  \cref{ex:centring-examples} contains $\GammaPrincipal[ad]{p}{p} =
+  \{g \equiv 1 \bmod p,\ c \equiv 0 \bmod p^{2}\}$ but not
+  $\GammaPrincipal[ad]{p}{1} = \GammaZero[ad]{p}$, so it has Helling level
+  $p$ and centred level $p^{2}$, while the classical level of
+  $\GammaZero{p^{3}}$ is $p^{3}$.
+\end{enumerate}
+\end{example}
+
+\begin{remark}
+If $U \subseteq \AdelicGroup$ is centred, then $\lifted{U}$ is centred with
+the same Helling level and $\CentredLevelQuotient{\lifted{U}}$ divides
+$\CentredLevelQuotient{U}$, since $\GammaPrincipal[ad]{N}{M} \subseteq U$
+implies $\GammaPrincipal[lift]{N}{M} \subseteq \lifted{U}$.
+\todo[inline]{The first claim needs the fixed set of the closure of
+$\lifted{U}$ to have the same centre as $\FixedSet{U}$; check.}
+\end{remark}

@@ -1,0 +1,301 @@
+% notation.tex -- all notation of the document is declared here.
+% Every macro is semantic: change the rendering here, not in the text.
+
+% ---------------------------------------------------------------------
+% Packages
+% ---------------------------------------------------------------------
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{etoolbox}
+\usepackage{array}
+\usepackage{tikz-cd}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage[hidelinks]{hyperref}
+\usepackage[capitalise,nameinlink]{cleveref}
+
+% ---------------------------------------------------------------------
+% Theorem environments
+% ---------------------------------------------------------------------
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{setup}[theorem]{Setup}
+\newtheorem{convention}[theorem]{Convention}
+\newtheorem{example}[theorem]{Example}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\crefname{setup}{Setup}{Setups}
+\crefname{convention}{Convention}{Conventions}
+
+% Stacks project style slogan, used as the first line of a statement.
+\newcommand{\slogan}[1]{\textit{Slogan: #1}\par\smallskip\noindent}
+
+% ---------------------------------------------------------------------
+% Number systems, rings, spaces
+% ---------------------------------------------------------------------
+\newcommand{\NN}{\mathbb{N}}
+\newcommand{\ZZ}{\mathbb{Z}}
+\newcommand{\QQ}{\mathbb{Q}}
+\newcommand{\RR}{\mathbb{R}}
+\newcommand{\CC}{\mathbb{C}}
+\newcommand{\FF}[1]{\mathbb{F}_{#1}}
+\newcommand{\pAdicIntegers}[1]{\ZZ_{#1}}
+\newcommand{\pAdicNumbers}[1]{\QQ_{#1}}
+\newcommand{\ProfiniteIntegers}{\widehat{\ZZ}}
+\newcommand{\Adeles}[1]{\mathbb{A}_{#1}}
+\newcommand{\FiniteAdeles}[1]{\mathbb{A}_{#1,f}}
+\newcommand{\PositiveRationals}{\QQ_{>0}}
+\newcommand{\unit}[1]{#1^{\times}}
+\newcommand{\ResidueRing}[1]{\ZZ/#1\ZZ}
+\newcommand{\AffineSpace}[2]{\mathbb{A}^{#2}_{#1}}
+\newcommand{\ProjectiveSpace}[2]{\mathbb{P}^{#2}_{#1}}
+\newcommand{\ProjectiveLine}[1]{\mathbb{P}^{1}(#1)}
+\newcommand{\UpperHalfPlane}{\mathfrak{H}}
+\newcommand{\SlitPlane}{\CC\setminus\RR}
+\newcommand{\ExtendedUpperHalfPlane}{\mathfrak{H}^{*}}
+\newcommand{\RootOfUnity}[1]{\zeta_{#1}}
+\newcommand{\CyclotomicField}[1]{\QQ(\RootOfUnity{#1})}
+\newcommand{\MaxAbelian}{\QQ^{\mathrm{ab}}}
+\newcommand{\StdBasis}[1]{e_{#1}}
+\newcommand{\StdModule}[2]{#1^{#2}}
+
+% ---------------------------------------------------------------------
+% Matrix groups and matrix operations
+% ---------------------------------------------------------------------
+% An empty second argument gives the group scheme name, e.g. \GL{2}{}.
+\newcommand{\optring}[1]{\ifstrempty{#1}{}{(#1)}}
+\newcommand{\GL}[2]{\mathrm{GL}_{#1}\optring{#2}}
+\newcommand{\SL}[2]{\mathrm{SL}_{#1}\optring{#2}}
+\newcommand{\PGL}[2]{\mathrm{PGL}_{#1}\optring{#2}}
+\newcommand{\PSL}[2]{\mathrm{PSL}_{#1}\optring{#2}}
+\newcommand{\GLplus}[2]{\mathrm{GL}_{#1}^{+}(#2)}
+\newcommand{\PGLplus}[2]{\mathrm{PGL}_{#1}^{+}(#2)}
+\newcommand{\MatRing}[2]{\mathrm{M}_{#1}(#2)}
+\newcommand{\Mat}[4]{\begin{pmatrix} #1 & #2 \\ #3 & #4 \end{pmatrix}}
+\newcommand{\smallMat}[4]{\left(\begin{smallmatrix} #1 & #2 \\ #3 & #4 \end{smallmatrix}\right)}
+\newcommand{\ColVec}[2]{\begin{pmatrix} #1 \\ #2 \end{pmatrix}}
+\newcommand{\smallColVec}[2]{\left(\begin{smallmatrix} #1 \\ #2 \end{smallmatrix}\right)}
+\newcommand{\IdMat}{1}
+\newcommand{\transpose}[1]{{#1}^{\mathsf{T}}}
+\newcommand{\invtranspose}[1]{{#1}^{-\mathsf{T}}}
+\newcommand{\adjugate}[1]{#1^{\mathrm{adj}}}
+\newcommand{\DetPair}[2]{\det(#1\mid #2)}
+\newcommand{\Sform}{S}
+\newcommand{\Diagonal}[2]{\mathrm{diag}(#1,#2)}
+\newcommand{\MobiusAction}[2]{#1\cdot #2}
+
+% ---------------------------------------------------------------------
+% Ambient groups
+% ---------------------------------------------------------------------
+% G^+ = GL_2(A_f)/Q_{>0}: the primary ambient group.
+\newcommand{\AdelicGroup}{\mathcal{G}^{+}}
+% G = GL_2(A_f)/Q^*: the group acting faithfully on the modular tower.
+\newcommand{\AdelicGroupCoarse}{\mathcal{G}}
+% GL_2(Q)^+/Q_{>0}: the rational lift.
+\newcommand{\RationalLiftGroup}{\GLplus{2}{\QQ}/\PositiveRationals}
+% PGL_2(Q)^+: the classical (projective) group.
+\newcommand{\RationalProjGroup}{\PGLplus{2}{\QQ}}
+\newcommand{\AdelicProjection}{\pi}
+\newcommand{\CoarseningMap}{\varpi}
+\newcommand{\ProjectionToPGL}{\rho}
+
+% Versions of a group: adelic (in G^+), lifted (in GL_2(Q)^+/Q_{>0}),
+% plain (in PGL_2(Q)^+), and SL_2 version.
+\newcommand{\adelic}[1]{\widehat{#1}}
+\newcommand{\lifted}[1]{\widetilde{#1}}
+\newcommand{\slversion}[1]{\lifted{#1}\cap\SL{2}{\QQ}}
+
+% Decoration switch for the standard groups: [ad], [lift] or [] (plain).
+\newcommand{\GammaSymbol}{\Gamma}
+\newcommand{\grpdecor}[2]{\ifstrequal{#1}{ad}{\adelic{#2}}{\ifstrequal{#1}{lift}{\lifted{#2}}{#2}}}
+\newcommand{\GammaZero}[2][]{\grpdecor{#1}{\GammaSymbol}_{0}(#2)}
+\newcommand{\GammaUpperZero}[2][]{\grpdecor{#1}{\GammaSymbol}^{0}(#2)}
+\newcommand{\GammaOne}[2][]{\grpdecor{#1}{\GammaSymbol}_{1}(#2)}
+\newcommand{\GammaFull}[2][]{\grpdecor{#1}{\GammaSymbol}(#2)}
+\newcommand{\GammaZeroStar}[2][]{\grpdecor{#1}{\GammaSymbol}_{0}(#2)^{*}}
+\newcommand{\GammaZeroPlus}[3][]{\grpdecor{#1}{\GammaSymbol}_{0}(#2)+#3}
+\newcommand{\GammaConway}[3][]{\grpdecor{#1}{\GammaSymbol}_{0}(#2\,|\,#3)}
+\newcommand{\GammaConwayStar}[3][]{\grpdecor{#1}{\GammaSymbol}_{0}(#2\,|\,#3)^{*}}
+\newcommand{\GammaPrincipal}[3][]{\grpdecor{#1}{\GammaSymbol}(#2;#3)}
+\newcommand{\GammaOfLevel}[2][]{\grpdecor{#1}{\GammaSymbol}_{#2}}
+\newcommand{\BorelMod}[1]{B(#1)}
+\newcommand{\CommutatorSubgroup}[1]{[#1,#1]}
+
+% ---------------------------------------------------------------------
+% Group theory
+% ---------------------------------------------------------------------
+\DeclareMathOperator{\Stab}{Stab}
+\DeclareMathOperator{\Aut}{Aut}
+\DeclareMathOperator{\Hom}{Hom}
+\DeclareMathOperator{\Isom}{Isom}
+\DeclareMathOperator{\Gal}{Gal}
+\DeclareMathOperator{\Ker}{ker}
+\DeclareMathOperator{\Img}{im}
+\DeclareMathOperator{\Coker}{coker}
+\DeclareMathOperator{\Tr}{tr}
+\DeclareMathOperator{\CoreOp}{core}
+\newcommand{\Normalizer}[2]{N_{#1}(#2)}
+\newcommand{\Centralizer}[2]{C_{#1}(#2)}
+\newcommand{\Core}[2]{\CoreOp_{#1}(#2)}
+\newcommand{\ConjClasses}[1]{\mathrm{Cl}(#1)}
+\newcommand{\ConjClassesBy}[2]{\mathrm{Cl}_{#1}(#2)}
+\newcommand{\ConjClassOf}[1]{[#1]}
+\newcommand{\Index}[2]{[#1:#2]}
+\newcommand{\Closure}[1]{\overline{#1}}
+\newcommand{\FibreProduct}[3]{#1\times_{#3}#2}
+\newcommand{\Fibre}[2]{#1^{(#2)}}
+\newcommand{\Diag}[1]{#1_{\mathrm{diag}}}
+\newcommand{\CentralizerImage}[1]{S(#1)}
+\newcommand{\FibreAction}{\ast}
+\newcommand{\ModularAut}[1]{\Aut_{\mathrm{mod}}(#1)}
+\newcommand{\GeomModularAut}[1]{A(#1)}
+
+% ---------------------------------------------------------------------
+% Valuations, divisors, types
+% ---------------------------------------------------------------------
+\newcommand{\val}[2]{v_{#1}(#2)}
+\newcommand{\NumPrimeFactors}[1]{\omega(#1)}
+\newcommand{\PsiIndex}[1]{\psi(#1)}
+\newcommand{\EulerPhi}[1]{\varphi(#1)}
+\newcommand{\HallDivides}{\,\Vert\,}
+\newcommand{\TypeGroup}[1]{T_{#1}}
+\newcommand{\TypeGroupAll}{T}
+\newcommand{\TypeMap}{\mathrm{t}}
+\newcommand{\TypeProduct}[2]{#1\ast #2}
+\newcommand{\ALimage}[1]{W_{#1}}
+\newcommand{\ALdim}[1]{d(#1)}
+\newcommand{\DetClass}{\delta}
+
+% ---------------------------------------------------------------------
+% The big picture
+% ---------------------------------------------------------------------
+\newcommand{\Tree}[1]{T_{#1}}
+\newcommand{\TreeRealization}[1]{|T_{#1}|}
+\newcommand{\BigPicture}{\mathcal{B}}
+\newcommand{\BigPictureVertices}{\mathcal{V}}
+\newcommand{\LocalVertexSet}[1]{\mathcal{V}_{#1}}
+\newcommand{\LatticeClass}[1]{[#1]}
+\newcommand{\BaseVertex}{o}
+\newcommand{\LocalBaseVertex}[1]{o_{#1}}
+\newcommand{\StdLattice}[1]{L_{#1}}
+\newcommand{\StdVertex}[1]{o(#1)}
+\newcommand{\LocalStdVertex}[2]{o(#1)_{#2}}
+\newcommand{\HyperDistance}[2]{\delta(#1,#2)}
+\newcommand{\TreeDistance}[3]{d_{#1}(#2,#3)}
+\newcommand{\Midpoint}[2]{m(#1,#2)}
+\newcommand{\Geodesic}[2]{[#1,#2]}
+\newcommand{\FixedSet}[1]{\mathrm{Fix}(#1)}
+\newcommand{\LocalFixedSet}[2]{\mathrm{Fix}_{#1}(#2)}
+\newcommand{\ConvexHull}[1]{\mathrm{hull}(#1)}
+\newcommand{\Centre}[1]{c(#1)}
+\newcommand{\LocalCentre}[2]{c_{#1}(#2)}
+\newcommand{\StdConfig}[1]{c_{#1}}
+\newcommand{\MaxCompact}[1]{\mathcal{U}_{#1}}
+\newcommand{\Snake}[1]{\mathcal{S}_{#1}}
+\newcommand{\Diameter}[1]{\mathrm{diam}(#1)}
+
+% ---------------------------------------------------------------------
+% Invariants of (centred) groups
+% ---------------------------------------------------------------------
+\newcommand{\HellingLevel}[1]{\operatorname{hl}(#1)}
+\newcommand{\CentredLevelQuotient}[1]{\operatorname{m}(#1)}
+\newcommand{\CentredLevel}[1]{\operatorname{cl}(#1)}
+\newcommand{\QuotientGroup}[2]{Q_{#1,#2}}
+\newcommand{\LiftedQuotientGroup}[2]{\widetilde{Q}_{#1,#2}}
+\newcommand{\AdelicQuotientGroup}[2]{\widehat{Q}_{#1,#2}}
+
+% ---------------------------------------------------------------------
+% Orders, Atkin-Lehner elements, diamond operators
+% ---------------------------------------------------------------------
+\newcommand{\EichlerOrder}[1]{R_{0}(#1)}
+\newcommand{\AdelicEichlerOrder}[1]{\widehat{R}_{0}(#1)}
+\newcommand{\IwahoriOrder}[1]{\Lambda_{#1}}
+\newcommand{\IwahoriRadical}[1]{J_{#1}}
+\newcommand{\Iwahori}[1]{I_{#1}}
+\newcommand{\NormalizerIwahori}[1]{\mathcal{N}_{#1}}
+\newcommand{\ALmatrix}[1]{W_{#1}}
+\newcommand{\ALlocal}[1]{w_{#1}}
+\newcommand{\ALflip}[1]{w_{#1}}
+\newcommand{\ALconj}[1]{\phi_{#1}}
+\newcommand{\ALcocycle}[2]{\kappa(#1,#2)}
+\newcommand{\diamondop}[1]{\langle #1\rangle}
+\newcommand{\ModelTuple}[4]{(#1,#2,#3,#4)}
+
+% ---------------------------------------------------------------------
+% Modular curves and moduli
+% ---------------------------------------------------------------------
+\newcommand{\ModCurve}[1]{X_{#1}}
+\newcommand{\OpenModCurve}[1]{Y_{#1}}
+\newcommand{\ComplexPoints}[1]{#1(\CC)}
+\newcommand{\PeriodVector}[1]{w_{#1}}
+\newcommand{\LatticeOf}[1]{L_{#1}}
+\newcommand{\EllCurve}[1]{E_{#1}}
+\newcommand{\LatticeBasis}[1]{b_{#1}}
+\newcommand{\StdLevel}[2]{\beta_{#1,#2}}
+\newcommand{\Torsion}[2]{#1[#2]}
+\newcommand{\WeilPairing}[1]{e_{#1}}
+\newcommand{\LevelStructure}{\alpha}
+\newcommand{\LevelClass}[2]{#1#2}
+\newcommand{\ModuliPoint}[2]{(#1,#2)}
+\newcommand{\DoubleCosetFinite}[1]{\GL{2}{\ZZ}\backslash(\SlitPlane)\times\GL{2}{\ResidueRing{#1}}}
+\newcommand{\ConstantField}[1]{K_{#1}}
+\newcommand{\Artin}{\mathrm{art}}
+\newcommand{\Reciprocity}[1]{\sigma_{#1}}
+\newcommand{\ModAut}[1]{\alpha_{#1}}
+\newcommand{\GaloisSemilinearAut}[2]{\Aut_{#1}(#2)}
+
+% ---------------------------------------------------------------------
+% Complex abelian varieties without coordinates (appendix)
+% ---------------------------------------------------------------------
+\newcommand{\GSp}[2]{\mathrm{GSp}_{#1}\optring{#2}}
+\newcommand{\Sp}[2]{\mathrm{Sp}_{#1}\optring{#2}}
+\newcommand{\SimilitudeFactor}{\nu}
+\newcommand{\LieAlg}[1]{\mathrm{Lie}(#1)}
+\newcommand{\Differentials}[1]{H^{0}(#1,\Omega^{1}_{#1})}
+\newcommand{\Homology}[2]{H_{1}(#1,#2)}
+\newcommand{\Cohomology}[2]{H^{1}(#1,#2)}
+\newcommand{\HodgeOneZero}[1]{H^{1,0}(#1)}
+\newcommand{\ExpMap}[1]{\exp_{#1}}
+\newcommand{\PeriodInclusion}[1]{\iota_{#1}}
+\newcommand{\Period}[2]{\int_{#1}#2}
+\newcommand{\ComplexStructure}[1]{J_{#1}}
+\newcommand{\HodgePiece}[3]{\Homology{#1}{\CC}^{#2,#3}}
+\newcommand{\HodgeFiltration}[1]{F^{0}\Homology{#1}{\CC}}
+\newcommand{\FrameDifferential}[1]{\omega_{#1}}
+\newcommand{\DualFrame}[1]{#1^{\vee}}
+\newcommand{\PoincareMap}[1]{\mathrm{PD}_{#1}}
+\newcommand{\Complexification}[1]{{#1}_{\CC}}
+\newcommand{\Realification}[1]{{#1}_{\RR}}
+\newcommand{\IntersectionPairing}[2]{#1\cdot #2}
+\newcommand{\RiemannForm}[1]{\psi_{#1}}
+\newcommand{\PoincareDual}[2]{u_{#1}(#2)}
+\newcommand{\Annihilator}[1]{#1^{\perp}}
+\newcommand{\Frame}{b}
+\newcommand{\PeriodPoint}[1]{\tau_{#1}}
+\newcommand{\SiegelPoint}[1]{Z_{#1}}
+\newcommand{\SiegelSpace}[1]{\mathfrak{H}_{#1}}
+\newcommand{\StdSymplectic}[1]{S_{#1}}
+\newcommand{\PeriodBlock}[1]{P_{#1}}
+\newcommand{\SiegelLatticeMap}[1]{b_{#1}}
+\newcommand{\TorusOf}[1]{A_{#1}}
+\newcommand{\NormalizedDifferential}[2]{\omega_{#1,#2}}
+\newcommand{\FreeModule}{\mathcal{H}}
+\newcommand{\DivisibleGroup}[1]{\mathcal{D}(#1)}
+\newcommand{\DivTorsion}[2]{\mathcal{D}(#1)[#2]}
+\newcommand{\AbstractTate}[1]{\widehat{T}(\mathcal{D}(#1))}
+\newcommand{\pAdicTate}[2]{T_{#1}(\mathcal{D}(#2))}
+\newcommand{\DivisionMap}[1]{\mathrm{div}_{#1}}
+\newcommand{\TateModule}[1]{\widehat{T}(#1)}
+\newcommand{\RationalTateModule}[1]{V_{f}(#1)}
+\newcommand{\IdentityBlock}[1]{1_{#1}}
+\newcommand{\Covolume}[1]{\mathrm{covol}(#1)}
+
+% ---------------------------------------------------------------------
+% Labels
+% ---------------------------------------------------------------------
+\newcommand{\LabelString}[1]{\texttt{#1}}

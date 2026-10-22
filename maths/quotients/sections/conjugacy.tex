@@ -1,0 +1,109 @@
+\section{Conjugacy classes in fibre products}\label{sec:conjugacy}
+
+To compute Gassmann classes of subgroups of the finite quotients of
+\cref{sec:quotients} one needs their conjugacy classes. By the fibre
+product decomposition (\cref{thm:fibre-product}) these come from the
+prime power pieces, but not simply as products.
+
+\begin{setup}[Fibre products over an abelian group]\label{setup:fibre-product}
+Let $A$ be an abelian group and $\pi_i \colon G_i \to A$, $i = 1, \ldots, r$,
+surjective homomorphisms of groups with kernels $K_i$. Let
+$G := \{(g_i)_i \in \prod_i G_i : \pi_1(g_1) = \cdots = \pi_r(g_r)\}$ and
+$\pi \colon G \to A$ the common value. For $a \in A$ write
+$\Fibre{G_i}{a} := \pi_i^{-1}(a)$ and $\Fibre{G}{a} := \pi^{-1}(a)$. For
+$x_i \in G_i$ put $\CentralizerImage{x_i} := \pi_i(\Centralizer{G_i}{x_i})
+\subseteq A$.
+\end{setup}
+
+\begin{lemma}[Types are conjugation invariant]\label{lem:types-invariant}
+In \cref{setup:fibre-product}, conjugation in $G$ (respectively $G_i$)
+preserves each $\Fibre{G}{a}$ (respectively $\Fibre{G_i}{a}$).
+\end{lemma}
+
+\begin{proof}
+$A$ is abelian.
+\end{proof}
+
+\begin{lemma}[Conjugation by the kernel is componentwise]
+\label{lem:kernel-componentwise}
+In \cref{setup:fibre-product}, $K := \prod_i K_i$ is a normal subgroup of
+$G$ with $G/K \cong A$, and the $K$-conjugacy classes in $\Fibre{G}{a}$ are
+the products of $K_i$-conjugacy classes in the $\Fibre{G_i}{a}$.
+\end{lemma}
+
+\begin{proof}
+$K$ is the kernel of $\pi$, which is surjective; and $K$ acts on
+$\prod_i G_i$ componentwise.
+\end{proof}
+
+\begin{lemma}[The diagonal action]\label{lem:diagonal-action}
+\slogan{Conjugacy classes of a fibre product are orbits of the base group
+on tuples of local kernel classes.}
+In \cref{setup:fibre-product}, for $b \in A$ and a $K_i$-conjugacy class
+$C \subseteq \Fibre{G_i}{a}$ put $b\FibreAction C := hCh^{-1}$ for any
+$h \in \Fibre{G_i}{b}$. This is a well defined action of $A$ on the set
+$\ConjClassesBy{K_i}{\Fibre{G_i}{a}}$ of $K_i$-classes, the stabiliser of
+the class of $x_i$ is $\CentralizerImage{x_i}$, and
+\[
+  \ConjClassesBy{G}{\Fibre{G}{a}} \cong
+  \Bigl(\prod_i \ConjClassesBy{K_i}{\Fibre{G_i}{a}}\Bigr)/A,
+\]
+with $A$ acting diagonally.
+\end{lemma}
+
+\begin{proof}
+Two elements of $\Fibre{G_i}{b}$ differ by an element of $K_i$. The
+stabiliser statement: $hx_ih^{-1}$ is $K_i$-conjugate to $x_i$ if and only
+if $kh$ centralises $x_i$ for some $k \in K_i$. The last statement follows
+from \cref{lem:kernel-componentwise}, since every element of $G$ is an
+element of $K$ times $(h_i)_i$ with all $h_i$ of the same type.
+\end{proof}
+
+\begin{proposition}[Fibres over local classes]\label{prop:fibres-over-local}
+\slogan{Over a tuple of local classes, the global classes form a torsor
+under $\Coker(A \to \prod A/S_i)$.}
+In \cref{setup:fibre-product}, the map
+$\ConjClassesBy{G}{\Fibre{G}{a}} \to \prod_i \ConjClassesBy{G_i}{\Fibre{G_i}{a}}$
+is surjective. Its fibre over $(\ConjClassOf{x_i})_i$ is a torsor under
+\[
+  \Coker\Bigl(A \xrightarrow{\ \mathrm{diag}\ } \prod_i A/\CentralizerImage{x_i}\Bigr),
+\]
+of cardinality $\prod_i\Index{A}{\CentralizerImage{x_i}}\big/
+\Index{A}{\bigcap_i\CentralizerImage{x_i}}$. Concretely, $x = (x_i)_i$ and
+$y = (y_i)_i$ in $\Fibre{G}{a}$ are conjugate in $G$ if and only if there
+are $u_i \in G_i$ with $y_i = u_ix_iu_i^{-1}$ such that the element
+$(\pi_i(u_i) \bmod \CentralizerImage{x_i})_i$ lies in the image of the
+diagonal; this element does not depend on the choice of the $u_i$ modulo
+the image of the diagonal.
+\end{proposition}
+
+\begin{proof}
+The $G_i$-class of $x_i$ is the $A$-orbit of its $K_i$-class
+(\cref{lem:diagonal-action}), isomorphic to $A/\CentralizerImage{x_i}$ as
+an $A$-set; so the fibre is the quotient of $\prod_i A/\CentralizerImage{x_i}$
+by the diagonal action of $A$, which since $A$ is abelian is the cokernel
+of the diagonal map, acting simply transitively. The cardinality is
+$\#\prod_i(A/\CentralizerImage{x_i})$ divided by the order of the image of
+$A$, which is $\Index{A}{\bigcap_i\CentralizerImage{x_i}}$.
+\end{proof}
+
+\begin{remark}[Canonical coordinates]\label{rem:basepoints}
+The group $\Coker(A \to \prod_i A/\CentralizerImage{x_i})$ is canonical,
+but to identify the fibre with it one has to choose a $K_i$-class inside
+each $G_i$-class (a basepoint). If the local conjugacy classes are labelled
+by invariants that are fine enough to distinguish $K_i$-classes, one can
+take the basepoint with the smallest label, which makes the coordinates
+canonical.
+\end{remark}
+
+\begin{example}[Application to the finite quotients]
+\label{ex:conjugacy-quotients}
+By the fibre product decomposition (\cref{thm:fibre-product}), the
+conjugacy classes of $\AdelicQuotientGroup{N}{M}$ and
+$\LiftedQuotientGroup{N}{M}$ are described by \cref{prop:fibres-over-local}
+with $A = \TypeGroup{N}$ and $G_i$ the prime power pieces. The kernels
+$K_i$ are the groups of \cref{prop:det-one-quotients} for $M = p_i^{k_i}$.
+For $p_i \nmid N$ they are (determinant one parts of)
+$\GL{2}{\ResidueRing{p_i^{k_i}}}$, and a type $e$ acts on their classes by
+conjugation by a matrix of determinant $e$.
+\end{example}

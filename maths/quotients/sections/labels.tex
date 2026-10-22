@@ -1,0 +1,71 @@
+\section{Towards labels}\label{sec:labels}
+
+This section summarises the current proposal for labelling (coarse)
+conjugacy classes of centred groups; it is not yet complete.
+
+\subsection{Invariants}
+For a centred compact open $U \subseteq \AdelicGroup$ (arithmetic label),
+or a centred $\Gamma \subseteq \RationalProjGroup$ commensurable with
+$\PSL{2}{\ZZ}$ (geometric label), the following are conjugacy invariants:
+\begin{enumerate}
+\item the Helling level $N = \HellingLevel{U}$ (\cref{def:helling-level});
+\item the centred level $L = \CentredLevel{U} = N\cdot\CentredLevelQuotient{U}$
+  (\cref{def:centred-level}), which for $N = 1$ is the minimal classical
+  level over all conjugates;
+\item the relative index $i = \Index{\MaxCompact{N}}{U}$, respectively
+  $\Index{\GammaZeroStar{N}}{\Gamma}$; the index relative to $\PSL{2}{\ZZ}$
+  is $i\,\PsiIndex{N}/2^{\NumPrimeFactors{N}}$, which need not be an
+  integer;
+\item the genus $g$;
+\item the Atkin--Lehner image $\ALimage{U} \subseteq \TypeGroup{N}$ and its
+  dimension $\ALdim{U}$ (\cref{def:al-image}), recorded as the set of
+  divisors $e$ of $N$ in it;
+\item the Gassmann class of the image of $U$ in the finite group
+  $\AdelicQuotientGroup{N}{L/N}$ (respectively of $\Gamma$ in
+  $\LiftedQuotientGroup{N}{L/N}$); since permutation characters inflate,
+  Gassmann equivalence does not depend on the chosen centred level.
+\end{enumerate}
+By centring (\cref{prop:centring}) conjugacy of centred groups is
+conjugacy of subgroups of these finite groups. The proposed label is
+\[
+  \LabelString{N.L.i.g.c.n},
+\]
+with $c$ a letter code for the Gassmann class and $n$ a tiebreaker, in
+analogy with the LMFDB labels $\LabelString{N.i.g.c.n}$ \cite{LMFDB}. The
+Atkin--Lehner image would be stored separately.
+
+\subsection{What the LMFDB does}
+The following summarises the code of Sutherland \cite{SutherlandMagma}
+(file \texttt{gl2base.m}).
+\begin{enumerate}
+\item Conjugacy classes of $\GL{2}{\ResidueRing{N}}$ (equivalently,
+  similarity classes) are labelled by a complete invariant: for each
+  $p^{e} \HallDivides N$ a quadruple $[j, z, d, t]$, where $j$ is maximal
+  with $A$ scalar modulo $p^{j}$, $z$ is that scalar, and $d, t$ are the
+  determinant and trace of $(A - z)/p^{j}$ modulo $p^{e-j}$, based on
+  \cite{AvniOnnPrasadVaserstein2009}. Classes are sorted lexicographically
+  by the list of quadruples; for composite $N$ the list is assembled by the
+  Chinese remainder theorem and then sorted.
+\item The Gassmann signature of $H \subseteq \GL{2}{\ResidueRing{N}}$ is the
+  vector of counts of elements of $H$ in the \emph{primitive} classes,
+  i.e.\ the minimal class among the generators of each conjugacy class of
+  cyclic subgroups, in the above order.
+\item For subgroups of $\SL{2}{}$ the signature is taken with respect to
+  $\GL{2}{}$-similarity classes of determinant one, which is coarser than
+  $\SL{2}{}$-Gassmann equivalence.
+\item The assignment of the letter $c$ and the tiebreaker $n$ is not in that
+  repository.
+\end{enumerate}
+
+\subsection{What remains}
+\todo[inline]{Find a complete invariant for conjugacy classes in
+$\unit{(\IwahoriOrder{p}/p^{k}\IwahoriOrder{p})}$ under conjugation by the
+normaliser of $\IwahoriOrder{p}$, the analogue of the similarity invariant.}
+\todo[inline]{For $p \nmid N$, refine the $\GL{2}{}$ similarity invariant by
+the class of the determinant modulo the determinants of the centraliser, so
+that it distinguishes the kernel classes needed for canonical basepoints
+(\cref{rem:basepoints}).}
+\todo[inline]{Fix the ordering of global classes as $\TypeGroup{N}$-orbit
+minima of tuples of local labels (\cref{prop:fibres-over-local}), the
+assignment of Gassmann letters and the tiebreaker, and the relation between
+arithmetic and geometric labels.}

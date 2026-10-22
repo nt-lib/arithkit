@@ -1,0 +1,381 @@
+\section{Conventions}\label{sec:conventions}
+
+Many binary choices enter the theory of modular curves: rows or columns,
+left or right actions, the direction of a level structure, the lattice
+attached to a point $\tau$ of the upper half plane. They influence each
+other, and the literature does not agree on them. In this section we make
+all choices explicit, starting from objects with an intrinsic meaning,
+and we compare with the literature at the end.
+
+\subsection{Matrices and level structures}
+
+\begin{convention}[Matrices act on columns]\label{conv:columns}
+For a commutative ring $R$ the elements of $\StdModule{R}{2}$ are column
+vectors, $\StdBasis{1} = \transpose{(1,0)}$ and
+$\StdBasis{2} = \transpose{(0,1)}$, and $A \in \MatRing{2}{R}$ acts on
+$\StdModule{R}{2}$ by $v \mapsto Av$. In particular the linear maps
+attached to $A$ and $B$ compose as $v \mapsto ABv$, and every group of
+matrices acts on $\StdModule{R}{2}$ on the left.
+\end{convention}
+
+\begin{convention}[Level structures]\label{conv:level}
+Let $N \geq 1$ and let $E$ be an elliptic curve over a field $k$ of
+characteristic not dividing $N$. A \emph{full level $N$ structure} on $E$
+is a group isomorphism
+$\LevelStructure \colon \StdModule{(\ResidueRing{N})}{2} \to \Torsion{E}{N}(\overline{k})$,
+as in \cite{KatzMazur1985}. The group $\GL{2}{\ResidueRing{N}}$ acts on the
+set of full level $N$ structures on the right by precomposition,
+$\LevelStructure \cdot h = \LevelStructure \circ h$. For a subgroup
+$H \subseteq \GL{2}{\ResidueRing{N}}$ an \emph{$H$-level structure} is an
+orbit $\LevelClass{\LevelStructure}{H}$.
+\end{convention}
+
+\begin{remark}
+Deligne and Rapoport use the opposite direction
+$\Torsion{E}{N} \to \StdModule{(\ResidueRing{N})}{2}$, on which
+$\GL{2}{\ResidueRing{N}}$ acts on the left
+\cite[IV.2.3, IV.3.1]{DeligneRapoport1973}. Passing from one to the other
+is $\LevelStructure \mapsto \LevelStructure^{-1}$, which also moves the
+action of $H$ to the other side.
+\end{remark}
+
+\begin{example}[The Borel subgroup]\label{ex:borel-moduli}
+Let $\BorelMod{N} \subseteq \GL{2}{\ResidueRing{N}}$ be the group of upper
+triangular matrices. For $h = \smallMat{a}{b}{0}{d} \in \BorelMod{N}$ one
+has $(\LevelStructure \circ h)(\StdBasis{1}) = a\,\LevelStructure(\StdBasis{1})$.
+Hence a $\BorelMod{N}$-level structure on $E$ is the same thing as the
+cyclic subgroup $\langle \LevelStructure(\StdBasis{1}) \rangle$ of order
+$N$. Similarly, for the group of matrices
+$\smallMat{1}{b}{0}{d}$ an $H$-level structure is the same thing as the
+point $\LevelStructure(\StdBasis{1})$ of order $N$.
+\end{example}
+
+\subsection{The lattice attached to a point of the slit plane}
+
+\begin{definition}[Period vector, lattice, level structure of $\tau$]
+\label{def:lattice-of-tau}
+Let $\tau \in \SlitPlane$. The \emph{period vector} of $\tau$ is
+$\PeriodVector{\tau} := \transpose{(\tau, 1)} \in \StdModule{\CC}{2}$.
+Define the $\RR$-linear map
+\[
+  \LatticeBasis{\tau} \colon \StdModule{\RR}{2} \to \CC, \qquad
+  v \mapsto \DetPair{\PeriodVector{\tau}}{v},
+\]
+the determinant of the $2\times 2$ complex matrix with columns
+$\PeriodVector{\tau}$ and $v$. Put
+$\LatticeOf{\tau} := \LatticeBasis{\tau}(\StdModule{\ZZ}{2})$ and
+$\EllCurve{\tau} := \CC/\LatticeOf{\tau}$. For $N \geq 1$ let
+\[
+  \StdLevel{\tau}{N} \colon \StdModule{(\ResidueRing{N})}{2} \to
+  \Torsion{\EllCurve{\tau}}{N}, \qquad
+  v \mapsto \tfrac{1}{N}\LatticeBasis{\tau}(v) \bmod \LatticeOf{\tau}.
+\]
+\end{definition}
+
+The point of using the determinant pairing, rather than the dot product
+$v \mapsto \transpose{\PeriodVector{\tau}} v$, is that it is equivariant
+for $\GL{2}{\RR}$ (\cref{lem:det-pairing-equivariance}); the dot product is
+only equivariant for the orthogonal group, which is where the transposes
+in other conventions come from (\cref{rem:literature}). Intrinsically,
+$\StdModule{\ZZ}{2}$ plays the role of $\Homology{\EllCurve{\tau}}{\ZZ}$, the
+determinant is its Riemann form, $\PeriodVector{\tau}$ spans its Hodge
+filtration, and $\LatticeBasis{\tau}$ is the period map of a normalised
+differential; see \cref{app:abelian}, in particular
+\cref{prop:frame-tau}.
+
+\begin{lemma}[Coordinates of the lattice of $\tau$]\label{lem:lattice-coordinates}
+\slogan{The lattice of $\tau$ has basis $-1, \tau$.}
+Let $\tau \in \SlitPlane$ and $N \geq 1$. Then
+$\LatticeBasis{\tau}(\StdBasis{1}) = -1$,
+$\LatticeBasis{\tau}(\StdBasis{2}) = \tau$,
+$\LatticeOf{\tau} = \ZZ + \ZZ\tau$ is a lattice in $\CC$, and
+$\StdLevel{\tau}{N}$ is a well defined group isomorphism. Moreover
+$\LatticeBasis{\tau}(v) = \transpose{\PeriodVector{\tau}}\,\Sform\, v$ with
+$\Sform = \smallMat{0}{1}{-1}{0}$.
+\end{lemma}
+
+\begin{proof}
+For $v = \transpose{(x,y)}$ one has
+$\DetPair{\PeriodVector{\tau}}{v} = \tau y - x =
+\transpose{\PeriodVector{\tau}} \Sform v$. Since $\tau \notin \RR$, the
+numbers $-1, \tau$ are $\RR$-linearly independent, so $\LatticeOf{\tau}$ is
+a lattice, $\LatticeBasis{\tau}$ restricts to an isomorphism
+$\StdModule{\ZZ}{2} \to \LatticeOf{\tau}$, and hence induces an isomorphism
+$\StdModule{(\ResidueRing{N})}{2} \cong \tfrac{1}{N}\LatticeOf{\tau}/\LatticeOf{\tau}
+= \Torsion{\EllCurve{\tau}}{N}$.
+\end{proof}
+
+\begin{lemma}[Inverse transpose is conjugation by $\Sform$]\label{lem:S-identity}
+\slogan{Transposes in $\GL{2}{}$ are inner, up to the determinant.}
+Let $R$ be a commutative ring and $\gamma \in \GL{2}{R}$. Then
+$\Sform \gamma \Sform^{-1} = \det(\gamma)\,(\transpose{\gamma})^{-1}$,
+where $\Sform = \smallMat{0}{1}{-1}{0}$.
+\end{lemma}
+
+\begin{proof}
+For $\gamma = \smallMat{a}{b}{c}{d}$ both sides equal
+$\smallMat{d}{-c}{-b}{a}$.
+\end{proof}
+
+\begin{lemma}[M\"obius transformations are the left action on lines]
+\label{lem:mobius}
+\slogan{$\gamma$ moves the period vector of $\tau$ to a multiple of the
+period vector of $\gamma\tau$.}
+Let $\gamma = \smallMat{a}{b}{c}{d} \in \GL{2}{\RR}$ and
+$\tau \in \SlitPlane$. Then $c\tau + d \neq 0$,
+$\MobiusAction{\gamma}{\tau} := (a\tau+b)/(c\tau+d) \in \SlitPlane$, and
+$\gamma \PeriodVector{\tau} = (c\tau + d)\,\PeriodVector{\gamma\tau}$.
+This defines a left action of $\GL{2}{\RR}$ on $\SlitPlane$, which
+preserves $\UpperHalfPlane$ for elements of positive determinant.
+\end{lemma}
+
+\begin{proof}
+Standard: $\gamma\PeriodVector{\tau} = \transpose{(a\tau+b, c\tau+d)}$, and
+$\mathrm{Im}(\gamma\tau) = \det(\gamma)\,\mathrm{Im}(\tau)/|c\tau+d|^{2}$.
+\end{proof}
+
+\begin{lemma}[Equivariance of the determinant pairing]
+\label{lem:det-pairing-equivariance}
+\slogan{The lattice of $\gamma\tau$ is the lattice of $\tau$ transported
+by $\gamma$.}
+Let $\gamma = \smallMat{a}{b}{c}{d} \in \GL{2}{\RR}$, $\tau \in \SlitPlane$
+and $v \in \StdModule{\RR}{2}$. Then
+\[
+  \LatticeBasis{\gamma\tau}(\gamma v) =
+  \det(\gamma)\,(c\tau + d)^{-1}\,\LatticeBasis{\tau}(v).
+\]
+In particular, for $\gamma \in \GL{2}{\ZZ}$ the map
+$z \mapsto \det(\gamma)(c\tau+d)^{-1} z$ is an isomorphism
+$\EllCurve{\tau} \to \EllCurve{\gamma\tau}$ which transforms
+$\StdLevel{\tau}{N}$ into $\StdLevel{\gamma\tau}{N} \circ \gamma$ for every
+$N \geq 1$.
+\end{lemma}
+
+\begin{proof}
+By the left action on lines (\cref{lem:mobius}),
+$\LatticeBasis{\gamma\tau}(\gamma v)
+= (c\tau+d)^{-1}\DetPair{\gamma\PeriodVector{\tau}}{\gamma v}
+= (c\tau+d)^{-1}\det(\gamma)\DetPair{\PeriodVector{\tau}}{v}$.
+For $\gamma \in \GL{2}{\ZZ}$ one has $\gamma\StdModule{\ZZ}{2} = \StdModule{\ZZ}{2}$,
+so the displayed identity says that multiplication by
+$\det(\gamma)(c\tau+d)^{-1}$ maps $\LatticeOf{\tau}$ onto
+$\LatticeOf{\gamma\tau}$, compatibly with the maps $\LatticeBasis{\tau}$ and
+$\LatticeBasis{\gamma\tau} \circ \gamma$.
+\end{proof}
+
+\begin{lemma}[Weil determinant of the standard level structure]
+\label{lem:weil-determinant}
+Normalise the Weil pairing on $\EllCurve{\tau}$, $\tau \in \UpperHalfPlane$,
+such that $\WeilPairing{N}(\tau/N, 1/N) = \exp(2\pi i/N)$, as in
+\cite{DiamondShurman2005}. Then
+$\WeilPairing{N}(\StdLevel{\tau}{N}(\StdBasis{1}), \StdLevel{\tau}{N}(\StdBasis{2}))
+= \exp(2\pi i/N)$.
+\end{lemma}
+
+\begin{proof}
+By the coordinates of the lattice of $\tau$ (\cref{lem:lattice-coordinates})
+the left hand side is $\WeilPairing{N}(-1/N, \tau/N)$, which equals
+$\WeilPairing{N}(\tau/N, 1/N)$ because the pairing is bilinear and
+alternating.
+\end{proof}
+
+\todo[inline]{Double check the normalisation of the Weil pairing in
+\cite{DiamondShurman2005} against \cite{KatzMazur1985} and
+\cite{DeligneRapoport1973}.}
+
+\subsection{Complex uniformisation}
+
+\begin{proposition}[Complex points of $\OpenModCurve{H}$]
+\label{prop:complex-uniformisation}
+\slogan{Elliptic curves with $H$-level structure are pairs $(\tau, g)$ up
+to $\GL{2}{\ZZ}$ on the left and $H$ on the right.}
+Let $N \geq 1$ and $H \subseteq \GL{2}{\ResidueRing{N}}$ a subgroup. Let
+$\GL{2}{\ZZ}$ act on $(\SlitPlane) \times \GL{2}{\ResidueRing{N}}$ on the
+left by $\gamma\cdot(\tau, g) = (\gamma\tau, \overline{\gamma} g)$, where
+$\overline{\gamma}$ is the reduction of $\gamma$ modulo $N$, and let $H$
+act on the right on the second factor. Then
+\begin{gather*}
+  \Phi \colon \GL{2}{\ZZ}\backslash\bigl((\SlitPlane)\times\GL{2}{\ResidueRing{N}}\bigr)/H
+  \longrightarrow
+  \{(E, \LevelClass{\LevelStructure}{H})\}/\cong,\\
+  (\tau, g) \mapsto (\EllCurve{\tau}, \LevelClass{(\StdLevel{\tau}{N}\circ g)}{H}),
+\end{gather*}
+where $E$ runs over elliptic curves over $\CC$, is a well defined
+bijection. It is compatible with the right actions of
+$\GL{2}{\ResidueRing{N}}$ when $H = \{1\}$.
+\end{proposition}
+
+\begin{proof}
+Well defined: by the equivariance of the determinant pairing
+(\cref{lem:det-pairing-equivariance}),
+$(\EllCurve{\gamma\tau}, \StdLevel{\gamma\tau}{N}\circ\overline{\gamma} g)
+\cong (\EllCurve{\tau}, \StdLevel{\tau}{N}\circ g)$ for $\gamma \in \GL{2}{\ZZ}$.
+
+Surjective: write $E = \CC/L$ and choose a basis
+$\omega \colon \StdModule{\ZZ}{2} \to L$. Put $\lambda := -\omega(\StdBasis{1})$
+and $\tau := -\omega(\StdBasis{2})/\omega(\StdBasis{1}) \in \SlitPlane$.
+Then $\omega = \lambda\LatticeBasis{\tau}$ by the coordinates of the lattice
+of $\tau$ (\cref{lem:lattice-coordinates}), so $z \mapsto \lambda^{-1}z$ is
+an isomorphism $E \to \EllCurve{\tau}$, and it transforms a level structure
+$\LevelStructure$ into $\StdLevel{\tau}{N}\circ g$ with
+$g := \StdLevel{\tau}{N}^{-1}\circ\lambda^{-1}\LevelStructure$.
+
+Injective: suppose $z \mapsto \mu z$ is an isomorphism
+$\EllCurve{\tau} \to \EllCurve{\tau'}$ transforming
+$\StdLevel{\tau}{N} \circ g$ into an element of
+$\LevelClass{(\StdLevel{\tau'}{N}\circ g')}{H}$. Both $\mu\LatticeBasis{\tau}$
+and $\LatticeBasis{\tau'}$ restrict to bases of $\LatticeOf{\tau'}$, so
+$\mu\LatticeBasis{\tau} = \LatticeBasis{\tau'}\circ\gamma$ for a unique
+$\gamma \in \GL{2}{\ZZ}$. Comparing with
+$\LatticeBasis{\gamma\tau}\circ\gamma = \det(\gamma)(c\tau+d)^{-1}\LatticeBasis{\tau}$
+shows that $\LatticeBasis{\tau'}$ and $\LatticeBasis{\gamma\tau}$ are
+proportional, hence $\tau' = \gamma\tau$ (the ratio
+$-\LatticeBasis{\tau}(\StdBasis{2})/\LatticeBasis{\tau}(\StdBasis{1})$
+recovers $\tau$), and that $\mu\StdLevel{\tau}{N} = \StdLevel{\tau'}{N}\circ\overline{\gamma}$.
+Therefore $\overline{\gamma} g \in g' H$, i.e.\ $(\tau', g') \in
+\gamma\cdot(\tau, g)\cdot H$.
+\end{proof}
+
+\begin{corollary}[Classical uniformisation without transposes]
+\label{cor:classical-uniformisation}
+\slogan{$\OpenModCurve{H}(\CC) = \GammaOfLevel{H}\backslash\UpperHalfPlane$
+with $\GammaOfLevel{H} = H \cap \SL{2}{\ZZ}$.}
+Let $N \geq 1$ and let $H \subseteq \GL{2}{\ResidueRing{N}}$ be a subgroup
+with $\det(H) = \unit{(\ResidueRing{N})}$. Let
+$\GammaOfLevel{H} := \{\gamma \in \SL{2}{\ZZ} : \overline{\gamma} \in H\}$.
+Then $\tau \mapsto (\tau, 1)$ induces a bijection
+\[
+  \GammaOfLevel{H}\backslash\UpperHalfPlane \longrightarrow
+  \GL{2}{\ZZ}\backslash\bigl((\SlitPlane)\times\GL{2}{\ResidueRing{N}}\bigr)/H .
+\]
+\end{corollary}
+
+\begin{proof}
+Surjective: given $(\tau, g)$, replace it by
+$\Diagonal{1}{-1}\cdot(\tau, g)$ if necessary to get
+$\tau \in \UpperHalfPlane$. Choose $h \in H$ with $\det(gh) = 1$ and a lift
+$\sigma \in \SL{2}{\ZZ}$ of $gh$ (reduction $\SL{2}{\ZZ} \to \SL{2}{\ResidueRing{N}}$
+is surjective). Then $(\tau, g)H = \sigma\cdot(\sigma^{-1}\tau, 1)H$.
+Injective: if $\gamma\cdot(\tau, 1) = (\tau', h)$ with
+$\tau, \tau' \in \UpperHalfPlane$ and $h \in H$, then $\det\gamma = 1$
+because $\gamma$ preserves $\UpperHalfPlane$, and
+$\overline{\gamma} = h \in H$, so $\gamma \in \GammaOfLevel{H}$.
+\end{proof}
+
+\begin{example}[The groups $\GammaZero{N}$, $\GammaOne{N}$, $\GammaFull{N}$]
+\label{ex:classical-groups}
+For $H = \BorelMod{N}$ one gets
+$\GammaOfLevel{H} = \{\smallMat{a}{b}{c}{d} \in \SL{2}{\ZZ} : N \mid c\}$, and
+$\tau$ corresponds to $(\EllCurve{\tau}, \langle 1/N\rangle)$ by
+the moduli description of $\BorelMod{N}$ (\cref{ex:borel-moduli}), since
+$\StdLevel{\tau}{N}(\StdBasis{1}) = -1/N$. For
+$H = \{\smallMat{1}{b}{0}{d}\}$ one gets the group of matrices with
+$c \equiv 0$ and $a \equiv d \equiv 1 \bmod N$, and $\tau$ corresponds to
+$(\EllCurve{\tau}, -1/N) \cong (\EllCurve{\tau}, 1/N)$. For $H = \{1\}$ one
+gets the principal congruence subgroup, and $\tau$ corresponds to
+$(\EllCurve{\tau}, (-1/N, \tau/N))$. These agree with
+\cite[Thm.~1.5.1]{DiamondShurman2005} and \cite[\S 7.2]{DiamondIm1995}.
+\end{example}
+
+\subsection{The adelic description}
+
+\begin{lemma}[Class number one for $\GL{2}{}$]\label{lem:gl2-class-number-one}
+\slogan{Every lattice in $\FiniteAdeles{\QQ}^{2}$ is rational.}
+One has $\GL{2}{\FiniteAdeles{\QQ}} = \GL{2}{\QQ}\,\GL{2}{\ProfiniteIntegers}$
+and $\GL{2}{\QQ} \cap \GL{2}{\ProfiniteIntegers} = \GL{2}{\ZZ}$ inside
+$\GL{2}{\FiniteAdeles{\QQ}}$.
+\end{lemma}
+
+\begin{proof}
+For $g \in \GL{2}{\FiniteAdeles{\QQ}}$ the set
+$L := g\StdModule{\ProfiniteIntegers}{2} \cap \StdModule{\QQ}{2}$ is a
+lattice in $\StdModule{\QQ}{2}$ whose closure is
+$g\StdModule{\ProfiniteIntegers}{2}$; writing $L = \gamma\StdModule{\ZZ}{2}$
+with $\gamma \in \GL{2}{\QQ}$ gives $\gamma^{-1}g \in \GL{2}{\ProfiniteIntegers}$.
+The second statement holds because a rational matrix that is integral at
+all primes, with determinant a unit at all primes, lies in $\GL{2}{\ZZ}$.
+\end{proof}
+
+\begin{definition}[Adelic double coset]\label{def:adelic-double-coset}
+For an open subgroup $\mathcal{K} \subseteq \GL{2}{\FiniteAdeles{\QQ}}$ put
+\[
+  \OpenModCurve{\mathcal{K}}(\CC) := \GL{2}{\QQ}\backslash\bigl((\SlitPlane)\times
+  \GL{2}{\FiniteAdeles{\QQ}}\bigr)/\mathcal{K},
+\]
+where $\GL{2}{\QQ}$ acts by $\gamma\cdot(\tau, g) = (\gamma\tau, \gamma g)$
+(diagonal left multiplication) and $\mathcal{K}$ acts by right
+multiplication on the second factor.
+\end{definition}
+
+\begin{proposition}[Finite level versus adelic level]\label{prop:finite-vs-adelic}
+\slogan{The adelic double coset with plain left multiplication recovers
+the finite level description.}
+Let $N \geq 1$, $H \subseteq \GL{2}{\ResidueRing{N}}$ a subgroup and
+$\mathcal{K} \subseteq \GL{2}{\ProfiniteIntegers}$ its preimage. Then the
+inclusion $\GL{2}{\ProfiniteIntegers} \subseteq \GL{2}{\FiniteAdeles{\QQ}}$
+and reduction modulo $N$ induce bijections
+\[
+  \GL{2}{\ZZ}\backslash\bigl((\SlitPlane)\times\GL{2}{\ResidueRing{N}}\bigr)/H
+  \cong
+  \GL{2}{\ZZ}\backslash\bigl((\SlitPlane)\times\GL{2}{\ProfiniteIntegers}\bigr)/\mathcal{K}
+  \cong \OpenModCurve{\mathcal{K}}(\CC).
+\]
+\end{proposition}
+
+\begin{proof}
+The first bijection holds because
+$\GL{2}{\ProfiniteIntegers}/\mathcal{K} = \GL{2}{\ResidueRing{N}}/H$. For the
+second, surjectivity follows from class number one for $\GL{2}{}$
+(\cref{lem:gl2-class-number-one}), and if
+$\gamma k u = k'$ with $\gamma \in \GL{2}{\QQ}$, $k, k' \in \GL{2}{\ProfiniteIntegers}$
+and $u \in \mathcal{K}$ then
+$\gamma \in \GL{2}{\QQ}\cap\GL{2}{\ProfiniteIntegers} = \GL{2}{\ZZ}$.
+\end{proof}
+
+\begin{remark}[Comparison with the literature]\label{rem:literature}
+\begin{enumerate}
+\item Diamond--Im \cite[\S 11.1, Rem.~11.1.1]{DiamondIm1995}, Shimura
+  \cite{Shimura1971}, Deligne \cite{DeligneTravaux1971,DeligneVarietes1979}
+  and Milne \cite{Milne2005} all write
+  $G(\QQ)\backslash X \times G(\FiniteAdeles{\QQ})/K$ with plain left
+  multiplication by $G(\QQ)$, as in \cref{def:adelic-double-coset}.
+  Diamond--Im define $U_0(N)$ by $c \equiv 0 \bmod N$, in agreement with
+  \cref{ex:classical-groups}. Their $U_1(N)$ is defined by $c \equiv 0$ and
+  $d \equiv 1$ instead of $a \equiv 1$; on $\SL{2}{}$ the two conditions
+  agree.
+  \todo[inline]{Check whether the $d \equiv 1$ version corresponds to the
+  $\mu_N \hookrightarrow E$ moduli problem $\mathcal{Y}_\mu(N)$ of
+  \cite[Variant 8.2.2]{DiamondIm1995} in our conventions.}
+\item Diamond--Shurman \cite{DiamondShurman2005} use the point $1/N$ and
+  the basis $(\tau/N, 1/N)$ of $\Torsion{\EllCurve{\tau}}{N}$; this agrees
+  with \cref{ex:classical-groups} after the change of basis $\Sform$.
+\item Rouse--Sutherland--Zureick-Brown \cite[\S 2]{RSZB2022} use column
+  vectors with a left action, upper triangular $\BorelMod{N}$, level
+  structures $\Torsion{E}{N} \to \StdModule{(\ResidueRing{N})}{2}$ with $H$
+  acting by postcomposition, and $\GammaOfLevel{H} = \pm H \cap \SL{2}{}$
+  without transpose. Up to $\LevelStructure \mapsto \LevelStructure^{-1}$
+  this agrees with \cref{conv:level} and
+  \cref{cor:classical-uniformisation}. They note that
+  \cite{RouseZureickBrown2015} uses right actions.
+\item Zywina \cite[Remark 3.6]{ZywinaExplicit2022} defines
+  $\GammaOfLevel{G} = G \cap \SL{2}{\ZZ}$ without transpose, but works with
+  the dual representation $\sigma \mapsto \transpose{\rho_E(\sigma^{-1})}$,
+  and warns that $\ModCurve{G}$ in other sources may be his
+  $\ModCurve{\transpose{G}}$.
+\item Deligne--Rapoport \cite[IV.5.1--5.3]{DeligneRapoport1973} use a basis
+  $\beta \colon \StdModule{\ZZ}{2} \to H_1(E,\ZZ)$ with
+  $z(\beta) = \beta(\StdBasis{1})/\beta(\StdBasis{2})$, a right action of
+  $\GL{2}{\ZZ}$ on bases written with transposed matrix entries, and the
+  double coset
+  $K\backslash X^{\pm}\times\GL{2}{\FiniteAdeles{\QQ}}/\GL{2}{\QQ}$. For our
+  basis $\LatticeBasis{\tau}$ one has $z = -1/\tau = \MobiusAction{\Sform}{\tau}$, and
+  their double coset is identified with ours by $g \mapsto g^{-1}$,
+  $\LevelStructure \mapsto \LevelStructure^{-1}$.
+\item Conway \cite{Conway1996} uses row vectors with a right action; his
+  statements translate to ours by transposition.
+\item In all cases the transposes that appear are explained by
+  inverse transpose being conjugation by $\Sform$
+  (\cref{lem:S-identity}), i.e.\ by the difference between the dot product
+  and the determinant pairing.
+\end{enumerate}
+\end{remark}

@@ -1,0 +1,220 @@
+\section{The finite quotients}\label{sec:quotients}
+
+\begin{definition}[Finite quotients]\label{def:finite-quotients}
+Let $N, M \geq 1$ with $N$ squarefree. Put
+\[
+  \AdelicQuotientGroup{N}{M} := \MaxCompact{N}/\GammaPrincipal[ad]{N}{M},
+  \qquad
+  \LiftedQuotientGroup{N}{M} := \GammaZeroStar[lift]{N}/\GammaPrincipal[lift]{N}{M}.
+\]
+These are finite groups by \cref{prop:principal-normal}. The classical
+quotient $\QuotientGroup{N}{M}$ is the quotient of $\LiftedQuotientGroup{N}{M}$
+by the image of $-1$.
+\end{definition}
+
+By centring (\cref{prop:centring}) and the definition of the centred level,
+every centred $U$ with $\HellingLevel{U} = N$ and
+$\CentredLevelQuotient{U} = M$ is the preimage of a subgroup of
+$\AdelicQuotientGroup{N}{M}$, and conjugacy of centred groups is conjugacy
+of subgroups of $\AdelicQuotientGroup{N}{M}$; similarly classically.
+
+\subsection{Fibre product decomposition}
+
+\begin{lemma}[Chinese remainder theorem for groups]\label{lem:goursat}
+\slogan{Normal subgroups that are pairwise ``coprime'' over $B$ give a fibre
+product decomposition.}
+Let $G$ be a group, $B \trianglelefteq G$ a normal subgroup and
+$A_1, \ldots, A_r \trianglelefteq G$ normal subgroups contained in $B$ such
+that $A_i\cdot\bigcap_{j \neq i}A_j = B$ for all $i$. Then the natural map
+\[
+  G/\textstyle\bigcap_{i}A_i \longrightarrow
+  \{(g_iA_i)_i \in \prod_i G/A_i : \text{all } g_iB \text{ are equal}\}
+\]
+is an isomorphism onto the iterated fibre product of the $G/A_i$ over
+$G/B$.
+\end{lemma}
+
+\begin{proof}
+Injectivity is clear. For surjectivity let $(g_iA_i)_i$ have a common
+image in $G/B$. The hypothesis also holds for the family
+$A_1, \ldots, A_{r-1}$, so by induction on $r$ there is $g \in G$ with
+$gA_j = g_jA_j$ for $j < r$. Then $g^{-1}g_r \in B =
+(\bigcap_{j<r}A_j)\cdot A_r$, say $g^{-1}g_r = ca$ with
+$c \in \bigcap_{j<r}A_j$ and $a \in A_r$. The element $h := gc$ satisfies
+$hA_j = gA_j = g_jA_j$ for $j < r$ and $hA_r = g_ra^{-1}A_r = g_rA_r$.
+\end{proof}
+
+\begin{theorem}[Fibre product decomposition]\label{thm:fibre-product}
+\slogan{$\GammaZeroStar{N}/\GammaPrincipal{N}{M}$ is a fibre product of its
+prime power pieces over the Atkin--Lehner types.}
+Let $N, M \geq 1$ with $N$ squarefree and $M = \prod_{i=1}^{r}p_i^{k_i}$.
+Then
+\[
+  \AdelicQuotientGroup{N}{M} \cong
+  \AdelicQuotientGroup{N}{p_1^{k_1}} \times_{\TypeGroup{N}} \cdots
+  \times_{\TypeGroup{N}} \AdelicQuotientGroup{N}{p_r^{k_r}},
+  \qquad
+  \LiftedQuotientGroup{N}{M} \cong
+  \LiftedQuotientGroup{N}{p_1^{k_1}} \times_{\TypeGroup{N}} \cdots
+  \times_{\TypeGroup{N}} \LiftedQuotientGroup{N}{p_r^{k_r}},
+\]
+where the maps to $\TypeGroup{N}$ are induced by the type map.
+\end{theorem}
+
+\begin{proof}
+Apply the Chinese remainder theorem for groups (\cref{lem:goursat}) with
+$G = \MaxCompact{N}$, $B = \GammaZero[ad]{N} = \GammaPrincipal[ad]{N}{1}$ and
+$A_i = \GammaPrincipal[ad]{N}{p_i^{k_i}}$, which are normal by
+\cref{prop:principal-normal}. The hypotheses are the lcm and gcd laws
+(\cref{prop:lcm-gcd}), and $G/B \cong \TypeGroup{N}$ by \cref{lem:U_N}. For
+the lifted version use $G = \GammaZeroStar[lift]{N}$,
+$B = \GammaZero[lift]{N}$ and \cref{lem:global-al}.
+\end{proof}
+
+\begin{remark}[Signs]\label{rem:signs}
+The decomposition fails for the classical (projective) groups:
+in $\PSL{2}{\ZZ}$ the images of $\GammaFull[lift]{3}$ and $\GammaFull[lift]{4}$
+intersect in more than the image of $\GammaFull[lift]{12}$, since a matrix
+congruent to $1$ modulo $3$ and to $-1$ modulo $4$ lies in both images.
+This is why we work with the lifted groups, in which $-1$ is a nontrivial
+element.
+\end{remark}
+
+\subsection{The local pieces and a computational model}
+
+\begin{proposition}[Coordinates on Eichler orders]\label{prop:eichler-model}
+Let $N, M \geq 1$. The map
+$\ModelTuple{a}{b}{c}{d} \mapsto \smallMat{a}{b}{Nc}{d}$ induces a bijection
+from $(\ResidueRing{M})^{4}$ to $\EichlerOrder{N}/M\EichlerOrder{N}$, under
+which
+\begin{align*}
+  \ModelTuple{a}{b}{c}{d}\cdot\ModelTuple{a'}{b'}{c'}{d'} &=
+  \ModelTuple{aa' + Nbc'}{ab' + bd'}{ca' + dc'}{Ncb' + dd'},\\
+  \det\ModelTuple{a}{b}{c}{d} &= ad - Nbc \in \ResidueRing{M},
+\end{align*}
+an element is a unit if and only if its determinant is a unit, and then its
+inverse is $\det^{-1}\ModelTuple{d}{-b}{-c}{a}$.
+\end{proposition}
+
+\begin{proof}
+Direct computation, using the description of $M\EichlerOrder{N}$ in
+\cref{lem:principal-lifted}.
+\end{proof}
+
+\begin{proposition}[Determinant one quotients]\label{prop:det-one-quotients}
+Let $N, M \geq 1$ with $N$ squarefree. Reduction induces isomorphisms
+\begin{gather*}
+  \GammaZero[ad]{N}/\GammaPrincipal[ad]{N}{M} \cong
+  \unit{(\EichlerOrder{N}/M\EichlerOrder{N})},\\
+  \GammaZero[lift]{N}/\GammaPrincipal[lift]{N}{M} \cong
+  \{x \in \unit{(\EichlerOrder{N}/M\EichlerOrder{N})} : \det x = 1\}.
+\end{gather*}
+\end{proposition}
+
+\begin{proof}
+The first holds because $\GammaZero[ad]{N}$ is the isomorphic image of
+$\unit{\AdelicEichlerOrder{N}}$ (\cref{lem:structure-G-plus}), the second by
+strong approximation for Eichler orders (\cref{lem:strong-approx-eichler}).
+\end{proof}
+
+\begin{lemma}[The part prime to $N$]\label{lem:prime-to-N}
+Let $N, M_1 \geq 1$ with $\gcd(N, M_1) = 1$. Then
+$\ModelTuple{a}{b}{c}{d} \mapsto \smallMat{a}{b}{Nc}{d}$ is a ring
+isomorphism $\EichlerOrder{N}/M_1\EichlerOrder{N} \cong \MatRing{2}{\ResidueRing{M_1}}$.
+For $M = M_1M_2$ with $\gcd(M_1, M_2) = 1$ and $M_2$ divisible only by
+primes dividing $N$, one has
+$\EichlerOrder{N}/M\EichlerOrder{N} \cong \MatRing{2}{\ResidueRing{M_1}} \times
+\EichlerOrder{N}/M_2\EichlerOrder{N}$.
+\end{lemma}
+
+\begin{proof}
+$N$ is a unit modulo $M_1$; the second statement is the Chinese remainder
+theorem.
+\end{proof}
+
+\begin{proposition}[Prime Helling level]\label{prop:prime-helling}
+\slogan{At a prime, the Atkin--Lehner element swaps the diagonal and the
+off-diagonal coordinates.}
+Let $p$ be a prime, $k \geq 0$ and $w := \smallMat{0}{1}{p}{0}$.
+\begin{enumerate}
+\item In the coordinates of \cref{prop:eichler-model} (with $N = p$,
+  $M = p^{k}$) conjugation by $w$ is
+  $\ModelTuple{a}{b}{c}{d} \mapsto \ModelTuple{d}{c}{b}{a}$.
+\item $\AdelicProjection(w) \in \MaxCompact{p}$ has order $2$, and
+  $\AdelicQuotientGroup{p}{p^{k}} \cong
+  \unit{(\IwahoriOrder{p}/p^{k}\IwahoriOrder{p})} \rtimes \langle w\rangle$.
+\item With $\ALmatrix{p} := \smallMat{0}{-1}{p}{0} \in \GLplus{2}{\QQ}$,
+  conjugation by $\ALmatrix{p}$ is $\ModelTuple{a}{b}{c}{d} \mapsto
+  \ModelTuple{d}{-c}{-b}{a}$, and $\ALmatrix{p}^{2} = -1$ in
+  $\RationalLiftGroup$. Thus $\LiftedQuotientGroup{p}{p^{k}}$ is an extension
+  of $\ZZ/2\ZZ$ by the determinant one units of
+  $\IwahoriOrder{p}/p^{k}\IwahoriOrder{p}$ in which $\ALmatrix{p}$ squares to
+  $-1$, and $\QuotientGroup{p}{p^{k}}$ is a semidirect product with
+  $\ZZ/2\ZZ$.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+(1) $w\smallMat{a}{b}{pc}{d}w^{-1} = \smallMat{d}{c}{pb}{a}$. (2) $w$ has
+determinant $-p$, lies in $\GL{2}{\pAdicIntegers{\ell}}$ for $\ell \neq p$
+and inverts the standard edge at $p$, so it lies in $\MaxCompact{p}$; and
+$w^{2} = p \in \PositiveRationals$. The type map restricted to
+$\langle w\rangle$ is a section of $\AdelicQuotientGroup{p}{p^{k}} \to
+\TypeGroup{p}$; combine with \cref{prop:det-one-quotients} and note that the
+quotient is $\MaxCompact{p}/\GammaPrincipal[ad]{p}{p^k}$, whose
+components away from $p$ are trivial. (3) is a similar computation with
+$\ALmatrix{p}^{2} = -p$.
+\end{proof}
+
+\begin{proposition}[Encoding Atkin--Lehner elements]\label{prop:al-encoding}
+\slogan{Elements of $\GammaZeroStar{N}/\GammaPrincipal{N}{M}$ are pairs of a
+type and a determinant one tuple.}
+Let $N, M \geq 1$ with $N$ squarefree, and fix an Atkin--Lehner matrix
+$\ALmatrix{e}$ for every $e \mid N$ (\cref{def:global-al}), with
+$\ALmatrix{1} = 1$. Then:
+\begin{enumerate}
+\item $\ALconj{e}(x) := \ALmatrix{e}x\ALmatrix{e}^{-1}$ is a
+  $\ResidueRing{M}$-linear ring automorphism of
+  $\EichlerOrder{N}/M\EichlerOrder{N}$; it can be computed as
+  $\ALconj{e}(x) = e^{-1}\ALmatrix{e}\tilde{x}\adjugate{\ALmatrix{e}}$ for any
+  lift $\tilde x \in \EichlerOrder{N}$, the division by $e$ being exact;
+\item $\ALcocycle{e}{e'} := \gcd(e,e')^{-1}\ALmatrix{e}\ALmatrix{e'}
+  \ALmatrix{\TypeProduct{e}{e'}}^{-1}$ lies in $\GammaZero[lift]{N}$;
+\item the map $(e, u) \mapsto u\ALmatrix{e}$ is a bijection from pairs of
+  $e \mid N$ and determinant one units $u$ of
+  $\EichlerOrder{N}/M\EichlerOrder{N}$ onto $\LiftedQuotientGroup{N}{M}$,
+  under which
+  \[
+    (e,u)\cdot(e',u') = \bigl(\TypeProduct{e}{e'},\ u\,\ALconj{e}(u')\,
+    \ALcocycle{e}{e'}\bigr).
+  \]
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+(1) $\ALmatrix{e}$ normalises $\AdelicEichlerOrder{N}$ (it lies in
+$\GammaZeroStar[ad]{N}$, which normalises the local orders by
+\cref{lem:eichler-ideal}), hence normalises $\EichlerOrder{N} =
+\AdelicEichlerOrder{N}\cap\MatRing{2}{\QQ}$ and $M\EichlerOrder{N}$; and
+$\ALmatrix{e}^{-1} = e^{-1}\adjugate{\ALmatrix{e}}$. (2) The matrix has
+determinant $1$, is rational and lies in $\GammaZeroStar[ad]{N}$ with trivial
+flips, so it lies in $\GammaZero[lift]{N}$ by \cref{lem:global-al}. (3)
+follows from \cref{lem:global-al}, \cref{prop:det-one-quotients} and
+$u\ALmatrix{e}u'\ALmatrix{e'} = u\ALconj{e}(u')\ALmatrix{e}\ALmatrix{e'}$,
+the scalar $\gcd(e,e')$ being trivial in $\RationalLiftGroup$.
+\end{proof}
+
+\begin{remark}[Using the split $M = M_1M_2$]
+In the situation of \cref{lem:prime-to-N}, the factor modulo $M_1$ is
+ordinary $2\times 2$ matrices, and there a type $e$ element can be stored
+directly as its determinant $e$ representative modulo $M_1$, with
+multiplication followed by division by the unit $\gcd(e,e')$. Only the
+factor modulo $M_2$ needs the twisted product of
+\cref{prop:eichler-model} and the encoding of \cref{prop:al-encoding}.
+\end{remark}
+
+\todo[inline]{Determine when the extension
+$1 \to \GammaZero[lift]{N}/\GammaPrincipal[lift]{N}{M} \to
+\LiftedQuotientGroup{N}{M} \to \TypeGroup{N} \to 1$ (and its adelic and
+classical versions) splits; for a single prime see
+\cref{prop:prime-helling}.}
