@@ -59,10 +59,12 @@ def evaluate_external(
             [*command, str(runner), str(recipe_path), str(inputs_path)],
             capture_output=True,
             text=True,
-            check=True,
+            check=False,
         )
     finally:
         inputs_path.unlink()
+    if proc.returncode != 0:
+        raise SystemExit(f"{system} runner failed:\n{proc.stderr}")
     lines = proc.stdout.strip().splitlines()
     version = json.loads(lines[0])["version"]
     return [json.loads(line) for line in lines[1:]], version

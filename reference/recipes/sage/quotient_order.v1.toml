@@ -6,7 +6,9 @@ system = "sage"
 # |Q_{N,M}| = 2^omega(N) * #{g in G(Z/NM) : N | c} / #{g in G(Z/NM) : g = 1 mod M, NM | c}
 # with G = GL_2 (adelic) or SL_2 (lifted): Gamma(NM) lies in Gamma(N;M), and reduction modulo NM
 # is surjective (strong approximation for the lifted groups). Counts matrices; small NM only.
+# Sage cannot iterate GL_2(Z/1), so N = M = 1 (the trivial group) is special-cased.
 template = """
+1 if N * M == 1 else
 (2 ** len(prime_divisors(N)))
 * sum(1 for g in (GL if kind == 'adelic' else SL)(2, Zmod(N * M)) if g.matrix()[1, 0].lift() % N == 0)
 // sum(
