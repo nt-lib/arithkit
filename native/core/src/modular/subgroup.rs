@@ -413,10 +413,51 @@ struct Search<'a, 'b> {
     table: &'b Table<'a>,
     gens: Vec<u32>,
     max_index: usize,
-    found: Vec<(Vec<bool>, Vec<u32>)>,
+    /// Packed subgroups whose class has been handled.
+    seen: HashSet<Vec<u64>>,
+    /// Classes by the canonical generators of their representative.
+    classes: HashMap<Vec<u32>, ClassEntry>,
+}
+
+/// A membership vector packed into words.
+fn pack(bits: &[bool]) -> Vec<u64> {
+    let mut words = vec![0u64; bits.len().div_ceil(64)];
+    for (i, &b) in bits.iter().enumerate() {
+        if b {
+            words[i / 64] |= 1 << (i % 64);
+        }
+    }
+    words
 }
 
 impl Search<'_, '_> {
+    /// Handles the class of a subgroup found by the search: its conjugates are the point
+    /// stabilisers `r H r^{-1}`; the least one is the canonical representative.
+    fn record(&mut self, h: &Subset, reps: &[u32]) -> Result<()> {
+        if self.seen.contains(&pack(&h.bits)) {
+            return Ok(());
+        }
+        let table = self.table;
+        let mut best: Option<(Vec<u32>, Vec<u64>)> = None;
+        for &r in reps {
+            let mut conjugate = vec![false; table.elements.len()];
+            for &x in &h.list {
+                conjugate[table.mul(table.mul(r, x), table.inv[r as usize]) as usize] = true;
+            }
+            let packed = pack(&conjugate);
+            if !self.seen.insert(packed.clone()) {
+                continue; // a conjugate already considered for this class
+            }
+            let key = table.canonical_generators(&conjugate)?;
+            if best.as_ref().is_none_or(|(k, _)| key < *k) {
+                best = Some((key, packed));
+            }
+        }
+        let (key, members) = best.expect("at least one representative");
+        self.classes.entry(key).or_insert((reps.len(), members));
+        Ok(())
+    }
+
     /// The cosets `r_i H` are distinct.
     fn consistent(&self, reps: &[u32], h: &[bool]) -> bool {
         (0..reps.len()).all(|i| {
@@ -437,7 +478,7 @@ impl Search<'_, '_> {
         // Entries are defined in the order (0,0), (0,1), ..., so `defined` indexes the next one.
         if defined == reps.len() * r {
             if reps.len() * h.list.len() == self.table.elements.len() {
-                self.found.push((h.bits.clone(), reps.clone()));
+                self.record(h, reps)?;
             }
             return Ok(());
         }
@@ -475,8 +516,8 @@ impl Search<'_, '_> {
     }
 }
 
-/// The index of a class and the members of its canonical representative.
-type ClassEntry = (usize, Vec<bool>);
+/// The index of a class and the (packed) members of its canonical representative.
+type ClassEntry = (usize, Vec<u64>);
 
 /// The canonical representatives of the conjugacy classes of subgroups of index at most
 /// `max_index`, sorted by index and then by canonical generators (alg:subgroup-classes).
@@ -496,7 +537,8 @@ pub fn subgroup_classes(q: &Quotient, max_index: u64) -> Result<Vec<Subgroup>> {
         table: &table,
         gens,
         max_index,
-        found: Vec::new(),
+        seen: HashSet::new(),
+        classes: HashMap::new(),
     };
     let identity = table.position.get(&q.identity());
     let mut bits = vec![false; table.elements.len()];
@@ -506,43 +548,15 @@ pub fn subgroup_classes(q: &Quotient, max_index: u64) -> Result<Vec<Subgroup>> {
         list: vec![identity],
     };
     search.extend(&mut vec![identity], 0, &mut Vec::new(), &trivial)?;
-    let found = std::mem::take(&mut search.found);
-    let mut classes: HashMap<Vec<u32>, ClassEntry> = HashMap::new();
-    let mut seen: HashSet<Vec<bool>> = HashSet::new(); // subgroups whose class has been handled
-    for (h, reps) in found {
-        if seen.contains(&h) {
-            continue;
-        }
-        let mut best: Option<(Vec<u32>, Vec<bool>)> = None;
-        for &r in &reps {
-            let mut conjugate = vec![false; table.elements.len()];
-            for (x, &inside) in h.iter().enumerate() {
-                if inside {
-                    let x = u32::try_from(x).expect("small");
-                    conjugate[table.mul(table.mul(r, x), table.inv[r as usize]) as usize] = true;
-                }
-            }
-            if !seen.insert(conjugate.clone()) {
-                continue; // a conjugate already considered for this class
-            }
-            let key = table.canonical_generators(&conjugate)?;
-            if best.as_ref().is_none_or(|(k, _)| key < *k) {
-                best = Some((key, conjugate));
-            }
-        }
-        let (key, members) = best.expect("at least one representative");
-        classes.entry(key).or_insert((reps.len(), members));
-    }
-    let mut ordered: Vec<(Vec<u32>, ClassEntry)> = classes.into_iter().collect();
+    let mut ordered: Vec<(Vec<u32>, ClassEntry)> =
+        std::mem::take(&mut search.classes).into_iter().collect();
     ordered.sort_by(|a, b| (a.1.0, &a.0).cmp(&(b.1.0, &b.0)));
     ordered
         .into_iter()
         .map(|(_, (_, members))| {
-            let set = members
-                .iter()
-                .enumerate()
-                .filter(|(_, b)| **b)
-                .map(|(i, _)| table.elements[i])
+            let set = (0..table.elements.len())
+                .filter(|&i| members[i / 64] >> (i % 64) & 1 == 1)
+                .map(|i| table.elements[i])
                 .collect();
             Subgroup::from_elements(q, set)
         })
