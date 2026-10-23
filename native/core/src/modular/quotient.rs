@@ -452,6 +452,60 @@ impl Quotient {
         total
     }
 
+    /// The primes dividing `NM`, in increasing order.
+    pub fn primes_nm(&self) -> Vec<u64> {
+        let mut primes: Vec<u64> = arith::factor(self.n)
+            .into_iter()
+            .chain(arith::factor(self.m))
+            .map(|(p, _)| p)
+            .collect();
+        primes.sort_unstable();
+        primes.dedup();
+        primes
+    }
+
+    /// An integral matrix acting on the candidate vertices at `p` like `x` (lem:local-action):
+    /// `[[a, b], [N c, d]] W_e` if `p | M`, and `W_e` otherwise.
+    pub fn local_matrix(&self, x: &Elem, p: u64) -> Mat2 {
+        let w = &self.al[x.mask as usize];
+        if !self.m.is_multiple_of(p) {
+            return w.clone();
+        }
+        let [a, b, c, d] = x.u;
+        let lift = [
+            [BigInt::from(a), BigInt::from(b)],
+            [&BigInt::from(self.n) * &BigInt::from(c), BigInt::from(d)],
+        ];
+        intmat::mul(&lift, w)
+    }
+
+    /// The kernel of the reduction to level `m | M`: type 1 and `u = 1` modulo `m`.
+    pub fn kernel_elements(&self, m: u64) -> Result<Vec<Elem>> {
+        let step = self.m / m;
+        let md = &self.md;
+        let mut out = Vec::new();
+        let mut poll = Poll::new(1 << 12);
+        for a in 0..step {
+            for b in 0..step {
+                for c in 0..step {
+                    poll.tick()?;
+                    for d in 0..step {
+                        let u = [
+                            md.reduce_u64(1 + m * a),
+                            md.reduce_u64(m * b),
+                            md.reduce_u64(m * c),
+                            md.reduce_u64(1 + m * d),
+                        ];
+                        if self.valid_det(&u) {
+                            out.push(Elem { mask: 0, u });
+                        }
+                    }
+                }
+            }
+        }
+        Ok(out)
+    }
+
     /// The order of the group.
     pub fn order(&self) -> BigInt {
         let size = &BigInt::from(self.e_of_mask.len() as u64) * &self.unit_group_order();

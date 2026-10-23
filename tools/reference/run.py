@@ -98,7 +98,10 @@ def evaluate_external(
     if not runner.exists():
         raise SystemExit(f"no runner for system {system!r}")
     # Run inside the activated Sage conda env, with our virtualenv removed from the environment.
-    command = {"sage": ["/opt/sage/bin/conda", "run", "-n", "sage", "python"]}.get(system)
+    command = {
+        "sage": ["/opt/sage/bin/conda", "run", "-n", "sage", "python"],
+        "magma": [sys.executable, "-I"],
+    }.get(system)
     if command is None:
         raise SystemExit(f"do not know how to start {system!r}")
     with tempfile.NamedTemporaryFile("w", suffix=".jsonl", dir=REPO / "tmp", delete=False) as f:

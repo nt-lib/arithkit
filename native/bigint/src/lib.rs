@@ -116,6 +116,31 @@ impl BigInt {
         }
     }
 
+    /// The remainder of `self` modulo `m >= 1`, in `[0, m)`.
+    pub fn rem_euclid(&self, m: &BigInt) -> BigInt {
+        assert!(m.signum() > 0, "modulus must be positive");
+        let r = &self.0 % &m.0;
+        BigInt(if r < IBig::ZERO { r + &m.0 } else { r })
+    }
+
+    /// `self^e`.
+    pub fn pow(&self, e: u32) -> BigInt {
+        (0..e).fold(BigInt::from(1u64), |acc, _| &acc * self)
+    }
+
+    /// The `p`-adic valuation for `p >= 2`; `None` for zero.
+    pub fn valuation(&self, p: &BigInt) -> Option<u32> {
+        if self.is_zero() {
+            return None;
+        }
+        let (mut rest, mut v) = (self.clone(), 0u32);
+        while let Some(q) = rest.div_exact(p) {
+            rest = q;
+            v += 1;
+        }
+        Some(v)
+    }
+
     /// The value as a `u64`, if it fits.
     pub fn to_u64(&self) -> Option<u64> {
         u64::try_from(&self.0).ok()
@@ -205,6 +230,19 @@ mod tests {
         assert_eq!(BigInt::from(7i64).rem_euclid_u64(3), 1);
         assert_eq!(BigInt::from(-6i64).rem_euclid_u64(3), 0);
         assert_eq!(BigInt::from(5i64).rem_euclid_u64(1), 0);
+    }
+
+    #[test]
+    fn remainders_powers_valuations() {
+        let seven = BigInt::from(7i64);
+        assert_eq!(BigInt::from(-1i64).rem_euclid(&seven), BigInt::from(6i64));
+        assert_eq!(BigInt::from(3i64).pow(4), BigInt::from(81i64));
+        assert_eq!(BigInt::from(3i64).pow(0), BigInt::from(1i64));
+        assert_eq!(
+            BigInt::from(-162i64).valuation(&BigInt::from(3i64)),
+            Some(4)
+        );
+        assert_eq!(BigInt::zero().valuation(&BigInt::from(3i64)), None);
     }
 
     #[test]

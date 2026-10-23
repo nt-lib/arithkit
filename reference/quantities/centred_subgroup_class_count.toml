@@ -1,0 +1,13 @@
+name = "centred_subgroup_class_count"
+description = """The number of conjugacy classes of centred subgroups (def:centred-subgroup) of index at most I of
+the adelic (kind "adelic") or lifted (kind "lifted") quotient Gamma_0(N)^* / Gamma(N;M)."""
+key = ["kind", "N", "M", "I"]
+domain = "kind in {adelic, lifted}; 1 <= N, M < 2^63; N squarefree; I >= 1"
+output = "int"
+canonical = "the integer itself"
+
+[input]
+kind = "str"
+N = "int"
+M = "int"
+I = "int"

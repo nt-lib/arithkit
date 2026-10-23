@@ -1,0 +1,9 @@
+id = "magma.subgroup_class_count.v1"
+quantity = "subgroup_class_count"
+system = "magma"
+# A Magma expression with format fields {kind}, {N}, {M}, {I}, run by crosscheck/magma/run.py.
+# Only for N = 1, where the quotients are GL_2(Z/M) (adelic) and SL_2(Z/M) (lifted); M >= 2.
+# Counts with Subgroups(P : IndexLimit := I) on a permutation representation P.
+template = "#Subgroups(Codomain(PermutationRepresentation(\"{kind}\" eq \"adelic\" select GL(2, Integers({M})) else SL(2, Integers({M})))) : IndexLimit := {I})"
+parser = "int"
+assumes = []

@@ -3,7 +3,7 @@
 use std::sync::Arc;
 
 use arithkit_core::modular::quotient::{Elem, Quotient};
-use arithkit_core::modular::subgroup::Subgroup;
+use arithkit_core::modular::subgroup::{Subgroup, subgroup_classes};
 use pyo3::basic::CompareOp;
 use pyo3::exceptions::PyTypeError;
 use pyo3::prelude::*;
@@ -214,6 +214,54 @@ impl PyQuotientGroup {
             q: this.q.clone(),
             sub: Arc::new(sub),
         })
+    }
+
+    fn subgroup_classes<'py>(
+        slf: &Bound<'py, Self>,
+        max_index: &Bound<'py, PyAny>,
+    ) -> PyResult<Bound<'py, PyTuple>> {
+        let py = slf.py();
+        let bound = to_bigint(max_index)?;
+        if bound.signum() <= 0 {
+            return Err(api_error(
+                py,
+                "InvalidParameterError",
+                "the index bound must be at least 1",
+            ));
+        }
+        let q = &slf.get().q;
+        let classes = subgroup_classes(q, bound.to_u64().unwrap_or(u64::MAX))
+            .map_err(|err| to_pyerr(py, err))?;
+        let objs = classes
+            .into_iter()
+            .map(|sub| {
+                Bound::new(
+                    py,
+                    PyQuotientSubgroup {
+                        parent: slf.clone().into_any().unbind(),
+                        q: q.clone(),
+                        sub: Arc::new(sub),
+                    },
+                )
+            })
+            .collect::<PyResult<Vec<_>>>()?;
+        PyTuple::new(py, objs)
+    }
+
+    fn centred_subgroup_classes<'py>(
+        slf: &Bound<'py, Self>,
+        max_index: &Bound<'py, PyAny>,
+    ) -> PyResult<Bound<'py, PyTuple>> {
+        let py = slf.py();
+        let q = slf.get().q.clone();
+        let all = Self::subgroup_classes(slf, max_index)?;
+        let mut kept = Vec::new();
+        for item in all.iter() {
+            if item.cast::<PyQuotientSubgroup>()?.get().sub.is_centred(&q) {
+                kept.push(item);
+            }
+        }
+        PyTuple::new(py, kept)
     }
 
     fn element_from_json(

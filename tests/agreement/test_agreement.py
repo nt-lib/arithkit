@@ -133,3 +133,52 @@ def test_mixing_backends_is_a_type_error() -> None:
         with pytest.raises(TypeError):
             f()
     assert x not in native.subgroup([]) and y not in toy.subgroup([])
+
+
+SMALL_LEVELS = [
+    (1, 2),
+    (1, 3),
+    (1, 4),
+    (2, 2),
+    (2, 3),
+    (3, 2),
+    (3, 3),
+    (5, 1),
+    (6, 1),
+    (6, 2),
+    (10, 1),
+    (1, 6),
+]
+
+
+@given(st.sampled_from(SMALL_LEVELS), kinds, st.integers(min_value=1, max_value=24))
+def test_subgroup_classes(level: tuple[int, int], kind: str, bound: int) -> None:
+    toy, native = pair(*level, kind)
+    a = [
+        (h.to_json(), h.centre(), h.helling_level(), h.is_centred(), h.principal_level())
+        for h in toy.subgroup_classes(bound)
+    ]
+    b = [
+        (h.to_json(), h.centre(), h.helling_level(), h.is_centred(), h.principal_level())
+        for h in native.subgroup_classes(bound)
+    ]
+    assert a == b
+    assert [h.to_json() for h in toy.centred_subgroup_classes(bound)] == [
+        h.to_json() for h in native.centred_subgroup_classes(bound)
+    ]
+
+
+@given(
+    st.sampled_from([(1, 9), (3, 9), (2, 8), (6, 4), (5, 5), (15, 2), (1, 12)]), kinds, st.integers(0, 2**32)
+)
+def test_centres_of_random_subgroups(level: tuple[int, int], kind: str, seed: int) -> None:
+    toy, native = pair(*level, kind)
+    rnd = random.Random(seed)
+    els_toy, els_native = toy.elements(), native.elements()
+    picks = [rnd.randrange(len(els_toy)) for _ in range(rnd.randrange(0, 3))]
+    h_toy = toy.subgroup([els_toy[i] for i in picks])
+    h_native = native.subgroup([els_native[i] for i in picks])
+    assert h_toy.centre() == h_native.centre()
+    assert h_toy.helling_level() == h_native.helling_level()
+    assert h_toy.is_centred() == h_native.is_centred()
+    assert h_toy.principal_level() == h_native.principal_level()

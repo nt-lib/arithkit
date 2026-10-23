@@ -79,6 +79,14 @@ docs/ (Sphinx, from arithkit_api only)
 - `N, M < 2^63`; residues are `u64` with `u128` products. BigInt (dashu, provisional - benchmark against
   GMP/FLINT before LMFDB-scale use) is only used for exact integer matrix work and conversions.
 
+## Subgroup classes (current limits)
+
+`subgroup_classes(I)` enumerates all subgroups of index <= I by standard coset tables
+(alg:coset-tables) on the full element list, so it is limited to groups whose elements can be listed
+(|Q| up to a few times 10^4 in seconds; the multiplication table is precomputed up to order 6144).
+Centredness uses the fixed sets of the centring algorithm (steps 1-2). For larger groups the plan is
+the Cannon--Cox--Holt layer method described in the remark after alg:subgroup-classes.
+
 ## Adding an algorithm
 
 1. Write or cite the mathematics in `maths/` (conventions, canonical choices, proofs).
@@ -130,4 +138,6 @@ Full description: `tools/reference/__init__.py`. In short:
 - `python -m tools.reference check` also checks against the git history (tool commits are ancestors of
   HEAD, and so are recorded system_version commits); this needs the full history (CI: `fetch-depth: 0`).
 - CAS code for comparisons lives only in `crosscheck/`; it is never part of the default test run.
+  Runners: `crosscheck/sage/run.py`, `crosscheck/magma/run.py` (recipes); `crosscheck/magma/regular_counts.py`
+  compares subgroup class counts for N > 1 with Magma via regular permutation representations.
 - If the data approaches GitHub's repository limits, move it to an external database (not Git LFS).

@@ -9,7 +9,9 @@ use pyo3::exceptions::PyTypeError;
 use pyo3::prelude::*;
 use pyo3::types::{PyDict, PyList, PyTuple};
 
-use crate::convert::{api_error, dumps, json_module, loads, to_pyerr};
+use arithkit_core::infra::tree::Vertex;
+
+use crate::convert::{api_error, bigint_to_py, dumps, json_module, loads, to_pyerr};
 use crate::modular::quotient::{
     PyQuotientElement, PyQuotientGroup, element_from_value, element_json_value, quotient_from_value,
 };
@@ -82,6 +84,49 @@ impl PyQuotientSubgroup {
             ));
         }
         Ok(self.sub.is_subset(&other.sub))
+    }
+
+    fn centre<'py>(&self, py: Python<'py>) -> PyResult<Bound<'py, PyTuple>> {
+        let vertex = |v: &Vertex| -> PyResult<Bound<'py, PyTuple>> {
+            PyTuple::new(
+                py,
+                [
+                    v.m.into_pyobject(py)?.into_any(),
+                    bigint_to_py(py, &v.r)?,
+                    v.s.into_pyobject(py)?.into_any(),
+                ],
+            )
+        };
+        let entries = self
+            .sub
+            .centre(&self.q)
+            .iter()
+            .map(|(p, v, w)| {
+                PyTuple::new(
+                    py,
+                    [
+                        p.into_pyobject(py)?.into_any(),
+                        vertex(v)?.into_any(),
+                        vertex(w)?.into_any(),
+                    ],
+                )
+            })
+            .collect::<PyResult<Vec<_>>>()?;
+        PyTuple::new(py, entries)
+    }
+
+    fn helling_level(&self) -> u64 {
+        self.sub.helling_level(&self.q)
+    }
+
+    fn is_centred(&self) -> bool {
+        self.sub.is_centred(&self.q)
+    }
+
+    fn principal_level(&self, py: Python<'_>) -> PyResult<u64> {
+        self.sub
+            .principal_level(&self.q)
+            .map_err(|err| to_pyerr(py, err))
     }
 
     fn __contains__(&self, x: &Bound<'_, PyAny>) -> bool {
