@@ -1,5 +1,11 @@
 # CLAUDE.md
 
+> **Alpha.** arithkit is in alpha. Backward incompatible changes will be made, without deprecations or
+> compatibility aliases, and development happens on `main` until the first release. Until then
+> everything under `reference/` may be changed freely: old recipes and old shards may simply be removed.
+> On the first release all generated data, including the provenance log, will be regenerated with the
+> stable interface, and every recipe will then have exactly one version per implementation.
+
 Guidance for working on arithkit. All conventions below are deliberate; do not "fix" them.
 
 ## What this is
@@ -64,9 +70,10 @@ docs/ (Sphinx, from arithkit_api only)
   `(e, (a, b, c, d))`, a parent as `GL2QSubQuotient(N, M)`.
 - Python class names are descriptive: `GL2ASubQuotient` (adelic, subquotient of GL2(A_f)) and
   `GL2QSubQuotient` (lifted/classical, subquotient of GL2(Q)).
-- No release has been made yet: backward incompatible changes are fine and no compatibility aliases
-  are kept for old names. When a change breaks a reference recipe, add a new recipe version and
-  retract the old one (`python -m tools.reference retract-recipe`).
+- Alpha (see the notice at the top): backward incompatible changes are fine and no compatibility
+  aliases are kept for old names. In `reference/`, when a change breaks a recipe, just fix or replace it
+  and remove old recipes and shards that are no longer useful (no new versions or retirement events
+  needed); the immutability rules below apply from the first release on.
 - Determinacy levels (`arithkit_api.levels`), marked per output with `Annotated[...]`, unmarked =
   Canonical: Canonical (equal everywhere), Deterministic(algorithm, version) (equal toy vs native,
   algorithm specified and versioned), Characterised(verify) (any value with the stated property),

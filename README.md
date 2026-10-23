@@ -1,5 +1,11 @@
 # arithkit
 
+> **Alpha.** arithkit is in alpha. Backward incompatible changes will be made, without deprecations or
+> compatibility aliases, and development happens on `main` until the first release. Until then
+> everything under `reference/` may be changed freely: old recipes and old shards may simply be removed.
+> On the first release all generated data, including the provenance log, will be regenerated with the
+> stable interface, and every recipe will then have exactly one version per implementation.
+
 Arithmetic algorithms implemented twice, with exactly the same Python interface:
 
 - `arithkit_toy`: a readable pure Python implementation (standard library only), the oracle;
