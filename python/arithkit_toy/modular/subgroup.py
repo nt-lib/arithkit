@@ -238,11 +238,13 @@ def _search(table: _Table, gens: Sequence[int], max_index: int) -> list[tuple[fr
             return
         i, j = undefined
         image = table.mul[gens[j]][reps[i]]  # s_j r_i
-        for k in range(len(reps)):
-            element = table.mul[table.inv[reps[k]]][image]  # r_k^{-1} s_j r_i
-            if element in h:
-                extend(reps, defined | {(i, j)}, schreier, h)
-                continue
+        elements = [table.mul[table.inv[reps[k]]][image] for k in range(len(reps))]  # r_k^{-1} s_j r_i
+        if any(element in h for element in elements):
+            # s_j r_i lies in a known coset r_k H: the entry is forced (any other choice, or a new
+            # point, would put s_j r_i into two cosets).
+            extend(reps, defined | {(i, j)}, schreier, h)
+            return
+        for element in elements:
             new_schreier = [*schreier, element]
             # n distinct cosets force |H| <= |G|/n: stop the closure early when it gets larger.
             new_h = table.closure(new_schreier, cap=order // len(reps))
