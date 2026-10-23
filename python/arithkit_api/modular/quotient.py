@@ -116,6 +116,27 @@ class _QuotientGroup(Protocol):
         """
         ...
 
+    def subgroup_classes(self, max_index: int) -> tuple[QuotientSubgroup, ...]:
+        """The conjugacy classes of subgroups of index at most ``max_index``.
+
+        One canonical representative per class (the least conjugate in the order of
+        def:class-representative), sorted by index and then by canonical generators
+        (alg:subgroup-classes). Raises :class:`~arithkit_api.errors.InvalidParameterError` if
+        ``max_index < 1``. The group must be small enough to enumerate (subgroups are stored by
+        their elements).
+        """
+        ...
+
+    def centred_subgroup_classes(self, max_index: int) -> tuple[QuotientSubgroup, ...]:
+        """The classes of :meth:`subgroup_classes` whose members are centred (def:centred-subgroup).
+
+        By prop:centring these correspond to the conjugacy classes of compact open subgroups of
+        Helling level $N$, centred level quotient dividing $M$ and relative index at most
+        ``max_index``; use :meth:`~arithkit_api.modular.subgroup.QuotientSubgroup.principal_level`
+        to select those of centred level quotient exactly $M$.
+        """
+        ...
+
     def element_from_json(self, text: str) -> QuotientElement:
         """The element with canonical JSON text ``text`` (see :meth:`QuotientElement.to_json`).
 

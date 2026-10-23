@@ -146,6 +146,29 @@ class _QuotientGroup:
 
     # -- group law --------------------------------------------------------------
 
+    def _local_matrix(self, x: QuotientElement, p: int) -> Mat2:
+        """An integral matrix acting on the candidate vertices at p like x (lem:local-action)."""
+        lift = self._lift(x.u) if self._m % p == 0 else ((1, 0), (0, 1))
+        return intmat.mul(lift, self._al[x.e])
+
+    def _kernel_elements(self, m: int) -> list[QuotientElement]:
+        """The kernel of the reduction to level m | M: type 1 and u = 1 modulo m."""
+        step = self._m // m
+        out: list[QuotientElement] = []
+        for a, b, c, d in product(range(step), repeat=4):
+            u = ((1 + m * a) % self._m, m * b % self._m, m * c % self._m, (1 + m * d) % self._m)
+            if self._is_valid_det(u):
+                out.append(self._make(1, u))
+        return out
+
+    def subgroup_classes(self, max_index: int) -> tuple[api_subgroup.QuotientSubgroup, ...]:
+        from arithkit_toy.modular.subgroup import _subgroup_classes  # pyright: ignore[reportPrivateUsage]
+
+        return _subgroup_classes(self, max_index)
+
+    def centred_subgroup_classes(self, max_index: int) -> tuple[api_subgroup.QuotientSubgroup, ...]:
+        return tuple(h for h in self.subgroup_classes(max_index) if h.is_centred())
+
     def _make(self, e: int, u: Coords) -> QuotientElement:
         return QuotientElement(self, e, u)
 

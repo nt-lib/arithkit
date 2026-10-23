@@ -55,6 +55,31 @@ class QuotientSubgroup(Protocol):
         """
         ...
 
+    def centre(self) -> tuple[tuple[int, tuple[int, int, int], tuple[int, int, int]], ...]:
+        r"""The centre of the corresponding compact open subgroup $U$ (def:helling-level).
+
+        One entry ``(p, v, w)`` for every prime $p$ dividing $NM$, in increasing order (at the
+        other primes the centre is the base vertex). ``v`` and ``w`` are vertices in the
+        coordinates ``(m, r, s)`` of def:vertex-coordinates, meaning the class of
+        $\begin{pmatrix} p^m & r/p^s \\ 0 & 1 \end{pmatrix}$; ``v == w`` if the centre is a vertex,
+        otherwise the centre is the midpoint of the edge from ``v`` to ``w`` (``v < w``).
+        In the lifted case $U$ is the closure of the preimage (lem:classical-fix).
+        """
+        ...
+
+    def helling_level(self) -> int:
+        """The Helling level: the product of the primes at which the centre is an edge midpoint."""
+        ...
+
+    def is_centred(self) -> bool:
+        """Whether the centre is the standard point $c_N$ (def:centred-subgroup)."""
+        ...
+
+    def principal_level(self) -> int:
+        r"""The least $m \mid M$ such that the subgroup contains the kernel of the reduction to
+        level $m$ (def:principal-level); for centred subgroups the centred level quotient."""
+        ...
+
     def __contains__(self, x: object) -> bool:
         """Whether ``x`` is an element of this subgroup (False for anything else)."""
         ...

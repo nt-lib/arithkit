@@ -26,6 +26,8 @@ manifest-path = "native/py/Cargo.toml"
 python-source = "python"
 module-name = "arithkit._native"
 python-packages = ["arithkit_api", "arithkit_toy"]
+# Build optimised (still with overflow checks, see Cargo.toml), also for editable installs.
+profile = "release"
 
 [tool.uv]
 # Rebuild the native extension whenever Rust sources change.

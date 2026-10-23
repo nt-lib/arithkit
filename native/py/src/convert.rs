@@ -50,6 +50,11 @@ pub fn to_bigint(obj: &Bound<'_, PyAny>) -> PyResult<BigInt> {
     }
 }
 
+/// A [`BigInt`] as a Python integer.
+pub fn bigint_to_py<'py>(py: Python<'py>, x: &BigInt) -> PyResult<Bound<'py, PyAny>> {
+    py.import("builtins")?.call_method1("int", (x.to_hex(), 16))
+}
+
 /// A Python integer as a `u64` if it lies in `[0, 2^64)`, `None` if it is out of range.
 pub fn to_u64_or_none(obj: &Bound<'_, PyAny>) -> PyResult<Option<u64>> {
     Ok(to_bigint(obj)?.to_u64())
