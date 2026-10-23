@@ -3,8 +3,7 @@
 Layout of a reference tree (see CLAUDE.md):
 
 - ``assumptions.toml``: the allowed names in a recipe's ``assumes``;
-- ``systems.toml``: the systems recipes may use; for systems in this repository the ``sources``
-  whose content is hashed into ``system_version``;
+- ``systems.toml``: the systems recipes may use, marking those in this repository;
 - ``quantities/<name>.toml``: input schema (``input``), key fields (``key``), output, canonical form;
 - ``recipes/<system>/<name>.vN.toml``: active recipes (``id``, ``quantity``, ``system``,
   ``template``, ``parser``, ``assumes``); files are never edited;
@@ -19,8 +18,9 @@ origin/main whose tooling (tools/, crosscheck/) equals the tooling that ran):
 
 - ``produced`` / ``confirmed`` / ``disagreed``: ``shard``, ``sha256``, ``recipe``, ``recipe_sha256``,
   ``system``, ``system_version``, ``assumes``; ``disagreed`` also ``mismatches`` (list of keys).
-  For in-repository systems ``system_version`` is the source hash (see ``run.source_hash``), so
-  reproductions can be recorded on a branch before merging;
+  For in-repository systems ``system_version`` is the commit at which the reproduction ran
+  (``git checkout`` it to reproduce) and ``toolchain`` records the Python (and rustc) versions;
+  reproductions may be recorded on a branch, since pull requests are merged with merge commits;
 - ``retracted``: ``shard``, ``sha256``, ``reason``, optional ``superseded_by``;
 - ``inherited``: ``shard``, ``sha256``, ``source``, ``source_sha256``, ``excluded`` (list of keys):
   every row of ``shard`` whose key occurs in ``source`` and is not excluded is byte-identical to the

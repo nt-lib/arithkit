@@ -27,7 +27,7 @@ def make_tree(tmp: pathlib.Path) -> pathlib.Path:
     (root / "retracted").mkdir()
     (root / "provenance").mkdir()
     (root / "assumptions.toml").write_text('[GRH]\ndescription = "GRH"\n')
-    (root / "systems.toml").write_text('[arithkit_toy]\nsources = ["python/arithkit_toy"]\n[magma]\n')
+    (root / "systems.toml").write_text("[arithkit_toy]\nin_repository = true\n[magma]\n")
     (root / "quantities" / "sq.toml").write_text(
         'name = "sq"\nkey = ["n"]\noutput = "int"\n[input]\nn = "int"\n'
     )
@@ -68,7 +68,7 @@ def support(root: pathlib.Path, kind: str, shard: str, digest: str, recipe: str)
         recipe=recipe,
         recipe_sha256=model.sha256(model.load(root).recipe_paths[recipe]),
         system=system,
-        system_version="ab" * 32 if system == "arithkit_toy" else "2.29",
+        system_version="ab" * 20 if system == "arithkit_toy" else "2.29",
         assumes=["GRH"] if system == "magma" else [],
     )
 
@@ -119,7 +119,7 @@ def test_retired_recipes(tmp_path: pathlib.Path) -> None:
     assert model.status(model.load(root)) == {"sq/0001.jsonl": "conditional on GRH"}
 
 
-def test_reproductions_need_system_and_source_hash(tmp_path: pathlib.Path) -> None:
+def test_reproductions_need_system_and_commit(tmp_path: pathlib.Path) -> None:
     root = make_tree(tmp_path)
     digest = write_shard(root, "sq/0001.jsonl", {2: 4})
     recipe_sha = model.sha256(root / "recipes" / "arithkit_toy" / "sq.v1.toml")
@@ -135,7 +135,7 @@ def test_reproductions_need_system_and_source_hash(tmp_path: pathlib.Path) -> No
     )
     problems = check(root)
     assert any("system must be the recipe's system" in p for p in problems)
-    assert any("source hash" in p for p in problems)
+    assert any("commit hash" in p for p in problems)
 
 
 def test_detects_tampering_and_unsupported_shards(tmp_path: pathlib.Path) -> None:

@@ -1,17 +1,18 @@
 # The systems that recipes can use.
 #
-# For systems in this repository, `sources` lists the paths whose content determines the result;
-# the `system_version` of a reproduction is then the source hash of these paths (see
-# tools/reference/run.py:source_hash), which is independent of commits and merge style.
-# External systems record their own version string.
+# For systems in this repository (`in_repository = true`) the `system_version` of a reproduction is
+# the commit (HEAD, on a clean working tree) at which it ran: `git checkout <system_version>` and
+# `uv sync` reproduce it. The interpreter and compiler versions are recorded in the event's
+# `toolchain`. This requires merging pull requests with merge commits (no squash or rebase merges),
+# so that recorded branch commits stay in main's history. External systems record their own version.
 
 [arithkit_toy]
 description = "The toy implementation (python/arithkit_toy)."
-sources = ["python/arithkit_toy", "python/arithkit_api"]
+in_repository = true
 
 [arithkit]
 description = "The native implementation (Rust, through python/arithkit)."
-sources = ["python/arithkit", "python/arithkit_api", "native", "Cargo.toml", "Cargo.lock"]
+in_repository = true
 
 [sage]
 description = "SageMath, run by crosscheck/sage/run.py in the conda env `sage`; version is Sage's version string."

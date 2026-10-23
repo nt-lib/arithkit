@@ -214,8 +214,8 @@ def check(tree: Tree) -> list[str]:
             version = event.get("system_version")
             if not isinstance(version, str) or not version:
                 tree.errors.append(f"{label}: system_version is required")
-            elif _uses_source_hash(tree, str(event.get("system"))) and not _is_hex(version, 64):
-                tree.errors.append(f"{label}: system_version must be the source hash (64 hex digits)")
+            elif _in_repository(tree, str(event.get("system"))) and not _is_hex(version, 40):
+                tree.errors.append(f"{label}: system_version must be a commit hash (40 hex digits)")
             if kind in SUPPORT_EVENTS:
                 supported.add(shard.shard_id)
         elif kind == "retracted":
@@ -250,8 +250,8 @@ def check(tree: Tree) -> list[str]:
     return tree.errors
 
 
-def _uses_source_hash(tree: Tree, system: str) -> bool:
-    return "sources" in tree.systems.get(system, {})
+def _in_repository(tree: Tree, system: str) -> bool:
+    return bool(tree.systems.get(system, {}).get("in_repository"))
 
 
 def _is_hex(text: str, length: int) -> bool:

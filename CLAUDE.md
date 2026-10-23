@@ -110,8 +110,8 @@ Never use `maturin develop` (one install route: uv). Temporary files go in `tmp/
 Full description: `tools/reference/__init__.py`. In short:
 
 - `quantities/*.toml`: what is computed (input schema, domain, output, canonical form).
-- `systems.toml`: the systems recipes may use (`arithkit_toy`, `arithkit`, `sage`, ...); for systems in
-  this repository the `sources` that are hashed into `system_version`.
+- `systems.toml`: the systems recipes may use (`arithkit_toy`, `arithkit`, `sage`, ...), marking those in
+  this repository.
 - `recipes/<system>/*.toml`: active, immutable, versioned recipes, with `assumes` (names from
   `assumptions.toml`, e.g. GRH). `recipes-retired/<system>/`: old recipes, moved there unchanged with
   `python -m tools.reference retire-recipe RECIPE {outdated,bug} EXPLANATION`. Reproductions of an
@@ -119,11 +119,13 @@ Full description: `tools/reference/__init__.py`. In short:
 - `data/<quantity>/NNNN.jsonl`: immutable shards (<= 10 MB), first line a header; only believed-correct
   shards. Retraction = `git mv` to `retracted/` (same relative path) + a `retracted` event.
 - `provenance/<quantity>.jsonl`: append-only log of all events. Reproductions record `system` and
-  `system_version`: for in-repository systems the source hash (content of the `sources`, independent
-  of commits, so reproductions can be recorded on a branch before merging), otherwise the external
-  version string. `tool_commit` is a commit of origin/main: tools/ and crosscheck/ must be unchanged
+  `system_version`: for in-repository systems the commit at which they ran (clean working tree;
+  `git checkout <system_version>` + `uv sync` reproduces it) plus `toolchain` (Python, rustc),
+  otherwise the external version string. Reproductions may be recorded on a branch: pull requests
+  are merged with merge commits only (squash and rebase merging are disabled), so the recorded
+  commits stay in main's history. `tool_commit` is a commit of origin/main: tools/ and crosscheck/ must be unchanged
   from main to record anything. Status (unconditional / conditional) is derived, never stored.
 - `python -m tools.reference check` also checks against the git history (tool commits are ancestors of
-  HEAD, source hashes occur in the history); this needs the full history (CI: `fetch-depth: 0`).
+  HEAD, and so are recorded system_version commits); this needs the full history (CI: `fetch-depth: 0`).
 - CAS code for comparisons lives only in `crosscheck/`; it is never part of the default test run.
 - If the data approaches GitHub's repository limits, move it to an external database (not Git LFS).

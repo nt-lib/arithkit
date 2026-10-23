@@ -3,12 +3,12 @@
 from __future__ import annotations
 
 import datetime
-import hashlib
 import json
 import os
 import pathlib
 import socket
 import subprocess
+import sys
 import tempfile
 from typing import Any
 
@@ -47,15 +47,13 @@ def tool_commit() -> str:
     return main
 
 
-def source_hash(sources: list[str], commit: str = "HEAD") -> str:
-    """The system version of an in-repository system: sha256 over the git object ids of its sources.
-
-    The text hashed is one line ``<path> <git object id at commit>`` per source, in the order of
-    systems.toml. It depends only on the content of the sources, not on the commit, so it is the
-    same before and after any kind of merge.
-    """
-    lines = [f"{path} {git('rev-parse', f'{commit}:{path}')}" for path in sources]
-    return hashlib.sha256("\n".join(lines).encode()).hexdigest()
+def toolchain(system: str) -> dict[str, str]:
+    """Versions of the toolchain that are not pinned by the commit (recorded next to it)."""
+    versions = {"python": sys.version.split()[0]}
+    if system == "arithkit":
+        rustc = subprocess.run(["rustc", "--version"], capture_output=True, text=True, check=False)
+        versions["rustc"] = rustc.stdout.strip() if rustc.returncode == 0 else "unknown"
+    return versions
 
 
 def evaluate_python(
@@ -73,9 +71,8 @@ def evaluate_python(
         "GL2QSubQuotient": quotient.GL2QSubQuotient,
     }
     outputs = [eval(f"({template})", {**namespace, **row}) for row in inputs]
-    sources = tree.systems[system]["sources"]
-    assert isinstance(sources, list)
-    return outputs, source_hash([str(x) for x in sources])  # pyright: ignore[reportUnknownVariableType, reportUnknownArgumentType]
+    # The working tree is clean (checked by tool_commit), so HEAD is exactly the code that ran.
+    return outputs, git("rev-parse", "HEAD")
 
 
 def _clean_environment() -> dict[str, str]:
@@ -199,6 +196,8 @@ def _record(
         "system_version": version,
         "assumes": recipe["assumes"],
     }
+    if tree.systems.get(str(recipe["system"]), {}).get("in_repository"):
+        event["toolchain"] = toolchain(str(recipe["system"]))
     if kind == "disagreed":
         event["mismatches"] = [list(k) for k in mismatches]
     append_event(tree, str(recipe["quantity"]), event, commit)
@@ -225,31 +224,19 @@ def retire_recipe(tree: Tree, recipe_id: str, reason: str, explanation: str) -> 
 
 
 def check_git(tree: Tree) -> list[str]:
-    """Checks against the git history: tool commits are ancestors of HEAD, and the source hash of
-    every reproduction by an in-repository system occurs at some commit reachable from HEAD."""
+    """Checks against the git history: every tool commit and every commit recorded as the version of
+    an in-repository system is an ancestor of HEAD (so it can be checked out to reproduce)."""
     problems: list[str] = []
-    commits = git("rev-list", "HEAD").split()
-    known: dict[str, set[str]] = {}
     for number, event in enumerate(tree.events, start=1):
-        commit = str(event.get("tool_commit"))
-        ok = subprocess.run(
-            ["git", "merge-base", "--is-ancestor", commit, "HEAD"], cwd=REPO, capture_output=True
-        )
-        if ok.returncode != 0:
-            problems.append(f"event {number}: tool_commit {commit} is not an ancestor of HEAD")
-        system = str(event.get("system"))
-        sources = tree.systems.get(system, {}).get("sources")
-        if event["event"] in REPRODUCTION_EVENTS and isinstance(sources, list):
-            if system not in known:
-                hashes: set[str] = set()
-                for c in commits:
-                    try:
-                        hashes.add(source_hash([str(x) for x in sources], c))  # pyright: ignore[reportUnknownVariableType, reportUnknownArgumentType]
-                    except subprocess.CalledProcessError:
-                        continue
-                known[system] = hashes
-            if event.get("system_version") not in known[system]:
-                problems.append(
-                    f"event {number}: source hash of {system} occurs at no commit of HEAD's history"
-                )
+        commits = [("tool_commit", str(event.get("tool_commit")))]
+        if event["event"] in REPRODUCTION_EVENTS and tree.systems.get(str(event.get("system")), {}).get(
+            "in_repository"
+        ):
+            commits.append(("system_version", str(event.get("system_version"))))
+        for name, commit in commits:
+            ok = subprocess.run(
+                ["git", "merge-base", "--is-ancestor", commit, "HEAD"], cwd=REPO, capture_output=True
+            )
+            if ok.returncode != 0:
+                problems.append(f"event {number}: {name} {commit} is not an ancestor of HEAD")
     return problems
