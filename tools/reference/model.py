@@ -10,7 +10,10 @@ from dataclasses import dataclass, field
 
 MAX_SHARD_BYTES = 10 * 1024 * 1024
 SUPPORT_EVENTS = ("produced", "confirmed")
-EVENT_KINDS = ("produced", "confirmed", "disagreed", "retracted", "inherited", "retracted_recipe")
+REPRODUCTION_EVENTS = ("produced", "confirmed", "disagreed")
+EVENT_KINDS = (*REPRODUCTION_EVENTS, "retracted", "inherited", "recipe_retired")
+RETIREMENT_REASONS = ("outdated", "bug")
+RECIPE_FOLDERS = ("recipes", "recipes-retired")
 
 type Key = tuple[object, ...]
 
@@ -55,6 +58,8 @@ class Tree:
     quantities: dict[str, dict[str, object]]
     recipes: dict[str, dict[str, object]]
     recipe_paths: dict[str, pathlib.Path]
+    retired: set[str]
+    systems: dict[str, dict[str, object]]
     shards: dict[str, Shard]
     events: list[dict[str, object]]
     errors: list[str]
@@ -76,9 +81,12 @@ def load(root: pathlib.Path) -> Tree:
         if q.get("name") != path.stem:
             errors.append(f"{path}: name must be {path.stem!r}")
         quantities[path.stem] = q
+    systems: dict[str, dict[str, object]] = tomllib.loads((root / "systems.toml").read_text())
     recipes: dict[str, dict[str, object]] = {}
     recipe_paths: dict[str, pathlib.Path] = {}
-    for path in sorted((root / "recipes").glob("*/*.toml")):
+    retired: set[str] = set()
+    paths = [(folder, path) for folder in RECIPE_FOLDERS for path in sorted((root / folder).glob("*/*.toml"))]
+    for folder, path in paths:
         r = tomllib.loads(path.read_text())
         rid = str(r.get("id"))
         expected = f"{path.parent.name}.{path.stem}"
@@ -86,6 +94,12 @@ def load(root: pathlib.Path) -> Tree:
             errors.append(f"{path}: id must be {expected!r}")
         if r.get("system") != path.parent.name:
             errors.append(f"{path}: system must be {path.parent.name!r}")
+        if path.parent.name not in systems:
+            errors.append(f"{path}: system {path.parent.name!r} is not listed in systems.toml")
+        if rid in recipes:
+            errors.append(f"{path}: recipe id {rid} occurs twice")
+        if folder == "recipes-retired":
+            retired.add(rid)
         if r.get("quantity") not in quantities:
             errors.append(f"{path}: unknown quantity {r.get('quantity')!r}")
         assumes = r.get("assumes")
@@ -113,7 +127,9 @@ def load(root: pathlib.Path) -> Tree:
                 errors.append(f"{path}:{number}: unknown event")
                 continue
             events.append(event)  # pyright: ignore[reportUnknownArgumentType]
-    return Tree(root, assumptions, quantities, recipes, recipe_paths, shards, events, errors)
+    return Tree(
+        root, assumptions, quantities, recipes, recipe_paths, retired, systems, shards, events, errors
+    )
 
 
 def _load_shard(
@@ -166,12 +182,21 @@ def check(tree: Tree) -> list[str]:
     """All problems of the tree (empty if it is consistent)."""
     retracted_ids: set[str] = set()
     supported: set[str] = set()
+    retirements: set[str] = set()
     for number, event in enumerate(tree.events, start=1):
         label = f"event {number} ({event['event']})"
         kind = event["event"]
-        if kind == "retracted_recipe":
-            if event.get("recipe") not in tree.recipes:
-                tree.errors.append(f"{label}: unknown recipe")
+        if kind == "recipe_retired":
+            recipe = str(event.get("recipe"))
+            if recipe not in tree.retired:
+                tree.errors.append(f"{label}: {recipe} is not in recipes-retired/")
+            elif recipe in retirements:
+                tree.errors.append(f"{label}: {recipe} retired twice")
+            if event.get("reason") not in RETIREMENT_REASONS:
+                tree.errors.append(f"{label}: reason must be one of {RETIREMENT_REASONS}")
+            if not isinstance(event.get("explanation"), str) or not event.get("explanation"):
+                tree.errors.append(f"{label}: an explanation is required")
+            retirements.add(recipe)
             continue
         shard = _event_shard(tree, event, label)
         if shard is None:
@@ -184,6 +209,13 @@ def check(tree: Tree) -> list[str]:
                 tree.errors.append(f"{label}: recipe {recipe} has changed (recipes are immutable)")
             elif tree.recipes[str(recipe)].get("quantity") != shard.quantity:
                 tree.errors.append(f"{label}: recipe is for another quantity")
+            elif event.get("system") != tree.recipes[str(recipe)].get("system"):
+                tree.errors.append(f"{label}: system must be the recipe's system")
+            version = event.get("system_version")
+            if not isinstance(version, str) or not version:
+                tree.errors.append(f"{label}: system_version is required")
+            elif _uses_source_hash(tree, str(event.get("system"))) and not _is_hex(version, 64):
+                tree.errors.append(f"{label}: system_version must be the source hash (64 hex digits)")
             if kind in SUPPORT_EVENTS:
                 supported.add(shard.shard_id)
         elif kind == "retracted":
@@ -198,6 +230,8 @@ def check(tree: Tree) -> list[str]:
                 if key in source.lines and key not in excluded and source.lines[key] != line:
                     tree.errors.append(f"{label}: row {key} differs from the source")
             supported.add(shard.shard_id)
+    for recipe in sorted(tree.retired - retirements):
+        tree.errors.append(f"{recipe}: in recipes-retired/ without a recipe_retired event")
     for shard in tree.shards.values():
         if shard.active and shard.shard_id in retracted_ids:
             tree.errors.append(f"{shard.shard_id}: retracted but still in data/")
@@ -216,13 +250,20 @@ def check(tree: Tree) -> list[str]:
     return tree.errors
 
 
-def _retracted_recipe(tree: Tree, event: dict[str, object]) -> bool:
-    for r in tree.events:
-        if r["event"] == "retracted_recipe" and r.get("recipe") == event.get("recipe"):
-            version = r.get("system_version")
-            if version is None or version == event.get("system_version"):
-                return True
-    return False
+def _uses_source_hash(tree: Tree, system: str) -> bool:
+    return "sources" in tree.systems.get(system, {})
+
+
+def _is_hex(text: str, length: int) -> bool:
+    return len(text) == length and all(c in "0123456789abcdef" for c in text)
+
+
+def _buggy_recipe(tree: Tree, recipe: object) -> bool:
+    """Whether the recipe was retired because it contained a bug (its reproductions do not count)."""
+    return any(
+        e["event"] == "recipe_retired" and e.get("recipe") == recipe and e.get("reason") == "bug"
+        for e in tree.events
+    )
 
 
 def row_support(tree: Tree, shard: Shard) -> dict[Key, list[frozenset[str]]]:
@@ -233,7 +274,7 @@ def row_support(tree: Tree, shard: Shard) -> dict[Key, list[frozenset[str]]]:
         sets: list[frozenset[str]] = []
         for event in tree.events:
             if event.get("shard") == shard_id and event["event"] in SUPPORT_EVENTS:
-                if not _retracted_recipe(tree, event):
+                if not _buggy_recipe(tree, event.get("recipe")):
                     sets.append(frozenset(str(a) for a in _as_list(event.get("assumes"))))  # pyright: ignore[reportUnknownVariableType, reportAttributeAccessIssue, reportUnknownArgumentType]
         return sets
 

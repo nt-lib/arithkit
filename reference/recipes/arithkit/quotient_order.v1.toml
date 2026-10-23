@@ -1,7 +1,9 @@
 id = "arithkit.quotient_order.v1"
 quantity = "quotient_order"
 system = "arithkit"
-# Evaluated by tools/reference with the native AdelicQuotient and LiftedQuotient in scope (order formula).
-template = "(AdelicQuotient if kind == 'adelic' else LiftedQuotient)(N, M).order()"
+# A Python expression in the key fields of the quantity (kind, N, M), evaluated by tools/reference
+# with the implementation's GL2ASubQuotient and GL2QSubQuotient in scope.
+# Uses the order formula.
+template = "(GL2ASubQuotient if kind == 'adelic' else GL2QSubQuotient)(N, M).order()"
 parser = "int"
 assumes = []

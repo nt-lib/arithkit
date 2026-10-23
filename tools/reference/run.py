@@ -3,35 +3,66 @@
 from __future__ import annotations
 
 import datetime
+import hashlib
 import json
 import os
 import pathlib
 import socket
 import subprocess
-import sys
 import tempfile
 from typing import Any
 
-from tools.reference.model import Key, Tree, sha256
+from tools.reference.model import REPRODUCTION_EVENTS, Key, Tree, sha256
+
+TOOL_PATHS = ("tools", "crosscheck")
 
 REPO = pathlib.Path(__file__).resolve().parents[2]
 CROSSCHECK = REPO / "crosscheck"
 
 
-def tool_commit() -> str:
-    """HEAD of this repository; refuses a working tree with uncommitted changes."""
-    dirty = subprocess.run(
-        ["git", "status", "--porcelain"], cwd=REPO, capture_output=True, text=True, check=True
-    )
-    if dirty.stdout.strip():
+def git(*args: str) -> str:
+    """Run git in the repository and return its stripped output."""
+    proc = subprocess.run(["git", *args], cwd=REPO, capture_output=True, text=True, check=True)
+    return proc.stdout.strip()
+
+
+def require_clean_tree() -> None:
+    """Refuse to record anything while the working tree has uncommitted changes."""
+    if git("status", "--porcelain"):
         raise SystemExit("refusing to record provenance: the working tree has uncommitted changes")
-    head = subprocess.run(["git", "rev-parse", "HEAD"], cwd=REPO, capture_output=True, text=True, check=True)
-    return head.stdout.strip()
 
 
-def evaluate_python(system: str, template: str, inputs: list[dict[str, Any]]) -> tuple[list[object], str]:
-    """Evaluate a toy/arithkit recipe in this process; returns the outputs and the system version."""
-    if system == "toy":
+def tool_commit() -> str:
+    """The commit of origin/main, provided the tooling at HEAD is identical to it.
+
+    Only tooling already merged on main may record provenance; reproductions themselves may
+    be recorded on a branch (their software is identified by source hashes).
+    """
+    require_clean_tree()
+    git("fetch", "--quiet", "origin", "main")
+    main = git("rev-parse", "FETCH_HEAD")
+    changed = git("diff", "--name-only", main, "HEAD", "--", *TOOL_PATHS)
+    if changed:
+        raise SystemExit(f"refusing to record provenance: the tooling differs from origin/main:\n{changed}")
+    return main
+
+
+def source_hash(sources: list[str], commit: str = "HEAD") -> str:
+    """The system version of an in-repository system: sha256 over the git object ids of its sources.
+
+    The text hashed is one line ``<path> <git object id at commit>`` per source, in the order of
+    systems.toml. It depends only on the content of the sources, not on the commit, so it is the
+    same before and after any kind of merge.
+    """
+    lines = [f"{path} {git('rev-parse', f'{commit}:{path}')}" for path in sources]
+    return hashlib.sha256("\n".join(lines).encode()).hexdigest()
+
+
+def evaluate_python(
+    tree: Tree, system: str, template: str, inputs: list[dict[str, Any]]
+) -> tuple[list[object], str]:
+    """Evaluate an arithkit_toy/arithkit recipe in this process; returns the outputs and the version."""
+    if system == "arithkit_toy":
         from arithkit_toy.modular import quotient
     elif system == "arithkit":
         from arithkit.modular import quotient
@@ -42,7 +73,9 @@ def evaluate_python(system: str, template: str, inputs: list[dict[str, Any]]) ->
         "GL2QSubQuotient": quotient.GL2QSubQuotient,
     }
     outputs = [eval(f"({template})", {**namespace, **row}) for row in inputs]
-    return outputs, f"{system} 0.1.0 (python {sys.version.split()[0]})"
+    sources = tree.systems[system]["sources"]
+    assert isinstance(sources, list)
+    return outputs, source_hash([str(x) for x in sources])  # pyright: ignore[reportUnknownVariableType, reportUnknownArgumentType]
 
 
 def _clean_environment() -> dict[str, str]:
@@ -94,8 +127,10 @@ def evaluate_external(
 def run_recipe(tree: Tree, recipe_id: str, inputs: list[dict[str, Any]]) -> tuple[list[object], str]:
     recipe = tree.recipes[recipe_id]
     system = str(recipe["system"])
-    if system in ("toy", "arithkit"):
-        return evaluate_python(system, str(recipe["template"]), inputs)
+    if tree.recipe_paths[recipe_id].parent.parent.name != "recipes":
+        raise SystemExit(f"{recipe_id} is retired; only recipes in recipes/ can be run")
+    if system in ("arithkit_toy", "arithkit"):
+        return evaluate_python(tree, system, str(recipe["template"]), inputs)
     return evaluate_external(system, tree.recipe_paths[recipe_id], inputs)
 
 
@@ -160,6 +195,7 @@ def _record(
         "sha256": sha256(tree.root / "data" / shard_id),
         "recipe": recipe_id,
         "recipe_sha256": sha256(tree.recipe_paths[recipe_id]),
+        "system": recipe["system"],
         "system_version": version,
         "assumes": recipe["assumes"],
     }
@@ -168,10 +204,52 @@ def _record(
     append_event(tree, str(recipe["quantity"]), event, commit)
 
 
-def retract_recipe(tree: Tree, recipe_id: str, reason: str) -> None:
-    """Record that events of ``recipe_id`` no longer count as support."""
-    if recipe_id not in tree.recipes:
-        raise SystemExit(f"unknown recipe {recipe_id!r}")
+def retire_recipe(tree: Tree, recipe_id: str, reason: str, explanation: str) -> None:
+    """Move a recipe to recipes-retired/ and record why ("outdated" or "bug")."""
+    if recipe_id not in tree.recipes or recipe_id in tree.retired:
+        raise SystemExit(f"{recipe_id!r} is not an active recipe")
+    if reason not in ("outdated", "bug"):
+        raise SystemExit("reason must be 'outdated' or 'bug'")
     commit = tool_commit()
-    event: dict[str, object] = {"event": "retracted_recipe", "recipe": recipe_id, "reason": reason}
+    source = tree.recipe_paths[recipe_id]
+    target = tree.root / "recipes-retired" / source.parent.name / source.name
+    target.parent.mkdir(parents=True, exist_ok=True)
+    git("mv", str(source), str(target))
+    event: dict[str, object] = {
+        "event": "recipe_retired",
+        "recipe": recipe_id,
+        "reason": reason,
+        "explanation": explanation,
+    }
     append_event(tree, str(tree.recipes[recipe_id]["quantity"]), event, commit)
+
+
+def check_git(tree: Tree) -> list[str]:
+    """Checks against the git history: tool commits are ancestors of HEAD, and the source hash of
+    every reproduction by an in-repository system occurs at some commit reachable from HEAD."""
+    problems: list[str] = []
+    commits = git("rev-list", "HEAD").split()
+    known: dict[str, set[str]] = {}
+    for number, event in enumerate(tree.events, start=1):
+        commit = str(event.get("tool_commit"))
+        ok = subprocess.run(
+            ["git", "merge-base", "--is-ancestor", commit, "HEAD"], cwd=REPO, capture_output=True
+        )
+        if ok.returncode != 0:
+            problems.append(f"event {number}: tool_commit {commit} is not an ancestor of HEAD")
+        system = str(event.get("system"))
+        sources = tree.systems.get(system, {}).get("sources")
+        if event["event"] in REPRODUCTION_EVENTS and isinstance(sources, list):
+            if system not in known:
+                hashes: set[str] = set()
+                for c in commits:
+                    try:
+                        hashes.add(source_hash([str(x) for x in sources], c))  # pyright: ignore[reportUnknownVariableType, reportUnknownArgumentType]
+                    except subprocess.CalledProcessError:
+                        continue
+                known[system] = hashes
+            if event.get("system_version") not in known[system]:
+                problems.append(
+                    f"event {number}: source hash of {system} occurs at no commit of HEAD's history"
+                )
+    return problems

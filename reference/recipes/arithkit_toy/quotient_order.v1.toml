@@ -1,0 +1,9 @@
+id = "arithkit_toy.quotient_order.v1"
+quantity = "quotient_order"
+system = "arithkit_toy"
+# A Python expression in the key fields of the quantity (kind, N, M), evaluated by tools/reference
+# with the implementation's GL2ASubQuotient and GL2QSubQuotient in scope.
+# Counts the elements by enumeration (independent of the order formula), so only for small N, M.
+template = "len((GL2ASubQuotient if kind == 'adelic' else GL2QSubQuotient)(N, M).elements())"
+parser = "int"
+assumes = []

@@ -1,10 +1,11 @@
-"""Command line: python -m tools.reference {check,status,produce,confirm,retract-recipe}.
+"""Command line: python -m tools.reference {check,status,produce,confirm,retire-recipe}.
 
 check                         consistency of reference/ (exit status 1 on problems)
 status                        derived status of every active shard
 produce RECIPE INPUTS SHARD   compute a new shard (INPUTS: JSONL of key fields)
 confirm RECIPE SHARD          recompute a shard and record confirmed/disagreed
-retract-recipe RECIPE REASON  record that a recipe no longer counts as support
+retire-recipe RECIPE {outdated,bug} EXPLANATION
+                              move a recipe to recipes-retired/ and record why
 """
 
 from __future__ import annotations
@@ -22,7 +23,8 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="python -m tools.reference")
     parser.add_argument("--root", type=pathlib.Path, default=DEFAULT_ROOT)
     sub = parser.add_subparsers(dest="command", required=True)
-    sub.add_parser("check")
+    k = sub.add_parser("check")
+    k.add_argument("--no-git", action="store_true", help="skip the checks against the git history")
     sub.add_parser("status")
     p = sub.add_parser("produce")
     p.add_argument("recipe")
@@ -31,13 +33,16 @@ def main(argv: list[str] | None = None) -> int:
     c = sub.add_parser("confirm")
     c.add_argument("recipe")
     c.add_argument("shard")
-    r = sub.add_parser("retract-recipe")
+    r = sub.add_parser("retire-recipe")
     r.add_argument("recipe")
-    r.add_argument("reason")
+    r.add_argument("reason", choices=["outdated", "bug"])
+    r.add_argument("explanation")
     args = parser.parse_args(argv)
     tree = model.load(args.root)
     if args.command == "check":
         problems = model.check(tree)
+        if not args.no_git:
+            problems += run.check_git(tree)
         for problem in problems:
             print(problem)
         print(f"{len(tree.shards)} shards, {len(tree.events)} events, {len(problems)} problems")
@@ -51,8 +56,8 @@ def main(argv: list[str] | None = None) -> int:
         return 1
     if args.command == "produce":
         run.produce(tree, args.recipe, args.inputs, args.shard)
-    elif args.command == "retract-recipe":
-        run.retract_recipe(tree, args.recipe, args.reason)
+    elif args.command == "retire-recipe":
+        run.retire_recipe(tree, args.recipe, args.reason, args.explanation)
     else:
         mismatches = run.confirm(tree, args.recipe, args.shard)
         print(f"{len(mismatches)} mismatches")

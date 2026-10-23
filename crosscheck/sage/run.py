@@ -18,7 +18,7 @@ def main() -> None:
         recipe = tomllib.load(f)
     template = recipe["template"].strip()
     namespace = {name: getattr(sage_all, name) for name in dir(sage_all) if not name.startswith("_")}
-    print(json.dumps({"version": f"SageMath {version}"}))
+    print(json.dumps({"version": version}))
     with open(sys.argv[2]) as f:
         lines = f.read().splitlines()
     for line in lines:
