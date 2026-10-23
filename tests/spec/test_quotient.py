@@ -15,7 +15,7 @@ from helpers import SMALL_CASES, al_matrix, mat_mul, random_gamma0_star
 
 
 def groups(backend: Backend, n: int, m: int) -> list[Any]:
-    return [backend.quotient.AdelicQuotient(n, m), backend.quotient.LiftedQuotient(n, m)]
+    return [backend.quotient.GL2ASubQuotient(n, m), backend.quotient.GL2QSubQuotient(n, m)]
 
 
 @pytest.mark.parametrize(("n", "m"), SMALL_CASES)
@@ -60,7 +60,7 @@ def _primes(m: int) -> list[int]:
 
 @pytest.mark.parametrize(("n", "m"), [(6, 5), (10, 4), (15, 6), (2, 8), (30, 7), (1, 12)])
 def test_from_matrix_is_a_homomorphism(backend: Backend, n: int, m: int) -> None:
-    q = backend.quotient.LiftedQuotient(n, m)
+    q = backend.quotient.GL2QSubQuotient(n, m)
     rnd = random.Random(n + 100 * m)
     for _ in range(30):
         g, h = random_gamma0_star(rnd, n), random_gamma0_star(rnd, n)
@@ -74,7 +74,7 @@ def test_from_matrix_is_a_homomorphism(backend: Backend, n: int, m: int) -> None
 
 
 def test_from_matrix_rejects(backend: Backend) -> None:
-    q = backend.quotient.LiftedQuotient(6, 5)
+    q = backend.quotient.GL2QSubQuotient(6, 5)
     for g in [((1, 0), (0, -1)), ((1, 0), (1, 1)), ((2, 0), (0, 1)), ((0, 0), (0, 0)), ((1, 0), (3, 1))]:
         with pytest.raises(NotInGroupError):
             q.from_matrix(g)
@@ -89,7 +89,7 @@ def test_prime_helling_level(backend: Backend) -> None:
     """prop:prime-helling (3): conjugation by W_p = [[0,-1],[p,0]] is (a,b,c,d) -> (d,-c,-b,a), W_p^2 = -1."""
     for p, k in [(2, 3), (3, 2), (5, 2), (7, 1)]:
         m = p**k
-        q = backend.quotient.LiftedQuotient(p, m)
+        q = backend.quotient.GL2QSubQuotient(p, m)
         w = q.from_matrix(((0, -1), (p, 0)))
         assert w * w == q.from_matrix(((-1, 0), (0, -1)))
         for x in q.elements():
@@ -102,7 +102,7 @@ def test_prime_helling_level(backend: Backend) -> None:
 def test_fibre_product_orders(backend: Backend) -> None:
     """thm:fibre-product implies |Q_{N,M}| = |T_N| prod_i |Q_{N,p_i^k_i}| / |T_N|."""
     for n, m in [(6, 12), (10, 18), (15, 20), (1, 30), (30, 9 * 4 * 5)]:
-        for cls in (backend.quotient.AdelicQuotient, backend.quotient.LiftedQuotient):
+        for cls in (backend.quotient.GL2ASubQuotient, backend.quotient.GL2QSubQuotient):
             t = len(cls(n, m).type_group())
             pieces = [cls(n, p**k).order() // t for p, k in _factor(m)]
             assert cls(n, m).order() == t * math.prod(pieces)
@@ -120,7 +120,7 @@ def _factor(m: int) -> list[tuple[int, int]]:
 
 
 def test_construction_and_reduction(backend: Backend) -> None:
-    q = backend.quotient.AdelicQuotient(6, 5)
+    q = backend.quotient.GL2ASubQuotient(6, 5)
     x = q(6, (-1, 10**30 + 1, 7, -4))
     assert x.coordinates() == (6, (4, 1, 2, 1))
     assert x == q(6, (4, 1, 2, 1))
@@ -136,7 +136,7 @@ def test_construction_and_reduction(backend: Backend) -> None:
     with pytest.raises(NotInGroupError):
         q(1, (0, 0, 0, 0))
     with pytest.raises(NotInGroupError):
-        backend.quotient.LiftedQuotient(6, 5)(1, (2, 0, 0, 1))
+        backend.quotient.GL2QSubQuotient(6, 5)(1, (2, 0, 0, 1))
     for bad in [[1, 0, 0, 1], (1, 0, 0), (1, 0, 0, 1, 0), (1.0, 0, 0, 1), "abcd"]:
         with pytest.raises(TypeError):
             q(1, bad)
@@ -147,7 +147,7 @@ def test_construction_and_reduction(backend: Backend) -> None:
 
 
 def test_invalid_parameters(backend: Backend) -> None:
-    for cls in (backend.quotient.AdelicQuotient, backend.quotient.LiftedQuotient):
+    for cls in (backend.quotient.GL2ASubQuotient, backend.quotient.GL2QSubQuotient):
         for n, m in [(4, 3), (0, 3), (3, 0), (-6, 5), (6, -5), (2**63, 3), (3, 2**63), (2**200, 1)]:
             with pytest.raises(InvalidParameterError):
                 cls(n, m)
@@ -158,7 +158,7 @@ def test_invalid_parameters(backend: Backend) -> None:
 
 
 def test_powers(backend: Backend) -> None:
-    q = backend.quotient.LiftedQuotient(10, 9)
+    q = backend.quotient.GL2QSubQuotient(10, 9)
     rnd = random.Random(3)
     for x in rnd.sample(q.elements(), 15):
         assert x**0 == q.identity()
@@ -173,12 +173,12 @@ def test_powers(backend: Backend) -> None:
 
 
 def test_equality_and_hashing(backend: Backend) -> None:
-    adelic = backend.quotient.AdelicQuotient(6, 5)
-    lifted = backend.quotient.LiftedQuotient(6, 5)
-    assert adelic == backend.quotient.AdelicQuotient(6, 5)
-    assert hash(adelic) == hash(backend.quotient.AdelicQuotient(6, 5))
+    adelic = backend.quotient.GL2ASubQuotient(6, 5)
+    lifted = backend.quotient.GL2QSubQuotient(6, 5)
+    assert adelic == backend.quotient.GL2ASubQuotient(6, 5)
+    assert hash(adelic) == hash(backend.quotient.GL2ASubQuotient(6, 5))
     assert adelic != lifted
-    assert adelic != backend.quotient.AdelicQuotient(6, 7)
+    assert adelic != backend.quotient.GL2ASubQuotient(6, 7)
     x = lifted(6, (1, 0, 0, 1))
     assert x != adelic(6, (1, 0, 0, 1))
     assert lifted.to_adelic(x) == adelic(6, (1, 0, 0, 1))
@@ -200,9 +200,19 @@ def test_equality_and_hashing(backend: Backend) -> None:
 
 
 def test_type_group_and_det(backend: Backend) -> None:
-    q = backend.quotient.AdelicQuotient(30, 7)
+    q = backend.quotient.GL2ASubQuotient(30, 7)
     assert q.type_group() == (1, 2, 3, 5, 6, 10, 15, 30)
     assert q.N == 30 and q.M == 7
     for x in itertools.islice(q.elements(), 0, None, 997):
         a, b, c, d = x.coordinates()[1]
         assert x.det() == (a * d - 30 * b * c) % 7
+
+
+def test_printing(backend: Backend) -> None:
+    """Elements print without their parent; both implementations print identically."""
+    q = backend.quotient.GL2QSubQuotient(6, 5)
+    x = q.al_element(3)
+    assert repr(x) == str(x) == "(3, (1, 0, 0, 1))"
+    assert repr(q) == str(q) == "GL2QSubQuotient(6, 5)"
+    assert repr(backend.quotient.GL2ASubQuotient(10, 7)) == "GL2ASubQuotient(10, 7)"
+    assert repr(q.subgroup([x])) == f"subgroup of order {q.subgroup([x]).order()} of GL2QSubQuotient(6, 5)"

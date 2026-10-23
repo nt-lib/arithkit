@@ -11,14 +11,14 @@ from arithkit_toy.modular import subgroup as toy_subgroup
 
 
 def check_toy(x: toy_quotient.QuotientElement, h: toy_subgroup.QuotientSubgroup) -> None:
-    _a: api_quotient.AdelicQuotient = toy_quotient.AdelicQuotient(6, 5)
-    _l: api_quotient.LiftedQuotient = toy_quotient.LiftedQuotient(6, 5)
+    _a: api_quotient.GL2ASubQuotient = toy_quotient.GL2ASubQuotient(6, 5)
+    _l: api_quotient.GL2QSubQuotient = toy_quotient.GL2QSubQuotient(6, 5)
     _x: api_quotient.QuotientElement = x
     _h: api_subgroup.QuotientSubgroup = h
 
 
 def check_native(x: native_quotient.QuotientElement, h: native_subgroup.QuotientSubgroup) -> None:
-    _a: api_quotient.AdelicQuotient = native_quotient.AdelicQuotient(6, 5)
-    _l: api_quotient.LiftedQuotient = native_quotient.LiftedQuotient(6, 5)
+    _a: api_quotient.GL2ASubQuotient = native_quotient.GL2ASubQuotient(6, 5)
+    _l: api_quotient.GL2QSubQuotient = native_quotient.GL2QSubQuotient(6, 5)
     _x: api_quotient.QuotientElement = x
     _h: api_subgroup.QuotientSubgroup = h

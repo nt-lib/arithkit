@@ -24,7 +24,7 @@ def kernel(q: Any, m: int) -> Any:
 
 def test_lcm_gcd_laws(backend: Backend) -> None:
     """prop:lcm-gcd, seen inside Q_{N,L}: intersections and products of the kernels."""
-    for cls in (backend.quotient.AdelicQuotient, backend.quotient.LiftedQuotient):
+    for cls in (backend.quotient.GL2ASubQuotient, backend.quotient.GL2QSubQuotient):
         q = cls(2, 6)
         for m1, m2 in [(2, 3), (1, 6), (2, 6), (3, 6)]:
             k1, k2 = kernel(q, m1), kernel(q, m2)
@@ -36,7 +36,7 @@ def test_lcm_gcd_laws(backend: Backend) -> None:
 def test_index_formula(backend: Backend) -> None:
     """lem:index-formula inside Q_{N,M}: [Q : H] = 2^(omega - d) [Q^0 : H^0] with ^0 the type 1 parts."""
     rnd = random.Random(5)
-    q = backend.quotient.AdelicQuotient(6, 5)
+    q = backend.quotient.GL2ASubQuotient(6, 5)
     q0 = sum(1 for x in q.elements() if x.type() == 1)
     els = q.elements()
     for _ in range(10):
@@ -48,7 +48,7 @@ def test_index_formula(backend: Backend) -> None:
 
 def test_canonical_generators(backend: Backend) -> None:
     rnd = random.Random(7)
-    for cls in (backend.quotient.AdelicQuotient, backend.quotient.LiftedQuotient):
+    for cls in (backend.quotient.GL2ASubQuotient, backend.quotient.GL2QSubQuotient):
         q = cls(10, 3)
         els = q.elements()
         for _ in range(8):
@@ -66,8 +66,8 @@ def test_canonical_generators(backend: Backend) -> None:
 
 
 def test_subgroup_membership_and_parents(backend: Backend) -> None:
-    q = backend.quotient.AdelicQuotient(6, 5)
-    other = backend.quotient.AdelicQuotient(6, 7)
+    q = backend.quotient.GL2ASubQuotient(6, 5)
+    other = backend.quotient.GL2ASubQuotient(6, 7)
     h = q.subgroup([q.al_element(2)])
     assert h.order() == q.al_element(2).order()
     assert h.al_image() == (1, 2)

@@ -57,6 +57,14 @@ docs/ (Sphinx, from arithkit_api only)
   Python values; hashes need not agree between implementations). No coercion; explicit conversions.
   Arithmetic between different parents of one implementation raises `ParentMismatchError`; toy and
   native objects never interact (`TypeError`).
+- Printing (`repr`/`str`) is part of the interface and identical in both implementations. Elements
+  never print their parent (users print the parent themselves): an element of a quotient prints as
+  `(e, (a, b, c, d))`, a parent as `GL2QSubQuotient(N, M)`.
+- Python class names are descriptive: `GL2ASubQuotient` (adelic, subquotient of GL2(A_f)) and
+  `GL2QSubQuotient` (lifted/classical, subquotient of GL2(Q)).
+- No release has been made yet: backward incompatible changes are fine and no compatibility aliases
+  are kept for old names. When a change breaks a reference recipe, add a new recipe version and
+  retract the old one (`python -m tools.reference retract-recipe`).
 - Determinacy levels (`arithkit_api.levels`), marked per output with `Annotated[...]`, unmarked =
   Canonical: Canonical (equal everywhere), Deterministic(algorithm, version) (equal toy vs native,
   algorithm specified and versioned), Characterised(verify) (any value with the stated property),

@@ -20,8 +20,8 @@ fn interrupt_hook() -> bool {
 fn _native(m: &Bound<'_, PyModule>) -> PyResult<()> {
     arithkit_core::infra::interrupt::set_hook(interrupt_hook);
     m.add_class::<modular::quotient::PyQuotientGroup>()?;
-    m.add_class::<modular::quotient::PyAdelicQuotient>()?;
-    m.add_class::<modular::quotient::PyLiftedQuotient>()?;
+    m.add_class::<modular::quotient::PyGL2ASubQuotient>()?;
+    m.add_class::<modular::quotient::PyGL2QSubQuotient>()?;
     m.add_class::<modular::quotient::PyQuotientElement>()?;
     m.add_class::<modular::subgroup::PyQuotientSubgroup>()?;
     m.add_function(wrap_pyfunction!(modular::quotient::quotient_from_json, m)?)?;

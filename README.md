@@ -12,9 +12,9 @@ Current content: the finite quotients Gamma_0(N)^* / Gamma(N;M) (adelic and lift
 their elements and subgroups. The mathematics is in the TeX document `maths/quotients/`.
 
 ```python
-from arithkit.modular.quotient import LiftedQuotient
+from arithkit.modular.quotient import GL2QSubQuotient
 
-q = LiftedQuotient(6, 5)
+q = GL2QSubQuotient(6, 5)
 w = q.from_matrix(((0, -1), (6, 0)))
 h = q.subgroup([w, q.al_element(2)])
 print(h.order(), h.al_image(), h.to_json())

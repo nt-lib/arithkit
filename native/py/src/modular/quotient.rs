@@ -15,19 +15,19 @@ use crate::convert::{
 };
 use crate::modular::subgroup::PyQuotientSubgroup;
 
-/// Shared base class of `AdelicQuotient` and `LiftedQuotient`.
+/// Shared base class of `GL2ASubQuotient` and `GL2QSubQuotient`.
 #[pyclass(name = "_QuotientGroup", module = "arithkit._native", subclass, frozen)]
 pub struct PyQuotientGroup {
     pub q: Arc<Quotient>,
 }
 
-/// The adelic quotient Q^_{N,M}; see `arithkit_api.modular.quotient.AdelicQuotient`.
-#[pyclass(name = "AdelicQuotient", module = "arithkit._native", extends = PyQuotientGroup, frozen)]
-pub struct PyAdelicQuotient;
+/// The adelic quotient Q^_{N,M}; see `arithkit_api.modular.quotient.GL2ASubQuotient`.
+#[pyclass(name = "GL2ASubQuotient", module = "arithkit._native", extends = PyQuotientGroup, frozen)]
+pub struct PyGL2ASubQuotient;
 
-/// The lifted quotient Q~_{N,M}; see `arithkit_api.modular.quotient.LiftedQuotient`.
-#[pyclass(name = "LiftedQuotient", module = "arithkit._native", extends = PyQuotientGroup, frozen)]
-pub struct PyLiftedQuotient;
+/// The lifted quotient Q~_{N,M}; see `arithkit_api.modular.quotient.GL2QSubQuotient`.
+#[pyclass(name = "GL2QSubQuotient", module = "arithkit._native", extends = PyQuotientGroup, frozen)]
+pub struct PyGL2QSubQuotient;
 
 /// An element (e, u); see `arithkit_api.modular.quotient.QuotientElement`.
 #[pyclass(name = "QuotientElement", module = "arithkit._native", frozen)]
@@ -44,13 +44,13 @@ pub fn new_parent(py: Python<'_>, n: u64, m: u64, lifted: bool) -> PyResult<Py<P
     if lifted {
         Ok(Py::new(
             py,
-            PyClassInitializer::from(base).add_subclass(PyLiftedQuotient),
+            PyClassInitializer::from(base).add_subclass(PyGL2QSubQuotient),
         )?
         .into_any())
     } else {
         Ok(Py::new(
             py,
-            PyClassInitializer::from(base).add_subclass(PyAdelicQuotient),
+            PyClassInitializer::from(base).add_subclass(PyGL2ASubQuotient),
         )?
         .into_any())
     }
@@ -108,9 +108,9 @@ impl PyQuotientGroup {
 
     fn json_value<'py>(&self, py: Python<'py>) -> PyResult<Bound<'py, PyAny>> {
         let kind = if self.q.lifted() {
-            "LiftedQuotient"
+            "GL2QSubQuotient"
         } else {
-            "AdelicQuotient"
+            "GL2ASubQuotient"
         };
         json_module(py)?.call_method1("encode_quotient", (kind, self.q.n(), self.q.m()))
     }
@@ -260,16 +260,16 @@ impl PyQuotientGroup {
 
     fn __repr__(&self) -> String {
         let kind = if self.q.lifted() {
-            "LiftedQuotient"
+            "GL2QSubQuotient"
         } else {
-            "AdelicQuotient"
+            "GL2ASubQuotient"
         };
         format!("{kind}({}, {})", self.q.n(), self.q.m())
     }
 }
 
 #[pymethods]
-impl PyAdelicQuotient {
+impl PyGL2ASubQuotient {
     #[new]
     #[pyo3(signature = (N, M))]
     #[allow(non_snake_case)]
@@ -281,7 +281,7 @@ impl PyAdelicQuotient {
         let q = Quotient::new(parameter(py, N)?, parameter(py, M)?, false)
             .map_err(|err| to_pyerr(py, err))?;
         Ok(PyClassInitializer::from(PyQuotientGroup { q: Arc::new(q) })
-            .add_subclass(PyAdelicQuotient))
+            .add_subclass(PyGL2ASubQuotient))
     }
 
     fn to_lifted(slf: PyRef<'_, Self>, x: &Bound<'_, PyAny>) -> PyResult<PyQuotientElement> {
@@ -298,7 +298,7 @@ impl PyAdelicQuotient {
 }
 
 #[pymethods]
-impl PyLiftedQuotient {
+impl PyGL2QSubQuotient {
     #[new]
     #[pyo3(signature = (N, M))]
     #[allow(non_snake_case)]
@@ -310,7 +310,7 @@ impl PyLiftedQuotient {
         let q = Quotient::new(parameter(py, N)?, parameter(py, M)?, true)
             .map_err(|err| to_pyerr(py, err))?;
         Ok(PyClassInitializer::from(PyQuotientGroup { q: Arc::new(q) })
-            .add_subclass(PyLiftedQuotient))
+            .add_subclass(PyGL2QSubQuotient))
     }
 
     fn from_matrix(slf: &Bound<'_, Self>, g: &Bound<'_, PyAny>) -> PyResult<PyQuotientElement> {
@@ -436,18 +436,8 @@ impl PyQuotientElement {
     }
 
     fn __repr__(&self) -> String {
-        let kind = if self.q.lifted() {
-            "LiftedQuotient"
-        } else {
-            "AdelicQuotient"
-        };
         let [a, b, c, d] = self.x.u;
-        format!(
-            "({}, ({a}, {b}, {c}, {d})) in {kind}({}, {})",
-            self.q.type_of(self.x.mask),
-            self.q.n(),
-            self.q.m()
-        )
+        format!("({}, ({a}, {b}, {c}, {d}))", self.q.type_of(self.x.mask))
     }
 
     fn to_json(&self, py: Python<'_>) -> PyResult<String> {
@@ -483,6 +473,6 @@ pub fn quotient_from_value(py: Python<'_>, value: &Bound<'_, PyAny>) -> PyResult
         py,
         parameter(py, &n)?,
         parameter(py, &m)?,
-        kind == "LiftedQuotient",
+        kind == "GL2QSubQuotient",
     )
 }

@@ -110,7 +110,7 @@ def expect_dict(value: object, keys: set[str], what: str) -> dict[str, object]:
     return items
 
 
-QUOTIENT_TYPES = ("AdelicQuotient", "LiftedQuotient")
+QUOTIENT_TYPES = ("GL2ASubQuotient", "GL2QSubQuotient")
 
 
 def decode_quotient(value: object) -> tuple[str, int, int]:

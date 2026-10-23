@@ -9,9 +9,9 @@ classes from :mod:`arithkit`.
 
 .. code-block:: python
 
-   from arithkit.modular.quotient import LiftedQuotient
+   from arithkit.modular.quotient import GL2QSubQuotient
 
-   q = LiftedQuotient(6, 5)          # Gamma_0(6)^* / Gamma(6; 5), -1 kept
+   q = GL2QSubQuotient(6, 5)          # Gamma_0(6)^* / Gamma(6; 5), -1 kept
    w = q.from_matrix(((0, -1), (6, 0)))
    h = q.subgroup([w, q.al_element(2)])
    h.order(), h.al_image()

@@ -16,14 +16,14 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Protocol
 
 if TYPE_CHECKING:
-    from arithkit_api.modular.quotient import AdelicQuotient, LiftedQuotient, QuotientElement
+    from arithkit_api.modular.quotient import GL2ASubQuotient, GL2QSubQuotient, QuotientElement
 
 
 class QuotientSubgroup(Protocol):
-    """A subgroup of an :class:`~arithkit_api.modular.quotient.AdelicQuotient` or
-    :class:`~arithkit_api.modular.quotient.LiftedQuotient`."""
+    """A subgroup of an :class:`~arithkit_api.modular.quotient.GL2ASubQuotient` or
+    :class:`~arithkit_api.modular.quotient.GL2QSubQuotient`."""
 
-    def parent(self) -> AdelicQuotient | LiftedQuotient:
+    def parent(self) -> GL2ASubQuotient | GL2QSubQuotient:
         """The ambient group."""
         ...
 

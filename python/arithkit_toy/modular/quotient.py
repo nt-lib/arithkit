@@ -254,27 +254,27 @@ class _QuotientGroup:
         return f"{self._kind}({self._n}, {self._m})"
 
 
-class AdelicQuotient(_QuotientGroup, api.AdelicQuotient):
-    """Toy implementation of :class:`arithkit_api.modular.quotient.AdelicQuotient`."""
+class GL2ASubQuotient(_QuotientGroup, api.GL2ASubQuotient):
+    """Toy implementation of :class:`arithkit_api.modular.quotient.GL2ASubQuotient`."""
 
     _lifted = False
-    _kind = "AdelicQuotient"
+    _kind = "GL2ASubQuotient"
 
     def to_lifted(self, x: api.QuotientElement) -> api.QuotientElement:
         x = self._own(x)
         if self._det(x.u) != 1 % self._m:
             raise NotInGroupError("det u is not 1")
-        return LiftedQuotient(self._n, self._m)._make(x.e, x.u)
+        return GL2QSubQuotient(self._n, self._m)._make(x.e, x.u)
 
 
-class LiftedQuotient(_QuotientGroup, api.LiftedQuotient):
-    """Toy implementation of :class:`arithkit_api.modular.quotient.LiftedQuotient`."""
+class GL2QSubQuotient(_QuotientGroup, api.GL2QSubQuotient):
+    """Toy implementation of :class:`arithkit_api.modular.quotient.GL2QSubQuotient`."""
 
     _lifted = True
-    _kind = "LiftedQuotient"
+    _kind = "GL2QSubQuotient"
 
     def from_matrix(self, g: tuple[tuple[int, int], tuple[int, int]]) -> api.QuotientElement:
-        """See :meth:`arithkit_api.modular.quotient.LiftedQuotient.from_matrix`.
+        """See :meth:`arithkit_api.modular.quotient.GL2QSubQuotient.from_matrix`.
 
         Write g = q gamma W_e. Then g adj(W_e) = q e gamma, so with
         D = det g = q^2 e we get s := q e = sqrt(D e) and gamma = g adj(W_e) / s.
@@ -296,7 +296,7 @@ class LiftedQuotient(_QuotientGroup, api.LiftedQuotient):
 
     def to_adelic(self, x: api.QuotientElement) -> api.QuotientElement:
         x = self._own(x)
-        return AdelicQuotient(self._n, self._m)._make(x.e, x.u)
+        return GL2ASubQuotient(self._n, self._m)._make(x.e, x.u)
 
 
 def _as_matrix(g: object) -> Mat2:
@@ -320,8 +320,8 @@ class QuotientElement(api.QuotientElement):
         self.e = e
         self.u = u
 
-    def parent(self) -> api.AdelicQuotient | api.LiftedQuotient:
-        assert isinstance(self._parent, AdelicQuotient | LiftedQuotient)
+    def parent(self) -> api.GL2ASubQuotient | api.GL2QSubQuotient:
+        assert isinstance(self._parent, GL2ASubQuotient | GL2QSubQuotient)
         return self._parent
 
     def coordinates(self) -> tuple[int, tuple[int, int, int, int]]:
@@ -385,7 +385,7 @@ class QuotientElement(api.QuotientElement):
 
     @override
     def __repr__(self) -> str:
-        return f"({self.e}, {self.u}) in {self._parent!r}"
+        return repr((self.e, self.u))
 
     def to_json(self) -> str:
         return _json.dumps(_json.encode_element(self.e, self.u))
@@ -396,11 +396,11 @@ class QuotientElement(api.QuotientElement):
         )
 
 
-def quotient_from_json(text: str) -> api.AdelicQuotient | api.LiftedQuotient:
+def quotient_from_json(text: str) -> api.GL2ASubQuotient | api.GL2QSubQuotient:
     """See :func:`arithkit_api.modular.quotient.quotient_from_json`."""
     return _quotient_from_value(_json.loads(text))
 
 
-def _quotient_from_value(value: object) -> AdelicQuotient | LiftedQuotient:
+def _quotient_from_value(value: object) -> GL2ASubQuotient | GL2QSubQuotient:
     kind, n, m = _json.decode_quotient(value)
-    return AdelicQuotient(n, m) if kind == "AdelicQuotient" else LiftedQuotient(n, m)
+    return GL2ASubQuotient(n, m) if kind == "GL2ASubQuotient" else GL2QSubQuotient(n, m)

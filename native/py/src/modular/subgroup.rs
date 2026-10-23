@@ -126,9 +126,9 @@ impl PyQuotientSubgroup {
 
     fn __repr__(&self) -> String {
         let kind = if self.q.lifted() {
-            "LiftedQuotient"
+            "GL2QSubQuotient"
         } else {
-            "AdelicQuotient"
+            "GL2ASubQuotient"
         };
         format!(
             "subgroup of order {} of {kind}({}, {})",
@@ -140,9 +140,9 @@ impl PyQuotientSubgroup {
 
     fn to_json(&self, py: Python<'_>) -> PyResult<String> {
         let kind = if self.q.lifted() {
-            "LiftedQuotient"
+            "GL2QSubQuotient"
         } else {
-            "AdelicQuotient"
+            "GL2ASubQuotient"
         };
         let parent =
             json_module(py)?.call_method1("encode_quotient", (kind, self.q.n(), self.q.m()))?;

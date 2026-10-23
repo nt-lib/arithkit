@@ -25,7 +25,7 @@ def backends() -> tuple[Backend, Backend]:
 SQUAREFREE = [1, 2, 3, 5, 6, 7, 10, 11, 14, 15, 21, 30]
 small_int = st.integers(min_value=-(10**20), max_value=10**20)
 any_int = st.one_of(small_int, st.integers(min_value=-(2**70), max_value=2**70))
-kinds = st.sampled_from(["AdelicQuotient", "LiftedQuotient"])
+kinds = st.sampled_from(["GL2ASubQuotient", "GL2QSubQuotient"])
 levels = st.tuples(st.sampled_from(SQUAREFREE), st.integers(min_value=1, max_value=13), kinds)
 
 
@@ -95,7 +95,7 @@ def test_subgroups(n: int, m: int, kind: str, seed: int) -> None:
 
 @given(st.sampled_from(SQUAREFREE), st.integers(min_value=1, max_value=40), st.integers(0, 2**32))
 def test_from_matrix(n: int, m: int, seed: int) -> None:
-    toy, native = pair(n, m, "LiftedQuotient")
+    toy, native = pair(n, m, "GL2QSubQuotient")
     rnd = random.Random(seed)
     for _ in range(5):
         g = random_gamma0_star(rnd, n)
@@ -117,7 +117,7 @@ def test_construction_outcomes(level: tuple[int, int, str], u: list[int], e: int
 
 @given(st.text(alphabet='[]{}0123456789,-"aeMNtvy:. ', max_size=40))
 def test_json_parsing_outcomes(text: str) -> None:
-    toy, native = pair(6, 5, "AdelicQuotient")
+    toy, native = pair(6, 5, "GL2ASubQuotient")
     a, b = outcome(lambda: toy.element_from_json(text)), outcome(lambda: native.element_from_json(text))
     assert (a[0], coords(a[1])) == (b[0], coords(b[1]))
     a = outcome(lambda: backends()[0].quotient.quotient_from_json(text).to_json())
@@ -126,7 +126,7 @@ def test_json_parsing_outcomes(text: str) -> None:
 
 
 def test_mixing_backends_is_a_type_error() -> None:
-    toy, native = pair(6, 5, "AdelicQuotient")
+    toy, native = pair(6, 5, "GL2ASubQuotient")
     x, y = toy.identity(), native.identity()
     assert x != y and y != x and toy != native
     for f in (lambda: x * y, lambda: y * x, lambda: toy.subgroup([y]), lambda: native.subgroup([x])):

@@ -1,0 +1,10 @@
+id = "toy.quotient_order.v2"
+quantity = "quotient_order"
+system = "toy"
+# v2: the classes were renamed from AdelicQuotient / LiftedQuotient (v1).
+# A Python expression in the variables of the quantity's input; evaluated by tools/reference with
+# the toy implementation's GL2ASubQuotient and GL2QSubQuotient in scope. Counts the elements by
+# enumeration (independent of the order formula), so only for small N, M.
+template = "len((GL2ASubQuotient if kind == 'adelic' else GL2QSubQuotient)(N, M).elements())"
+parser = "int"
+assumes = []

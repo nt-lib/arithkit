@@ -37,7 +37,10 @@ def evaluate_python(system: str, template: str, inputs: list[dict[str, Any]]) ->
         from arithkit.modular import quotient
     else:
         raise ValueError(system)
-    namespace = {"AdelicQuotient": quotient.AdelicQuotient, "LiftedQuotient": quotient.LiftedQuotient}
+    namespace = {
+        "GL2ASubQuotient": quotient.GL2ASubQuotient,
+        "GL2QSubQuotient": quotient.GL2QSubQuotient,
+    }
     outputs = [eval(f"({template})", {**namespace, **row}) for row in inputs]
     return outputs, f"{system} 0.1.0 (python {sys.version.split()[0]})"
 
@@ -163,3 +166,12 @@ def _record(
     if kind == "disagreed":
         event["mismatches"] = [list(k) for k in mismatches]
     append_event(tree, str(recipe["quantity"]), event, commit)
+
+
+def retract_recipe(tree: Tree, recipe_id: str, reason: str) -> None:
+    """Record that events of ``recipe_id`` no longer count as support."""
+    if recipe_id not in tree.recipes:
+        raise SystemExit(f"unknown recipe {recipe_id!r}")
+    commit = tool_commit()
+    event: dict[str, object] = {"event": "retracted_recipe", "recipe": recipe_id, "reason": reason}
+    append_event(tree, str(tree.recipes[recipe_id]["quantity"]), event, commit)

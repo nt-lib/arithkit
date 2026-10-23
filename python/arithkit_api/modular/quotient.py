@@ -6,10 +6,10 @@ are implemented (sec:quotients, def:finite-quotients):
 * the adelic quotient $\widehat{Q}_{N,M} = U_N/\widehat{\Gamma}(N;M)$, where
   $U_N = \widehat{\Gamma}_0(N)^*$ is the Atkin--Lehner group inside
   $\mathcal{G}^+ = \mathrm{GL}_2(\mathbb{A}_{\mathbb{Q},f})/\mathbb{Q}_{>0}$
-  (:class:`AdelicQuotient`);
+  (:class:`GL2ASubQuotient`);
 * the lifted (classical, fine) quotient
   $\widetilde{Q}_{N,M} = \widetilde{\Gamma}_0(N)^*/\widetilde{\Gamma}(N;M)$, in
-  which $-1$ is a nontrivial element (:class:`LiftedQuotient`).
+  which $-1$ is a nontrivial element (:class:`GL2QSubQuotient`).
 
 The projective quotient $Q_{N,M}$ and the coarse group are not implemented.
 
@@ -34,12 +34,16 @@ $\kappa(e,e') = \gcd(e,e')^{-1} W_e W_{e'} W_{e*e'}^{-1}$.
 
 The lifted quotient is the subgroup $\det u = 1$ of the adelic one, but the
 two are different parents: their elements never compare equal, and
-:meth:`LiftedQuotient.to_adelic` / :meth:`AdelicQuotient.to_lifted` convert.
+:meth:`GL2QSubQuotient.to_adelic` / :meth:`GL2ASubQuotient.to_lifted` convert.
 
 **Canonical order** of elements: lexicographic on $(e, a, b, c, d)$.
 
-**JSON**: a parent is ``{"M":M,"N":N,"type":"AdelicQuotient","v":1}`` (or
-``"LiftedQuotient"``); an element is ``[e,[a,b,c,d]]`` relative to its parent.
+**Printing**: an element prints as ``(e, (a, b, c, d))`` without its parent (print
+the parent separately); a parent prints as ``GL2ASubQuotient(N, M)`` or
+``GL2QSubQuotient(N, M)``. Both implementations print identically.
+
+**JSON**: a parent is ``{"M":M,"N":N,"type":"GL2ASubQuotient","v":1}`` (or
+``"GL2QSubQuotient"``); an element is ``[e,[a,b,c,d]]`` relative to its parent.
 """
 
 from __future__ import annotations
@@ -52,7 +56,7 @@ if TYPE_CHECKING:
 
 
 class _QuotientGroup(Protocol):
-    """Methods shared by :class:`AdelicQuotient` and :class:`LiftedQuotient`."""
+    """Methods shared by :class:`GL2ASubQuotient` and :class:`GL2QSubQuotient`."""
 
     @property
     def N(self) -> int:  # noqa: N802
@@ -132,10 +136,10 @@ class _QuotientGroup(Protocol):
     def __hash__(self) -> int: ...
 
 
-class AdelicQuotient(_QuotientGroup, Protocol):
+class GL2ASubQuotient(_QuotientGroup, Protocol):
     """The adelic quotient $\\widehat{Q}_{N,M} = U_N/\\widehat{\\Gamma}(N;M)$.
 
-    Constructed as ``AdelicQuotient(N, M)``; raises
+    Constructed as ``GL2ASubQuotient(N, M)``; raises
     :class:`~arithkit_api.errors.InvalidParameterError` unless
     $1 \\leq N, M < 2^{63}$ and $N$ is squarefree.
     """
@@ -150,10 +154,10 @@ class AdelicQuotient(_QuotientGroup, Protocol):
         ...
 
 
-class LiftedQuotient(_QuotientGroup, Protocol):
+class GL2QSubQuotient(_QuotientGroup, Protocol):
     """The lifted quotient $\\widetilde{Q}_{N,M} = \\widetilde{\\Gamma}_0(N)^*/\\widetilde{\\Gamma}(N;M)$.
 
-    Constructed as ``LiftedQuotient(N, M)``; raises
+    Constructed as ``GL2QSubQuotient(N, M)``; raises
     :class:`~arithkit_api.errors.InvalidParameterError` unless
     $1 \\leq N, M < 2^{63}$ and $N$ is squarefree.
     """
@@ -179,13 +183,13 @@ class LiftedQuotient(_QuotientGroup, Protocol):
 
 
 class QuotientElement(Protocol):
-    """An element $(e, u)$ of an :class:`AdelicQuotient` or a :class:`LiftedQuotient`.
+    """An element $(e, u)$ of an :class:`GL2ASubQuotient` or a :class:`GL2QSubQuotient`.
 
     Products and comparisons with elements of another parent raise
     :class:`~arithkit_api.errors.ParentMismatchError` (``==`` returns False).
     """
 
-    def parent(self) -> AdelicQuotient | LiftedQuotient:
+    def parent(self) -> GL2ASubQuotient | GL2QSubQuotient:
         """The group containing this element."""
         ...
 
@@ -232,6 +236,6 @@ class QuotientElement(Protocol):
         ...
 
 
-def quotient_from_json(text: str) -> AdelicQuotient | LiftedQuotient:  # pyright: ignore[reportReturnType]
-    """The parent with canonical JSON text ``text`` (see :meth:`AdelicQuotient.to_json`)."""
+def quotient_from_json(text: str) -> GL2ASubQuotient | GL2QSubQuotient:  # pyright: ignore[reportReturnType]
+    """The parent with canonical JSON text ``text`` (see :meth:`GL2ASubQuotient.to_json`)."""
     ...

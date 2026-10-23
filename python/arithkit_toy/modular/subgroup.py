@@ -10,8 +10,8 @@ from arithkit_api.errors import ParentMismatchError
 from arithkit_api.modular import quotient as api_quotient
 from arithkit_api.modular import subgroup as api
 from arithkit_toy.modular.quotient import (
-    AdelicQuotient,
-    LiftedQuotient,
+    GL2ASubQuotient,
+    GL2QSubQuotient,
     QuotientElement,
     _quotient_from_value,  # pyright: ignore[reportPrivateUsage]
     _QuotientGroup,  # pyright: ignore[reportPrivateUsage]
@@ -56,9 +56,9 @@ class QuotientSubgroup(api.QuotientSubgroup):
                 span = _closure(identity, kept)
         self._gens = tuple(kept)
 
-    def parent(self) -> api_quotient.AdelicQuotient | api_quotient.LiftedQuotient:
+    def parent(self) -> api_quotient.GL2ASubQuotient | api_quotient.GL2QSubQuotient:
         p = self._parent
-        assert isinstance(p, AdelicQuotient | LiftedQuotient)
+        assert isinstance(p, GL2ASubQuotient | GL2QSubQuotient)
         return p
 
     def order(self) -> int:

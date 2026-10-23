@@ -1,9 +1,10 @@
-"""Command line: python -m tools.reference {check,status,produce,confirm}.
+"""Command line: python -m tools.reference {check,status,produce,confirm,retract-recipe}.
 
 check                         consistency of reference/ (exit status 1 on problems)
 status                        derived status of every active shard
 produce RECIPE INPUTS SHARD   compute a new shard (INPUTS: JSONL of key fields)
 confirm RECIPE SHARD          recompute a shard and record confirmed/disagreed
+retract-recipe RECIPE REASON  record that a recipe no longer counts as support
 """
 
 from __future__ import annotations
@@ -30,6 +31,9 @@ def main(argv: list[str] | None = None) -> int:
     c = sub.add_parser("confirm")
     c.add_argument("recipe")
     c.add_argument("shard")
+    r = sub.add_parser("retract-recipe")
+    r.add_argument("recipe")
+    r.add_argument("reason")
     args = parser.parse_args(argv)
     tree = model.load(args.root)
     if args.command == "check":
@@ -47,6 +51,8 @@ def main(argv: list[str] | None = None) -> int:
         return 1
     if args.command == "produce":
         run.produce(tree, args.recipe, args.inputs, args.shard)
+    elif args.command == "retract-recipe":
+        run.retract_recipe(tree, args.recipe, args.reason)
     else:
         mismatches = run.confirm(tree, args.recipe, args.shard)
         print(f"{len(mismatches)} mismatches")

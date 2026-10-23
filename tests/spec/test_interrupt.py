@@ -19,10 +19,10 @@ pytestmark = [
 
 SCRIPT = """
 import sys
-from arithkit.modular.quotient import AdelicQuotient
+from arithkit.modular.quotient import GL2ASubQuotient
 print("start", flush=True)
 try:
-    AdelicQuotient(1, 1000).elements()
+    GL2ASubQuotient(1, 1000).elements()
 except KeyboardInterrupt:
     print("interrupted", flush=True)
     sys.exit(3)

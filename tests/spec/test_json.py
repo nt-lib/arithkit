@@ -14,19 +14,19 @@ from conftest import Backend
 
 
 def test_canonical_texts(backend: Backend) -> None:
-    q = backend.quotient.LiftedQuotient(6, 5)
-    assert q.to_json() == '{"M":5,"N":6,"type":"LiftedQuotient","v":1}'
+    q = backend.quotient.GL2QSubQuotient(6, 5)
+    assert q.to_json() == '{"M":5,"N":6,"type":"GL2QSubQuotient","v":1}'
     x = q.al_element(3)
     assert x.to_json() == "[3,[1,0,0,1]]"
     assert (
-        x.to_json_full() == '{"element":[3,[1,0,0,1]],"parent":{"M":5,"N":6,"type":"LiftedQuotient","v":1}}'
+        x.to_json_full() == '{"element":[3,[1,0,0,1]],"parent":{"M":5,"N":6,"type":"GL2QSubQuotient","v":1}}'
     )
     h = q.subgroup([x])
     assert h.to_json().startswith('{"gens":[')
 
 
 def test_round_trips(backend: Backend) -> None:
-    for cls in (backend.quotient.AdelicQuotient, backend.quotient.LiftedQuotient):
+    for cls in (backend.quotient.GL2ASubQuotient, backend.quotient.GL2QSubQuotient):
         q = cls(10, 3)
         assert backend.quotient.quotient_from_json(q.to_json()) == q
         for x in q.elements()[::17]:
@@ -36,7 +36,7 @@ def test_round_trips(backend: Backend) -> None:
 
 
 def test_malformed_json(backend: Backend) -> None:
-    q = backend.quotient.AdelicQuotient(6, 5)
+    q = backend.quotient.GL2ASubQuotient(6, 5)
     for text in [
         "",
         "[",
@@ -66,14 +66,14 @@ def test_malformed_json(backend: Backend) -> None:
         q.element_from_json(b"[1,[1,0,0,1]]")  # pyright: ignore[reportArgumentType]
     for text in [
         '{"M":5,"N":6,"type":"Other","v":1}',
-        '{"M":5,"N":6,"type":"AdelicQuotient","v":2}',
-        '{"M":5,"N":6,"type":"AdelicQuotient"}',
-        '{"M":5,"N":6.0,"type":"AdelicQuotient","v":1}',
-        '{"M":5,"N":6,"type":"AdelicQuotient","v":1,"x":0}',
+        '{"M":5,"N":6,"type":"GL2ASubQuotient","v":2}',
+        '{"M":5,"N":6,"type":"GL2ASubQuotient"}',
+        '{"M":5,"N":6.0,"type":"GL2ASubQuotient","v":1}',
+        '{"M":5,"N":6,"type":"GL2ASubQuotient","v":1,"x":0}',
     ]:
         with pytest.raises(JsonFormatError):
             backend.quotient.quotient_from_json(text)
     with pytest.raises(InvalidParameterError):
-        backend.quotient.quotient_from_json('{"M":5,"N":4,"type":"AdelicQuotient","v":1}')
+        backend.quotient.quotient_from_json('{"M":5,"N":4,"type":"GL2ASubQuotient","v":1}')
     with pytest.raises(JsonFormatError):
         backend.subgroup.subgroup_from_json('{"gens":[[1,[1,0,0,1]]]}')
