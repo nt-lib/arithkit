@@ -1,0 +1,50 @@
+name: Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build documentation and PDF
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.12"
+      - name: Install dependencies (without building the extension)
+        run: uv sync --no-install-project
+      - name: Sphinx (from arithkit_api only)
+        run: uv run --no-sync sphinx-build -W -q docs docs/_build
+      - uses: wtfjoke/setup-tectonic@v3
+      - name: Compile maths/quotients
+        run: |
+          mkdir -p tmp/tex
+          (cd maths/quotients && tectonic -X compile main.tex --outdir ../../tmp/tex)
+          cp tmp/tex/main.pdf docs/_build/quotients.pdf
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/_build
+
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

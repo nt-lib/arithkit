@@ -17,7 +17,9 @@ classes from :mod:`arithkit`.
    h.order(), h.al_image()
 
 The mathematics is described in the TeX document ``maths/quotients/`` of the
-repository; docstrings refer to its labels (e.g. ``prop:al-encoding``).
+repository (`compiled PDF <quotients.pdf>`_, including the section on the
+conventions and algorithms of the implementation); docstrings refer to its
+labels (e.g. ``prop:al-encoding``).
 
 .. toctree::
    :maxdepth: 2
