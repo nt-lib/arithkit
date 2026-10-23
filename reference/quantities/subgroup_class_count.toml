@@ -1,0 +1,13 @@
+name = "subgroup_class_count"
+description = """The number of conjugacy classes of subgroups of index at most I of the adelic (kind "adelic":
+Q^_{N,M}) or lifted (kind "lifted": Q~_{N,M}) quotient Gamma_0(N)^* / Gamma(N;M) (maths: alg:subgroup-classes)."""
+key = ["kind", "N", "M", "I"]
+domain = "kind in {adelic, lifted}; 1 <= N, M < 2^63; N squarefree; I >= 1"
+output = "int"
+canonical = "the integer itself"
+
+[input]
+kind = "str"
+N = "int"
+M = "int"
+I = "int"

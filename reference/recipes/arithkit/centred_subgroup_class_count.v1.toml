@@ -1,0 +1,8 @@
+id = "arithkit.centred_subgroup_class_count.v1"
+quantity = "centred_subgroup_class_count"
+system = "arithkit"
+# A Python expression in the key fields (kind, N, M, I), evaluated by tools/reference with the
+# implementation's GL2ASubQuotient and GL2QSubQuotient in scope.
+template = "len((GL2ASubQuotient if kind == 'adelic' else GL2QSubQuotient)(N, M).centred_subgroup_classes(I))"
+parser = "int"
+assumes = []

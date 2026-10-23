@@ -16,3 +16,6 @@ in_repository = true
 
 [sage]
 description = "SageMath, run by crosscheck/sage/run.py in the conda env `sage`; version is Sage's version string."
+
+[magma]
+description = "Magma, run by crosscheck/magma/run.py (magma -n on PATH); version is Magma's version (e.g. 2.30-1)."
