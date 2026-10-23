@@ -356,6 +356,18 @@ impl Table<'_> {
     /// `h`), or `None` as soon as it has more than `cap` elements. Dimino's method: the result
     /// is a union of right cosets `H y`; only coset representatives are multiplied by `gens`.
     fn extend_subgroup(&self, h: &Subset, gens: &[u32], cap: usize) -> Result<Option<Subset>> {
+        self.extend_avoiding(h, gens, cap, &[])
+    }
+
+    /// As [`Table::extend_subgroup`], but also `None` as soon as the subgroup contains an
+    /// element `x` with `forbidden[x] > 0` (an empty slice forbids nothing).
+    fn extend_avoiding(
+        &self,
+        h: &Subset,
+        gens: &[u32],
+        cap: usize,
+        forbidden: &[u16],
+    ) -> Result<Option<Subset>> {
         let mut bits = h.bits.clone();
         let mut list = h.list.clone();
         let identity = self.position.get(&self.q.identity());
@@ -376,6 +388,9 @@ impl Table<'_> {
                 }
                 for &z in &h.list {
                     let w = self.mul(z, y);
+                    if !forbidden.is_empty() && forbidden[w as usize] > 0 {
+                        return Ok(None);
+                    }
                     bits[w as usize] = true;
                     list.push(w);
                 }
@@ -395,6 +410,11 @@ struct Search<'a, 'b> {
     seen: HashSet<Vec<u64>>,
     /// Classes by the canonical generators of their representative.
     classes: HashMap<Vec<u32>, ClassEntry>,
+    /// The elements `r_i^{-1} r_k` for `i < k`, in the order of the points `k`.
+    quotients: Vec<u32>,
+    /// `forbidden[x]` counts the occurrences of `x` in `quotients`: a subgroup containing such
+    /// an `x` makes the table inconsistent.
+    forbidden: Vec<u16>,
 }
 
 /// A membership vector packed into words.
@@ -436,12 +456,29 @@ impl Search<'_, '_> {
         Ok(())
     }
 
-    /// The cosets `r_i H` are distinct.
-    fn consistent(&self, reps: &[u32], h: &[bool]) -> bool {
-        (0..reps.len()).all(|i| {
-            (i + 1..reps.len())
-                .all(|k| !h[self.table.mul(self.table.inv[reps[i] as usize], reps[k]) as usize])
-        })
+    /// The cosets `r_i H` are distinct, i.e. no `r_i^{-1} r_k` (`i < k`) lies in `H`.
+    fn consistent(&self, h: &[bool]) -> bool {
+        self.quotients.iter().all(|&x| !h[x as usize])
+    }
+
+    /// Adds the point with representative `r`, recording the new quotients.
+    fn push_point(&mut self, reps: &mut Vec<u32>, r: u32) {
+        for &previous in reps.iter() {
+            let x = self.table.mul(self.table.inv[previous as usize], r);
+            self.quotients.push(x);
+            self.forbidden[x as usize] += 1;
+        }
+        reps.push(r);
+    }
+
+    /// Removes the last point.
+    fn pop_point(&mut self, reps: &mut Vec<u32>) {
+        reps.pop();
+        let keep = self.quotients.len() - reps.len();
+        for &x in &self.quotients[keep..] {
+            self.forbidden[x as usize] -= 1;
+        }
+        self.quotients.truncate(keep);
     }
 
     fn extend(
@@ -476,19 +513,22 @@ impl Search<'_, '_> {
             schreier.push(element);
             // n distinct cosets force |H| <= |G|/n: stop the closure early when it gets larger.
             let cap = self.table.elements.len() / reps.len();
-            if let Some(new_h) = self.table.extend_subgroup(h, schreier, cap)?
-                && self.consistent(reps, &new_h.bits)
+            // The closure stops early at an element r_i^{-1} r_k (an inconsistent table).
+            if let Some(new_h) = self
+                .table
+                .extend_avoiding(h, schreier, cap, &self.forbidden)?
+                && self.consistent(&new_h.bits)
             {
                 self.extend(reps, defined + 1, schreier, &new_h)?;
             }
             schreier.pop();
         }
         if reps.len() < self.max_index {
-            reps.push(image);
-            if self.consistent(reps, &h.bits) {
+            self.push_point(reps, image);
+            if self.consistent(&h.bits) {
                 self.extend(reps, defined + 1, schreier, h)?;
             }
-            reps.pop();
+            self.pop_point(reps);
         }
         Ok(())
     }
@@ -517,6 +557,8 @@ pub fn subgroup_classes(q: &Quotient, max_index: u64) -> Result<Vec<Subgroup>> {
         max_index,
         seen: HashSet::new(),
         classes: HashMap::new(),
+        quotients: Vec::new(),
+        forbidden: vec![0; table.elements.len()],
     };
     let identity = table.position.get(&q.identity());
     let mut bits = vec![false; table.elements.len()];
