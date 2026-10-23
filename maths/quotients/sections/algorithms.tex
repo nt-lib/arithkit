@@ -1,12 +1,10 @@
-\section{Conventions and algorithms of the implementation}\label{sec:algorithms}
-
-This section fixes the arbitrary choices made by the implementation
+This chapter fixes the arbitrary choices made by the implementation
 (\texttt{arithkit}) and describes its algorithms, with proofs. Everything
 here is either \emph{canonical} or \emph{deterministic}: the output of a
 specified, versioned algorithm. Throughout, $N, M \geq 1$ with $N$
 squarefree, and $S$ denotes the set of primes dividing $NM$.
 
-\subsection{Encoding of the finite quotients}
+\section{Encoding of the finite quotients}\label{sec:algorithms}
 
 \begin{convention}[Atkin--Lehner matrices]\label{conv:al-matrices}
 For $e \mid N$ put $\ALmatrix{1} = 1$ and, for $e > 1$,
@@ -58,7 +56,7 @@ by the elements kept before.
 They depend only on $H$, generate $H$, and $H \subseteq H'$ need not imply
 anything about the canonical generators.
 
-\subsection{Coordinates on the trees}
+\section{Coordinates on the trees}
 
 \begin{definition}[Vertex coordinates]\label{def:vertex-coordinates}
 Let $p$ be a prime. Every vertex of $\Tree{p}$ is the class of the column span
@@ -96,7 +94,7 @@ operations by elements of $\GL{2}{\ZZ_{(p)}}$ and a scaling, so they do not
 change the vertex.
 \end{procedure}
 
-\subsection{Fixed sets of the principal congruence subgroups}
+\section{Fixed sets of the principal congruence subgroups}
 
 \begin{lemma}[Local fixed sets]\label{lem:fixed-principal-iwahori}
 Let $p$ be a prime, $k \geq 0$, and $K$ the image in $\PGL{2}{\pAdicNumbers{p}}$
@@ -143,7 +141,7 @@ $\GammaPrincipal[ad]{N}{M}$ (strong approximation,
 \cref{lem:strong-approx-eichler}).
 \end{corollary}
 
-\subsection{Centring}
+\section{Centring}
 
 Let $H \subseteq \AdelicQuotientGroup{N}{M}$ be a subgroup and $U$ its
 preimage in $\MaxCompact{N}$; in the classical case let
@@ -261,7 +259,7 @@ this forces $(a - x, b - y) \equiv \mu(c, d)$ with
 $\mu \equiv \alpha(a-x) + \beta(b-y)$; so $j \equiv \mu$ works.
 \end{proof}
 
-\subsection{The centred level}
+\section{The centred level}
 
 Let $D = \det g$ for the primitive integral $g$ above; all its prime factors
 lie in $S$.
