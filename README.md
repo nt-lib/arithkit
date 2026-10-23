@@ -8,6 +8,8 @@ Arithmetic algorithms implemented twice, with exactly the same Python interface:
 The interface, with all docstrings, is defined in `arithkit_api` (typing Protocols). Any difference
 in behaviour between the two implementations is a bug; the test suite compares them.
 
+The principles of the project are summarised in [ZEN.md](ZEN.md).
+
 Current content: the finite quotients Gamma_0(N)^* / Gamma(N;M) (adelic and lifted, fine version),
 their elements and subgroups. The mathematics is in the TeX document `maths/quotients/`.
 

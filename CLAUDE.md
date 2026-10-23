@@ -4,6 +4,8 @@ Guidance for working on arithkit. All conventions below are deliberate; do not "
 
 ## What this is
 
+The short version of everything below is [ZEN.md](ZEN.md); read it first.
+
 Maintainable, correct, reasonably fast mathematics code. Priorities: correctness > maintainability >
 performance. Every algorithm exists twice with an identical Python interface:
 
