@@ -29,6 +29,20 @@ MAGMA_COUNTS = [
 ]
 
 
+# For N > 1: Magma's Subgroups(G : IndexLimit := I) with G the regular permutation representation
+# computed from our group law (crosscheck/magma/regular_counts.py), whose correctness is tested
+# separately (from_matrix is a homomorphism).
+MAGMA_COUNTS_N = [
+    ("GL", 2, 3, 24, 34),
+    ("SL", 2, 3, 24, 12),
+    ("GL", 3, 4, 20, 90),
+    ("SL", 5, 2, 30, 10),
+    ("GL", 10, 3, 24, 122),
+    ("SL", 15, 4, 20, 89),
+    ("GL", 2, 4, 32, 150),
+]
+
+
 def parent(backend: Backend, kind: str, n: int, m: int) -> Any:
     cls = backend.quotient.GL2ASubQuotient if kind == "GL" else backend.quotient.GL2QSubQuotient
     return cls(n, m)
@@ -38,6 +52,13 @@ def parent(backend: Backend, kind: str, n: int, m: int) -> Any:
 def test_class_counts_match_magma(backend: Backend, kind: str, n: int, bound: int, count: int) -> None:
     classes = parent(backend, kind, 1, n).subgroup_classes(bound)
     assert len(classes) == count
+
+
+@pytest.mark.parametrize(("kind", "n", "m", "bound", "count"), MAGMA_COUNTS_N)
+def test_class_counts_for_atkin_lehner_levels(
+    backend: Backend, kind: str, n: int, m: int, bound: int, count: int
+) -> None:
+    assert len(parent(backend, kind, n, m).subgroup_classes(bound)) == count
 
 
 def conjugates(q: Any, h: Any) -> set[frozenset[Any]]:
