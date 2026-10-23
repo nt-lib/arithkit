@@ -107,13 +107,23 @@ Never use `maturin develop` (one install route: uv). Temporary files go in `tmp/
 
 ## Reference data (`reference/`)
 
+Full description: `tools/reference/__init__.py`. In short:
+
 - `quantities/*.toml`: what is computed (input schema, domain, output, canonical form).
-- `recipes/<system>/*.toml`: immutable, versioned ways to compute a quantity in a system (toy, arithkit,
-  sage, magma, pari, lmfdb), with `assumes` (names from `assumptions.toml`, e.g. GRH).
+- `systems.toml`: the systems recipes may use (`arithkit_toy`, `arithkit`, `sage`, ...); for systems in
+  this repository the `sources` that are hashed into `system_version`.
+- `recipes/<system>/*.toml`: active, immutable, versioned recipes, with `assumes` (names from
+  `assumptions.toml`, e.g. GRH). `recipes-retired/<system>/`: old recipes, moved there unchanged with
+  `python -m tools.reference retire-recipe RECIPE {outdated,bug} EXPLANATION`. Reproductions of an
+  `outdated` recipe keep counting as support; those of a `bug` recipe do not.
 - `data/<quantity>/NNNN.jsonl`: immutable shards (<= 10 MB), first line a header; only believed-correct
   shards. Retraction = `git mv` to `retracted/` (same relative path) + a `retracted` event.
-- `provenance/<quantity>.jsonl`: append-only events (produced, confirmed, disagreed, retracted,
-  inherited) referring to shards by path and sha256. Status (unconditional / conditional) is derived,
-  never stored. Never edit a shard or rewrite provenance; append instead.
+- `provenance/<quantity>.jsonl`: append-only log of all events. Reproductions record `system` and
+  `system_version`: for in-repository systems the source hash (content of the `sources`, independent
+  of commits, so reproductions can be recorded on a branch before merging), otherwise the external
+  version string. `tool_commit` is a commit of origin/main: tools/ and crosscheck/ must be unchanged
+  from main to record anything. Status (unconditional / conditional) is derived, never stored.
+- `python -m tools.reference check` also checks against the git history (tool commits are ancestors of
+  HEAD, source hashes occur in the history); this needs the full history (CI: `fetch-depth: 0`).
 - CAS code for comparisons lives only in `crosscheck/`; it is never part of the default test run.
 - If the data approaches GitHub's repository limits, move it to an external database (not Git LFS).

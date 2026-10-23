@@ -1,8 +1,0 @@
-id = "arithkit.quotient_order.v2"
-quantity = "quotient_order"
-system = "arithkit"
-# v2: the classes were renamed from AdelicQuotient / LiftedQuotient (v1).
-# Evaluated by tools/reference with the native GL2ASubQuotient and GL2QSubQuotient in scope (order formula).
-template = "(GL2ASubQuotient if kind == 'adelic' else GL2QSubQuotient)(N, M).order()"
-parser = "int"
-assumes = []

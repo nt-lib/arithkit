@@ -1,0 +1,17 @@
+# The systems that recipes can use.
+#
+# For systems in this repository, `sources` lists the paths whose content determines the result;
+# the `system_version` of a reproduction is then the source hash of these paths (see
+# tools/reference/run.py:source_hash), which is independent of commits and merge style.
+# External systems record their own version string.
+
+[arithkit_toy]
+description = "The toy implementation (python/arithkit_toy)."
+sources = ["python/arithkit_toy", "python/arithkit_api"]
+
+[arithkit]
+description = "The native implementation (Rust, through python/arithkit)."
+sources = ["python/arithkit", "python/arithkit_api", "native", "Cargo.toml", "Cargo.lock"]
+
+[sage]
+description = "SageMath, run by crosscheck/sage/run.py in the conda env `sage`; version is Sage's version string."

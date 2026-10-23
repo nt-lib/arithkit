@@ -21,17 +21,18 @@ def dumps(obj: object) -> str:
 def make_tree(tmp: pathlib.Path) -> pathlib.Path:
     root = tmp / "reference"
     (root / "quantities").mkdir(parents=True)
-    (root / "recipes" / "toy").mkdir(parents=True)
+    (root / "recipes" / "arithkit_toy").mkdir(parents=True)
     (root / "recipes" / "magma").mkdir(parents=True)
     (root / "data" / "sq").mkdir(parents=True)
     (root / "retracted").mkdir()
     (root / "provenance").mkdir()
     (root / "assumptions.toml").write_text('[GRH]\ndescription = "GRH"\n')
+    (root / "systems.toml").write_text('[arithkit_toy]\nsources = ["python/arithkit_toy"]\n[magma]\n')
     (root / "quantities" / "sq.toml").write_text(
         'name = "sq"\nkey = ["n"]\noutput = "int"\n[input]\nn = "int"\n'
     )
-    (root / "recipes" / "toy" / "sq.v1.toml").write_text(
-        'id = "toy.sq.v1"\nquantity = "sq"\nsystem = "toy"\ntemplate = "n * n"\n'
+    (root / "recipes" / "arithkit_toy" / "sq.v1.toml").write_text(
+        'id = "arithkit_toy.sq.v1"\nquantity = "sq"\nsystem = "arithkit_toy"\ntemplate = "n * n"\n'
         'parser = "int"\nassumes = []\n'
     )
     (root / "recipes" / "magma" / "sq.v1.toml").write_text(
@@ -65,10 +66,20 @@ def support(root: pathlib.Path, kind: str, shard: str, digest: str, recipe: str)
         shard=shard,
         sha256=digest,
         recipe=recipe,
-        recipe_sha256=model.sha256(root / "recipes" / system / "sq.v1.toml"),
-        system_version="test",
+        recipe_sha256=model.sha256(model.load(root).recipe_paths[recipe]),
+        system=system,
+        system_version="ab" * 32 if system == "arithkit_toy" else "2.29",
         assumes=["GRH"] if system == "magma" else [],
     )
+
+
+def retire(root: pathlib.Path, recipe: str, reason: str) -> None:
+    system, name = recipe.split(".", 1)
+    (root / "recipes-retired" / system).mkdir(parents=True, exist_ok=True)
+    shutil.move(
+        root / "recipes" / system / f"{name}.toml", root / "recipes-retired" / system / f"{name}.toml"
+    )
+    event(root, event="recipe_retired", recipe=recipe, reason=reason, explanation="test")
 
 
 def check(root: pathlib.Path) -> list[str]:
@@ -85,17 +96,53 @@ def test_conditional_then_unconditional(tmp_path: pathlib.Path) -> None:
     support(root, "produced", "sq/0001.jsonl", digest, "magma.sq.v1")
     assert check(root) == []
     assert model.status(model.load(root)) == {"sq/0001.jsonl": "conditional on GRH"}
-    support(root, "confirmed", "sq/0001.jsonl", digest, "toy.sq.v1")
+    support(root, "confirmed", "sq/0001.jsonl", digest, "arithkit_toy.sq.v1")
     assert model.status(model.load(root)) == {"sq/0001.jsonl": "unconditional"}
-    event(root, event="retracted_recipe", recipe="toy.sq.v1", reason="bug")
+
+
+def test_retired_recipes(tmp_path: pathlib.Path) -> None:
+    root = make_tree(tmp_path)
+    digest = write_shard(root, "sq/0001.jsonl", {1: 1, 2: 4})
+    support(root, "produced", "sq/0001.jsonl", digest, "magma.sq.v1")
+    support(root, "confirmed", "sq/0001.jsonl", digest, "arithkit_toy.sq.v1")
+    # Moved without an event: inconsistent.
+    shutil.move(root / "recipes" / "magma" / "sq.v1.toml", root / "sq.v1.toml")
+    (root / "recipes-retired" / "magma").mkdir(parents=True)
+    shutil.move(root / "sq.v1.toml", root / "recipes-retired" / "magma" / "sq.v1.toml")
+    assert any("without a recipe_retired event" in p for p in check(root))
+    event(root, event="recipe_retired", recipe="magma.sq.v1", reason="outdated", explanation="old")
+    assert check(root) == []
+    assert model.status(model.load(root)) == {"sq/0001.jsonl": "unconditional"}
+    # A recipe retired for a bug no longer supports anything.
+    retire(root, "arithkit_toy.sq.v1", "bug")
+    assert check(root) == []
     assert model.status(model.load(root)) == {"sq/0001.jsonl": "conditional on GRH"}
+
+
+def test_reproductions_need_system_and_source_hash(tmp_path: pathlib.Path) -> None:
+    root = make_tree(tmp_path)
+    digest = write_shard(root, "sq/0001.jsonl", {2: 4})
+    recipe_sha = model.sha256(root / "recipes" / "arithkit_toy" / "sq.v1.toml")
+    common = {"shard": "sq/0001.jsonl", "sha256": digest, "recipe": "arithkit_toy.sq.v1", "assumes": []}
+    event(root, event="produced", recipe_sha256=recipe_sha, system="magma", system_version="x", **common)
+    event(
+        root,
+        event="confirmed",
+        recipe_sha256=recipe_sha,
+        system="arithkit_toy",
+        system_version="0.1.0",
+        **common,
+    )
+    problems = check(root)
+    assert any("system must be the recipe's system" in p for p in problems)
+    assert any("source hash" in p for p in problems)
 
 
 def test_detects_tampering_and_unsupported_shards(tmp_path: pathlib.Path) -> None:
     root = make_tree(tmp_path)
     digest = write_shard(root, "sq/0001.jsonl", {1: 1, 2: 4})
     assert any("no produced" in p for p in check(root))
-    support(root, "produced", "sq/0001.jsonl", digest, "toy.sq.v1")
+    support(root, "produced", "sq/0001.jsonl", digest, "arithkit_toy.sq.v1")
     assert check(root) == []
     with (root / "data" / "sq" / "0001.jsonl").open("a") as f:
         f.write(dumps({"n": 3, "out": 9}) + "\n")
@@ -105,8 +152,8 @@ def test_detects_tampering_and_unsupported_shards(tmp_path: pathlib.Path) -> Non
 def test_recipes_are_immutable(tmp_path: pathlib.Path) -> None:
     root = make_tree(tmp_path)
     digest = write_shard(root, "sq/0001.jsonl", {2: 4})
-    support(root, "produced", "sq/0001.jsonl", digest, "toy.sq.v1")
-    recipe = root / "recipes" / "toy" / "sq.v1.toml"
+    support(root, "produced", "sq/0001.jsonl", digest, "arithkit_toy.sq.v1")
+    recipe = root / "recipes" / "arithkit_toy" / "sq.v1.toml"
     recipe.write_text(recipe.read_text().replace("n * n", "n ** 2"))
     assert any("has changed" in p for p in check(root))
 
@@ -115,15 +162,15 @@ def test_conflicts_between_active_shards(tmp_path: pathlib.Path) -> None:
     root = make_tree(tmp_path)
     d1 = write_shard(root, "sq/0001.jsonl", {2: 4})
     d2 = write_shard(root, "sq/0002.jsonl", {2: 5})
-    support(root, "produced", "sq/0001.jsonl", d1, "toy.sq.v1")
-    support(root, "produced", "sq/0002.jsonl", d2, "toy.sq.v1")
+    support(root, "produced", "sq/0001.jsonl", d1, "arithkit_toy.sq.v1")
+    support(root, "produced", "sq/0002.jsonl", d2, "arithkit_toy.sq.v1")
     assert any("conflicts" in p for p in check(root))
 
 
 def test_retraction_and_inheritance(tmp_path: pathlib.Path) -> None:
     root = make_tree(tmp_path)
     bad = write_shard(root, "sq/0001.jsonl", {1: 1, 2: 5, 3: 9})
-    support(root, "produced", "sq/0001.jsonl", bad, "toy.sq.v1")
+    support(root, "produced", "sq/0001.jsonl", bad, "arithkit_toy.sq.v1")
     assert check(root) == []
     # Retract: move the shard unchanged and record the event.
     (root / "retracted" / "sq").mkdir(parents=True)
@@ -153,14 +200,14 @@ def test_retraction_and_inheritance(tmp_path: pathlib.Path) -> None:
     assert model.status(tree) == {"sq/0002.jsonl": "unsupported"}  # row 2 has no support yet
     support(root, "confirmed", "sq/0002.jsonl", good, "magma.sq.v1")
     assert model.status(model.load(root)) == {"sq/0002.jsonl": "conditional on GRH"}
-    support(root, "confirmed", "sq/0002.jsonl", good, "toy.sq.v1")
+    support(root, "confirmed", "sq/0002.jsonl", good, "arithkit_toy.sq.v1")
     assert model.status(model.load(root)) == {"sq/0002.jsonl": "unconditional"}
 
 
 def test_inherited_rows_must_be_identical(tmp_path: pathlib.Path) -> None:
     root = make_tree(tmp_path)
     source = write_shard(root, "sq/0001.jsonl", {1: 1, 2: 4})
-    support(root, "produced", "sq/0001.jsonl", source, "toy.sq.v1")
+    support(root, "produced", "sq/0001.jsonl", source, "arithkit_toy.sq.v1")
     copy = write_shard(root, "sq/0002.jsonl", {1: 1, 2: 4, 5: 25})
     event(
         root,
